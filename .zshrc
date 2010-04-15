@@ -31,7 +31,7 @@ setopt no_beep                  # no beeps
 setopt auto_resume              # single word commands are candidates for job resumption
 bindkey -v
 
-PROMPT='%d$ '       # default prompt
+PROMPT='%d$ '                   # default prompt
 RPROMPT='[%n@%M>%l]'            # prompt for right side of screen 
 
 alias ls='ls --color=auto'
