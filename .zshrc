@@ -29,9 +29,17 @@ setopt hist_verify              # expand history before execution
 setopt print_exit_value         # print exit value on non-zero exits
 setopt no_beep                  # no beeps
 setopt auto_resume              # single word commands are candidates for job resumption
+
 bindkey -v
+bindkey '^R' history-incremental-search-backward
 
 PROMPT='%d$ '                   # default prompt
 RPROMPT='[%n@%M>%l]'            # prompt for right side of screen 
 
 alias ls='ls --color=auto'
+alias views='cd ~/code/views_workspace/views'
+
+export ORACLE_HOME=/opt/wgoracle-client/u01/app/oracle/product/10.2.0.3.0
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME/lib
+export PATH=$HOME/bin:$PATH:$ORACLE_HOME/bin:/usr/sbin
+export EDITOR=vim
