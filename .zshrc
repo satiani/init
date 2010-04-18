@@ -32,6 +32,9 @@ setopt auto_resume              # single word commands are candidates for job re
 
 bindkey -v
 bindkey '^R' history-incremental-search-backward
+bindkey '[1~' beginning-of-line
+bindkey '[4~' end-of-line
+bindkey '' backward-delete-char
 
 PROMPT='%d$ '                   # default prompt
 RPROMPT='[%n@%M>%l]'            # prompt for right side of screen
