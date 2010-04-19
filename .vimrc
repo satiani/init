@@ -24,17 +24,11 @@ set autoindent
 set cpo&vim
 set modeline
 
-
 " Key mappings
 inoremap <silent><A-Left> <Esc>:tabprevious<CR>
 inoremap <silent><A-Right> <Esc>:tabnext<CR>
 map - <c-w><
-map <S-xF1> <S-F1>
-map <S-xF2> <S-F2>
-map <S-xF3> <S-F3>
-map <S-xF4> <S-F4>
-map <c-d> :s/#/<enter>
-map <c-e> <home>i#<esc>
+map \ <c-w>>
 map <c-w>F <c-w>_<c-w><bar>
 map <c-w>O <c-w>w<c-w>_<c-w><bar>
 map <silent> <F6> :call BufferList()<CR>
@@ -42,26 +36,8 @@ map <silent><A-Down> :tabnew<CR>
 map <silent><A-Left> :tabprevious<CR>
 map <silent><A-Right> :tabnext<CR>
 map <silent><A-Up> :tabnew .<CR>
-map <xEnd> <End>
-map <xF1> <F1>
-map <xF2> <F2>
-map <xF3> <F3>
-map <xF4> <F4>
-map <xHome> <Home>
-map \ <c-w>>
-map! <S-xF1> <S-F1>
-map! <S-xF2> <S-F2>
-map! <S-xF3> <S-F3>
-map! <S-xF4> <S-F4>
-map! <xEnd> <End>
-map! <xF1> <F1>
-map! <xF2> <F2>
-map! <xF3> <F3>
-map! <xF4> <F4>
-map! <xHome> <Home>
-nmap <C-W>E :new \| vimshell bash<CR>
-nmap <C-W>e :vnew \| vimshell bash<CR>
-
+map <silent><F7>  :TlistToggle<CR>
+map <F8> :!/usr/bin/ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
 
 " General Settings
 "disabled because of collisions with eclim
@@ -70,6 +46,7 @@ syntax on
 colorscheme desert256
 highlight OverLength ctermbg=red ctermfg=white guibg=#592929
 "match OverLength /\%81v.*/
+let Tlist_WinWidth = 50
 
 
 " Utility functions
@@ -103,7 +80,6 @@ def SetBreakpoint():
         vim.current.buffer.append('import pdb', 0)
         vim.command('normal j1')
 
-vim.command('map <f7> :py SetBreakpoint()<cr>')
 
 def RemoveBreakpoints():
     import re
@@ -132,6 +108,7 @@ def EvaluateCurrentRange():
     eval(compile('\n'.join(vim.current.range),'','exec'), globals())
     print "#" * 30
 
-vim.command( 'map <s-f7> :py RemoveBreakpoints()<cr>')
+#vim.command( 'map <s-f7> :py RemoveBreakpoints()<cr>')
+#vim.command('map <f7> :py SetBreakpoint()<cr>')
 vim.command( 'map <C-h> :py EvaluateCurrentRange()<cr>')
 EOF
