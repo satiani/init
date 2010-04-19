@@ -30,8 +30,14 @@ setopt print_exit_value         # print exit value on non-zero exits
 setopt no_beep                  # no beeps
 setopt auto_resume              # single word commands are candidates for job resumption
 
+autoload edit-command-line
+zle -N edit-command-line
+
 bindkey -v
+bindkey -M vicmd 'v' edit-command-line
 bindkey '^R' history-incremental-search-backward
+bindkey 'OA' up-line-or-history #application mode binding
+bindkey '[A' up-line-or-history
 bindkey '[1~' beginning-of-line
 bindkey '[4~' end-of-line
 bindkey '' backward-delete-char
@@ -47,3 +53,4 @@ export ORACLE_HOME=/opt/wgoracle-client/u01/app/oracle/product/10.2.0.3.0
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME/lib
 export PATH=$HOME/bin:$PATH:$ORACLE_HOME/bin:/usr/sbin
 export EDITOR=vim
+export LC_ALL=C
