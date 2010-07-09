@@ -1,0 +1,6 @@
+--type-add
+php=.module,.install,.inc,.lib
+--type-set
+velocity=.vm
+--pager
+less -RF

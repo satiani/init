@@ -27,8 +27,8 @@ set modeline
 " Key mappings
 inoremap <silent><A-Left> <Esc>:tabprevious<CR>
 inoremap <silent><A-Right> <Esc>:tabnext<CR>
-map - <c-w><
-map \ <c-w>>
+map \ :n<CR>
+map - :prev<CR>
 map <c-w>F <c-w>_<c-w><bar>
 map <c-w>O <c-w>w<c-w>_<c-w><bar>
 map <silent> <F6> :call BufferList()<CR>

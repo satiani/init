@@ -53,9 +53,15 @@ alias ls='ls --color=auto'
 alias views='cd ~/code/views_workspace/views'
 alias km='cd ~/code/km_workspace/km'
 alias grep='grep --color=auto'
+alias sqlplus='rlwrap sqlplus'
+alias lampstart='sudo /opt/lampp/lampp start'
+alias lampstop='sudo /opt/lampp/lampp stop'
+alias lamprestart='lampstop && lampstart'
+alias svn-1.5='/home/satiani/svn-1.5/bin/svn'
 
 export ORACLE_HOME=/opt/wgoracle-client/u01/app/oracle/product/10.2.0.3.0
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME/lib
-export PATH=$HOME/bin:$PATH:$ORACLE_HOME/bin:/usr/sbin
+export LAMPP_HOME=/opt/lampp
+export PATH=$HOME/bin:$PATH:$ORACLE_HOME/bin:/usr/sbin:$LAMPP_HOME/bin
 export EDITOR=vim
 export LC_ALL=C
