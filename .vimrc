@@ -19,7 +19,6 @@ set printoptions=paper:letter
 set history=50
 set fileencodings=ucs-bom,utf-8,latin1
 set backspace=indent,eol,start
-set background=dark
 set autoindent
 set cpo&vim
 set modeline
