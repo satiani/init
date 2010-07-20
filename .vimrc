@@ -30,12 +30,12 @@ map \ :n<CR>
 map - :prev<CR>
 map <c-w>F <c-w>_<c-w><bar>
 map <c-w>O <c-w>w<c-w>_<c-w><bar>
-map <silent> <F6> :call BufferList()<CR>
+map <silent> <F2> :call BufferList()<CR>
 map <silent><A-Down> :tabnew<CR>
 map <silent><A-Left> :tabprevious<CR>
 map <silent><A-Right> :tabnext<CR>
 map <silent><A-Up> :tabnew .<CR>
-map <silent><F7>  :TlistToggle<CR>
+map <silent><F3>  :TlistToggle<CR>
 map <F8> :!/usr/bin/ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
 
 " General Settings
