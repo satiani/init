@@ -59,6 +59,8 @@ alias lampstop='sudo /opt/lampp/lampp stop'
 alias lamprestart='lampstop && lampstart'
 alias svn-1.5='/home/satiani/svn-1.5/bin/svn'
 alias tmux='tmux -2'
+#finch doesn't work well with xterm-256colors
+[[ "$TERM" == "xterm-256color" ]] && alias finch='TERM=screen finch'
 
 export ORACLE_HOME=/opt/wgoracle-client/u01/app/oracle/product/10.2.0.3.0
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME/lib
