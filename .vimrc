@@ -26,23 +26,27 @@ set modeline
 " Key mappings
 inoremap <silent><A-Left> <Esc>:tabprevious<CR>
 inoremap <silent><A-Right> <Esc>:tabnext<CR>
-map \ :n<CR>
-map - :prev<CR>
+map <Leader>\ :n<CR>
+map <Leader>- :prev<CR>
 map <c-w>F <c-w>_<c-w><bar>
 map <c-w>O <c-w>w<c-w>_<c-w><bar>
-map <silent> <F2> :call BufferList()<CR>
 map <silent><A-Down> :tabnew<CR>
 map <silent><A-Left> :tabprevious<CR>
 map <silent><A-Right> :tabnext<CR>
 map <silent><A-Up> :tabnew .<CR>
 map <silent><F3>  :TlistToggle<CR>
 map <F8> :!/usr/bin/ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
+map <silent> <F2> :call BufferList()<CR>
+map <silent> [12~ :call BufferList()<CR>
+map <silent> OS :call CHANGE_CURR_DIR()<CR>
+map <silent> O1;2S :call CHANGE_CURR_DIR()<CR>:e .<CR>
 
 " Utility functions
 function! CHANGE_CURR_DIR()
     if !exists("b:eclim_temp_window")
         let _dir = expand("%:p:h")
         exec join(["cd", escape(_dir, " ")])
+        echo "Changed current directory to " . _dir
         unlet _dir
     endif
 endfunction
