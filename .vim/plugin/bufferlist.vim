@@ -119,8 +119,8 @@ function! BufferList()
     syn clear
     syn match BufferNormal /  .*/
     syn match BufferSelected /> .*/hs=s+1
-    hi def BufferNormal ctermfg=black ctermbg=white
-    hi def BufferSelected ctermfg=white ctermbg=black
+    hi def BufferNormal ctermfg=white ctermbg=black
+    hi def BufferSelected ctermfg=black ctermbg=white
   endif
 
   setlocal modifiable
