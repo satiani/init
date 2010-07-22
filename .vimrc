@@ -38,16 +38,6 @@ map <silent><A-Up> :tabnew .<CR>
 map <silent><F3>  :TlistToggle<CR>
 map <F8> :!/usr/bin/ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
 
-" General Settings
-"disabled because of collisions with eclim
-"autocmd BufEnter * call CHANGE_CURR_DIR()
-syntax on
-colorscheme desert256
-highlight OverLength ctermbg=red ctermfg=white guibg=#592929
-"match OverLength /\%81v.*/
-let Tlist_WinWidth = 50
-
-
 " Utility functions
 function! CHANGE_CURR_DIR()
     if !exists("b:eclim_temp_window")
@@ -57,6 +47,21 @@ function! CHANGE_CURR_DIR()
     endif
 endfunction
 
+function! SET_PHP_STYLE()
+    set sw=2
+    set sts=2
+endfunction
+
+" General Settings
+" disable the following command when using eclim
+"au BufEnter * call CHANGE_CURR_DIR()
+au FileType php call SET_PHP_STYLE()
+
+syntax on
+colorscheme desert256
+highlight OverLength ctermbg=red ctermfg=white guibg=#592929
+"match OverLength /\%81v.*/
+let Tlist_WinWidth = 50
 
 " Python extensions
 python << EOF
