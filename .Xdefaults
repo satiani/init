@@ -1,0 +1,9 @@
+URxvt.perl-ext: matcher
+URxvt.urlLauncher: firefox
+URxvt.background: black
+URxvt.foreground: white
+URxvt.font: xft:Monospace:pixelsize=14
+URxvt.scrollBar: False
+URxvt.letterSpace: -2
+URxvt.cursorBlink: True
+URxvt.iconFile: /usr/share/icons/Humanity/apps/48/utilities-terminal.svg
