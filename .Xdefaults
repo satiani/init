@@ -1,3 +1,8 @@
+#These settings work on Ubuntu 10.04 with a custom compiled urxvt
+# urxvt compiled with:
+#    --enable-256-color
+#    --enable-xft
+
 URxvt.perl-ext: matcher
 URxvt.urlLauncher: firefox
 URxvt.background: black
