@@ -63,6 +63,7 @@ alias tmux='tmux -2'
 if [[ "$TERM" == "xterm-256color" ]]; then
     alias ack-grep='TERM=vt100 ack-grep' 
     alias finch='TERM=screen finch'
+    alias htop='TERM=screen htop'
 fi
 
 export ORACLE_HOME=/opt/wgoracle-client/u01/app/oracle/product/10.2.0.3.0
