@@ -2,6 +2,7 @@
 # urxvt compiled with:
 #    --enable-256-color
 #    --enable-xft
+#    --enable-afterimage
 
 URxvt.perl-ext: matcher
 URxvt.urlLauncher: firefox
@@ -11,4 +12,5 @@ URxvt.font: xft:Monospace:pixelsize=14
 URxvt.scrollBar: False
 URxvt.letterSpace: -2
 URxvt.cursorBlink: True
-URxvt.iconFile: /usr/share/icons/Humanity/apps/48/utilities-terminal.svg
+URxvt.iconFile: /usr/share/icons/Humanity/apps/48/gnome-terminal.svg
+URxvt.termName: xterm-256color
