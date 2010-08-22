@@ -6,6 +6,7 @@
 
 URxvt.perl-ext: matcher
 URxvt.urlLauncher: firefox
+URxvt.matcher.button: 1
 URxvt.background: black
 URxvt.foreground: white
 URxvt.font: xft:Monospace:pixelsize=14
