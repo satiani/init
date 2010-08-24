@@ -22,10 +22,15 @@ set backspace=indent,eol,start
 set autoindent
 set cpo&vim
 set modeline
+set tags=tags;/
+set laststatus=2
+set statusline=%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %P
+filetype plugin on
 
 " Key mappings
 inoremap <silent><A-Left> <Esc>:tabprevious<CR>
 inoremap <silent><A-Right> <Esc>:tabnext<CR>
+inoremap  
 map <Leader>\ :n<CR>
 map <Leader>- :prev<CR>
 map <c-w>F <c-w>_<c-w><bar>
@@ -57,10 +62,7 @@ function! SET_PHP_STYLE()
 endfunction
 
 " General Settings
-" disable the following command when using eclim
-"au BufEnter * call CHANGE_CURR_DIR()
 au FileType php call SET_PHP_STYLE()
-
 syntax on
 colorscheme desert256
 highlight OverLength ctermbg=red ctermfg=white guibg=#592929

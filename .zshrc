@@ -59,10 +59,13 @@ alias lampstop='sudo /opt/lampp/lampp stop'
 alias lamprestart='lampstop && lampstart'
 alias svn-1.5='/home/satiani/svn-1.5/bin/svn'
 alias tmux='tmux -2'
-#finch and ack-grep paging don't work well with xterm-256colors
-if [[ "$TERM" == "xterm-256color" ]]; then
+
+#ack-grep and vim don't work perfectly within tmux 
+#changing the TERM fixes their problems
+if [ ! -z "$TMUX" ]; then
     alias ack-grep='TERM=vt100 ack-grep' 
-    alias finch='TERM=screen finch'
+    alias vi='TERM=xterm-256color vi'
+    alias vim='TERM=xterm-256color vim'
 fi
 
 export ORACLE_HOME=/opt/wgoracle-client/u01/app/oracle/product/10.2.0.3.0
