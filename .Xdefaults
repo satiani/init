@@ -15,3 +15,4 @@ URxvt.letterSpace: -2
 URxvt.cursorBlink: True
 URxvt.iconFile: /usr/share/icons/Humanity/apps/48/gnome-terminal.svg
 URxvt.termName: xterm-256color
+URxvt.color12: #3465a4
