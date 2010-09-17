@@ -43,12 +43,12 @@ map <silent><F3>  :TlistToggle<CR>
 map <F8> :!/usr/bin/ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
 map <silent> <F2> :call BufferList()<CR>
 map <silent> [12~ :call BufferList()<CR>
-map <silent> OS :call CHANGE_CURR_DIR()<CR>
-map <silent> O1;2S :call CHANGE_CURR_DIR()<CR>:e .<CR>
+map <silent> OS :call ChangeCurrDir()<CR>
+map <silent> O1;2S :call ChangeCurrDir()<CR>:e .<CR>
 map <silent>  :call ToggleOverLengthMatch()<CR>
 
 " Utility functions
-function! CHANGE_CURR_DIR()
+function! ChangeCurrDir()
     if !exists("b:eclim_temp_window")
         let _dir = expand("%:p:h")
         exec join(["cd", escape(_dir, " ")])
@@ -73,13 +73,13 @@ function! ToggleOverLengthMatch()
     endif
 endfunction
 
-function! SET_PHP_STYLE()
+function! SetPhpStyle()
     set sw=2
     set sts=2
 endfunction
 
 " General Settings
-au FileType php call SET_PHP_STYLE()
+au FileType php call SetPhpStyle()
 syntax on
 colorscheme desert256
 highlight OverLength ctermbg=red ctermfg=white guibg=#592929
