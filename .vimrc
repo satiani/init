@@ -45,6 +45,7 @@ map <silent> <F2> :call BufferList()<CR>
 map <silent> [12~ :call BufferList()<CR>
 map <silent> OS :call CHANGE_CURR_DIR()<CR>
 map <silent> O1;2S :call CHANGE_CURR_DIR()<CR>:e .<CR>
+map <silent>  :call ToggleOverLengthMatch()<CR>
 
 " Utility functions
 function! CHANGE_CURR_DIR()
@@ -53,6 +54,22 @@ function! CHANGE_CURR_DIR()
         exec join(["cd", escape(_dir, " ")])
         echo "Changed current directory to " . _dir
         unlet _dir
+    endif
+endfunction
+
+function! ToggleOverLengthMatch()
+    if !exists("b:overlength_match_flag")
+        match OverLength /\%81v.*/
+        let b:overlength_match_flag = 1
+        let b:previous_text_width = &tw
+        setlocal tw=80
+    else
+        match none
+        unlet b:overlength_match_flag
+        "setlocal takes only number literals, to use variables
+        "one must construct the command dynamically
+        execute 'setlocal tw='.b:previous_text_width
+        unlet b:previous_text_width
     endif
 endfunction
 
@@ -66,7 +83,6 @@ au FileType php call SET_PHP_STYLE()
 syntax on
 colorscheme desert256
 highlight OverLength ctermbg=red ctermfg=white guibg=#592929
-"match OverLength /\%81v.*/
 let Tlist_WinWidth = 50
 
 " Python extensions
