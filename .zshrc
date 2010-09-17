@@ -69,8 +69,9 @@ if [ ! -z "$TMUX" ]; then
 fi
 
 export ORACLE_HOME=/opt/wgoracle-client/u01/app/oracle/product/10.2.0.3.0
+export JAVA_HOME=/usr/lib/jvm/java-6-sun
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME/lib
 export LAMPP_HOME=/opt/lampp
-export PATH=$HOME/bin:$PATH:$ORACLE_HOME/bin:/usr/sbin:$LAMPP_HOME/bin
+export PATH=$JAVA_HOME/bin:$HOME/bin:$PATH:$ORACLE_HOME/bin:/usr/sbin:$LAMPP_HOME/bin
 export EDITOR=vim
 export LC_ALL=C
