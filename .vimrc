@@ -59,16 +59,21 @@ endfunction
 
 function! ToggleOverLengthMatch()
     if !exists("b:overlength_match_flag")
+        "TODO: find a way to use a variable in the pattern used in the match
+        "command. Without this, we'll have to use hardcoded overlength
+        "thresholds. Using 'execute' trick doesn't work for some reason.
         match OverLength /\%81v.*/
         let b:overlength_match_flag = 1
         let b:previous_text_width = &tw
         setlocal tw=80
+        echo "Changed textwidth to 80"
     else
         match none
         unlet b:overlength_match_flag
         "setlocal takes only number literals, to use variables
         "one must construct the command dynamically
-        execute 'setlocal tw='.b:previous_text_width
+        execute 'setlocal tw=' . b:previous_text_width
+        echo "Reset textwidth to " . b:previous_text_width
         unlet b:previous_text_width
     endif
 endfunction
