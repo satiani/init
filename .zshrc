@@ -59,6 +59,7 @@ alias lampstop='sudo /opt/lampp/lampp stop'
 alias lamprestart='lampstop && lampstart'
 alias svn-1.5='/home/satiani/svn-1.5/bin/svn'
 alias tmux='tmux -2'
+alias assmt-web-app='cd /home/satiani/code/assmt-web-app/ && source ../assmt-web-app-venv/bin/activate'
 
 #ack-grep and vim don't work perfectly within tmux 
 #changing the TERM fixes their problems

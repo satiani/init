@@ -6,3 +6,7 @@ velocity=.vm
 php-module=.module
 --pager
 less -RF
+--type-set
+mako=.mako
+--type-set
+scss=.scss
