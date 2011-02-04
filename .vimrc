@@ -89,6 +89,8 @@ syntax on
 colorscheme desert256
 highlight OverLength ctermbg=red ctermfg=white guibg=#592929
 let Tlist_WinWidth = 50
+" For BufferList (F2)
+let g:BufferListMaxWidth = 60
 
 " Python extensions
 python << EOF
