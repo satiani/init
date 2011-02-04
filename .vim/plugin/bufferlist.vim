@@ -68,7 +68,14 @@ function! BufferList()
           let l:width = strlen(l:bufname) + 5
         else
           let l:width = g:BufferListMaxWidth
-          let l:bufname = '...' . strpart(l:bufname, strlen(l:bufname) - g:BufferListMaxWidth + 8)
+          let l:firstslash = stridx(l:bufname, '/')
+          if l:firstslash > (l:width * 2/3)
+            let l:bufname = '...' . strpart(l:bufname, strlen(l:bufname) - g:BufferListMaxWidth + 8)
+          else
+            let l:beforedots = strpart(l:bufname, 0, l:firstslash + 1) 
+            let l:afterdots = strpart(l:bufname, strlen(l:bufname) + l:firstslash - g:BufferListMaxWidth + 9)
+            let l:bufname = l:beforedots . '...' . l:afterdots
+          endif
         endif
       endif
 
