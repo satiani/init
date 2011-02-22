@@ -28,6 +28,7 @@ setopt hist_reduce_blanks       # remove superfluous blanks before saving in his
 setopt print_exit_value         # print exit value on non-zero exits
 setopt no_beep                  # no beeps
 setopt auto_resume              # single word commands are candidates for job resumption
+setopt no_nomatch               # if there are no matches for globs, don't throw an error, leave it alone
 
 autoload edit-command-line
 zle -N edit-command-line
@@ -60,6 +61,7 @@ alias lamprestart='lampstop && lampstart'
 alias svn-1.5='/home/satiani/svn-1.5/bin/svn'
 alias tmux='tmux -2'
 alias assmt-web-app='cd /home/satiani/code/assmt-web-app/ && source ../assmt-web-app-venv/bin/activate'
+alias jsassmt-web-app='cd /home/satiani/code/assmt-web-app/ && source ../assmt-web-app-venv/bin/activate && cd assess/public/javascript/wgen/assess'
 alias ttytter='/home/satiani/bin/ttytter.pl -ansi -timestamp="%Y-%m-%d %H:%M:%S"'
 
 #ack-grep and vim don't work perfectly within tmux 
