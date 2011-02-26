@@ -39,7 +39,7 @@ map <silent><A-Down> :tabnew<CR>
 map <silent><A-Left> :tabprevious<CR>
 map <silent><A-Right> :tabnext<CR>
 map <silent><A-Up> :tabnew .<CR>
-map <silent><F3>  :TlistToggle<CR>
+map <silent><F3>  :NERDTreeToggle<CR>
 map <F8> :!/usr/bin/ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
 map <silent> <F2> :call BufferList()<CR>
 map <silent> [12~ :call BufferList()<CR>
