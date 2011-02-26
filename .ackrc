@@ -10,3 +10,5 @@ less -RF
 mako=.mako
 --type-set
 scss=.scss
+--type-set
+ejs=.ejs

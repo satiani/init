@@ -78,13 +78,14 @@ function! ToggleOverLengthMatch()
     endif
 endfunction
 
-function! SetPhpStyle()
+function! SetTwoLineStyle()
     set sw=2
     set sts=2
 endfunction
 
 " General Settings
-au FileType php call SetPhpStyle()
+au FileType php call SetTwoLineStyle()
+au FileType ruby call SetTwoLineStyle()
 syntax on
 colorscheme desert256
 highlight OverLength ctermbg=red ctermfg=white guibg=#592929
