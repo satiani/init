@@ -26,6 +26,9 @@ set tags=tags;/
 set laststatus=2
 set statusline=%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %P
 filetype plugin on
+"" NERDTree settings
+let NERDTreeHijackNetrw=0
+let NERDTreeQuitOnOpen=1
 
 " Key mappings
 inoremap <silent><A-Left> <Esc>:tabprevious<CR>
