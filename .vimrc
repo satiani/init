@@ -28,7 +28,7 @@ set statusline=%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %P
 filetype plugin on
 "" NERDTree settings
 let NERDTreeHijackNetrw=0
-let NERDTreeQuitOnOpen=1
+let NERDTreeWinSize=40
 
 " Key mappings
 inoremap <silent><A-Left> <Esc>:tabprevious<CR>
@@ -42,7 +42,8 @@ map <silent><A-Down> :tabnew<CR>
 map <silent><A-Left> :tabprevious<CR>
 map <silent><A-Right> :tabnext<CR>
 map <silent><A-Up> :tabnew .<CR>
-map <silent><F3>  :NERDTreeToggle<CR>
+map <silent><F3>  :let NERDTreeQuitOnOpen=1<CR>:call SwitchToNerdTree()<CR>
+map <silent><F4>  :let NERDTreeQuitOnOpen=0<CR>:call SwitchToNerdTree()<CR>
 map <F8> :!/usr/bin/ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
 map <silent> <F2> :call BufferList()<CR>
 map <silent> [12~ :call BufferList()<CR>
@@ -58,6 +59,19 @@ function! ChangeCurrDir()
         echo "Changed current directory to " . _dir
         unlet _dir
     endif
+endfunction
+
+function! SwitchToNerdTree()
+    if exists("t:NERDTreeBufName")
+        let winnr = bufwinnr(t:NERDTreeBufName)
+        let currwinnr = bufwinnr("%")
+        if winnr != -1 && winnr != currwinnr
+            exec(winnr . "wincmd w")
+            return
+        endif
+    endif
+
+    NERDTreeToggle
 endfunction
 
 function! ToggleOverLengthMatch()
