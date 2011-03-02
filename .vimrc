@@ -44,11 +44,7 @@ map <silent><A-Right> :tabnext<CR>
 map <silent><A-Up> :tabnew .<CR>
 map <silent><F3>  :let NERDTreeQuitOnOpen=1<CR>:call SwitchToNerdTree()<CR>
 map <silent><F4>  :let NERDTreeQuitOnOpen=0<CR>:call SwitchToNerdTree()<CR>
-map <F8> :!/usr/bin/ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
 map <silent> <F2> :call BufferList()<CR>
-map <silent> [12~ :call BufferList()<CR>
-map <silent> OS :call ChangeCurrDir()<CR>
-map <silent> O1;2S :call ChangeCurrDir()<CR>:e .<CR>
 map <silent>  :call ToggleOverLengthMatch()<CR>
 
 " Utility functions
