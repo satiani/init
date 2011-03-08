@@ -128,6 +128,12 @@ Tlist_Get_Tag_Prototype_By_Line()	taglist.txt	/*Tlist_Get_Tag_Prototype_By_Line(
 Tlist_Get_Tagname_By_Line()	taglist.txt	/*Tlist_Get_Tagname_By_Line()*
 Tlist_Set_App()	taglist.txt	/*Tlist_Set_App()*
 Tlist_Update_File_Tags()	taglist.txt	/*Tlist_Update_File_Tags()*
+git-vim	git-vim.txt	/*git-vim*
+git-vim-commands	git-vim.txt	/*git-vim-commands*
+git-vim-contents	git-vim.txt	/*git-vim-contents*
+git-vim-keymaps	git-vim.txt	/*git-vim-keymaps*
+git-vim-license	git-vim.txt	/*git-vim-license*
+git-vim.txt	git-vim.txt	/*git-vim.txt*
 taglist-commands	taglist.txt	/*taglist-commands*
 taglist-debug	taglist.txt	/*taglist-debug*
 taglist-extend	taglist.txt	/*taglist-extend*
