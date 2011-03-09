@@ -36,6 +36,9 @@ inoremap <silent><A-Right> <Esc>:tabnext<CR>
 inoremap  
 map <Leader>\ :n<CR>
 map <Leader>- :prev<CR>
+" Replace word under cursor
+map <Leader>s :%s/\<<C-r><C-w>\>/
+map <Leader>S :%s/\(\<<C-r><C-w>\>\)/
 map <c-w>F <c-w>_<c-w><bar>
 map <c-w>O <c-w>w<c-w>_<c-w><bar>
 map <silent><A-Down> :tabnew<CR>

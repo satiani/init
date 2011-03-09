@@ -140,6 +140,12 @@ loremipsum#GenerateInline()	loremipsum.txt	/*loremipsum#GenerateInline()*
 loremipsum#Insert()	loremipsum.txt	/*loremipsum#Insert()*
 loremipsum#Replace()	loremipsum.txt	/*loremipsum#Replace()*
 loremipsum.txt	loremipsum.txt	/*loremipsum.txt*
+git-vim	git-vim.txt	/*git-vim*
+git-vim-commands	git-vim.txt	/*git-vim-commands*
+git-vim-contents	git-vim.txt	/*git-vim-contents*
+git-vim-keymaps	git-vim.txt	/*git-vim-keymaps*
+git-vim-license	git-vim.txt	/*git-vim-license*
+git-vim.txt	git-vim.txt	/*git-vim.txt*
 taglist-commands	taglist.txt	/*taglist-commands*
 taglist-debug	taglist.txt	/*taglist-debug*
 taglist-extend	taglist.txt	/*taglist-extend*
