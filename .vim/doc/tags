@@ -43,6 +43,8 @@
 'Tlist_WinHeight'	taglist.txt	/*'Tlist_WinHeight'*
 'Tlist_WinWidth'	taglist.txt	/*'Tlist_WinWidth'*
 'loaded_nerd_tree'	NERD_tree.txt	/*'loaded_nerd_tree'*
+:Loremipsum	loremipsum.txt	/*:Loremipsum*
+:Loreplace	loremipsum.txt	/*:Loreplace*
 :NERDTree	NERD_tree.txt	/*:NERDTree*
 :NERDTreeClose	NERD_tree.txt	/*:NERDTreeClose*
 :NERDTreeFind	NERD_tree.txt	/*:NERDTreeFind*
@@ -128,6 +130,16 @@ Tlist_Get_Tag_Prototype_By_Line()	taglist.txt	/*Tlist_Get_Tag_Prototype_By_Line(
 Tlist_Get_Tagname_By_Line()	taglist.txt	/*Tlist_Get_Tagname_By_Line()*
 Tlist_Set_App()	taglist.txt	/*Tlist_Set_App()*
 Tlist_Update_File_Tags()	taglist.txt	/*Tlist_Update_File_Tags()*
+b:loremipsum_file	loremipsum.txt	/*b:loremipsum_file*
+g:loremipsum_files	loremipsum.txt	/*g:loremipsum_files*
+g:loremipsum_marker	loremipsum.txt	/*g:loremipsum_marker*
+g:loremipsum_paragraph_template	loremipsum.txt	/*g:loremipsum_paragraph_template*
+g:loremipsum_words	loremipsum.txt	/*g:loremipsum_words*
+loremipsum#Generate()	loremipsum.txt	/*loremipsum#Generate()*
+loremipsum#GenerateInline()	loremipsum.txt	/*loremipsum#GenerateInline()*
+loremipsum#Insert()	loremipsum.txt	/*loremipsum#Insert()*
+loremipsum#Replace()	loremipsum.txt	/*loremipsum#Replace()*
+loremipsum.txt	loremipsum.txt	/*loremipsum.txt*
 taglist-commands	taglist.txt	/*taglist-commands*
 taglist-debug	taglist.txt	/*taglist-debug*
 taglist-extend	taglist.txt	/*taglist-extend*
