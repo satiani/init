@@ -52,8 +52,8 @@ set cpo&vim
     "vmenu PopUp.BlockDiff.This\ is\ Block\ 2,\ start\ diff :call BlockDiff_GetBlock2()<CR>
 
 " Shortcuts
-    "vmap ,d1 :call BlockDiff_GetBlock1()<CR>
-    "vmap ,d2 :call BlockDiff_GetBlock2()<CR>
+    map ,d1 :call BlockDiff_GetBlock1()<CR>
+    map ,d2 :call BlockDiff_GetBlock2()<CR>
 
 " Commands 
     command! -range BlockDiff1 :<line1>,<line2>call BlockDiff_GetBlock1() 
