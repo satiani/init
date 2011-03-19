@@ -1,3 +1,20 @@
+" INSTALLATION: Drop this file into your ~/.vim/plugin folder
+"
+" WHAT DOES THIS DO:
+"
+" This script will look at the string under the cursor in the current buffer 
+" and attempt to find ejs files named the same with the .ejs extension appended.
+" The search for ejs files is started at the base directory for the file open in
+" the current buffer and will search subdirectories recursively.
+"
+" USE:
+"
+" <Leader> in vim defaults to backslash '\', so <Leader>x means clicking
+" \x in command mode.
+"
+"   - <Leader>x will open the ejs file found in a vertical split
+"   - <Leader>X will open the ejs file found in a horizontal split
+
 python << EOF
 import vim
 import os
@@ -15,6 +32,10 @@ def open_ejs_file(orientation):
                 vim.command("vsp " + full_path)
             else:
                 vim.command("sp" + full_path)
+
+            return
+
+    print "No file named %s found" % ejs_file_name
 
 EOF
 
