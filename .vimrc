@@ -3,7 +3,7 @@ set wildmenu
 set hidden
 set t_Co=256
 set completeopt=longest,menuone
-set directory=/home/satiani/vimswap/
+set directory=$HOME/vimswap/
 set diffexpr="sdiff --strip-trailing-cr"
 set diffopt=vertical,filler
 set incsearch
@@ -110,6 +110,7 @@ let Tlist_WinWidth = 50
 let g:BufferListMaxWidth = 60
 
 " Python extensions
+if has("python")
 python << EOF
 import vim
 def SetBreakpoint():
@@ -162,3 +163,4 @@ def EvaluateCurrentRange():
 #vim.command('map <f7> :py SetBreakpoint()<cr>')
 vim.command( 'map <C-h> :py EvaluateCurrentRange()<cr>')
 EOF
+endif

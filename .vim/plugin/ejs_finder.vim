@@ -15,6 +15,7 @@
 "   - <Leader>x will open the ejs file found in a vertical split
 "   - <Leader>X will open the ejs file found in a horizontal split
 
+if has("python")
 python << EOF
 import vim
 import os
@@ -41,3 +42,4 @@ EOF
 
 map <Leader>x :py open_ejs_file("vertical")<CR>
 map <Leader>X :py open_ejs_file("horizontal")<CR>
+endif
