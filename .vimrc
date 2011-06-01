@@ -100,7 +100,6 @@ function! SetTwoLineStyle()
 endfunction
 
 " General Settings
-au FileType php call SetTwoLineStyle()
 au FileType ruby call SetTwoLineStyle()
 syntax on
 colorscheme desert256
