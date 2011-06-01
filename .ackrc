@@ -12,3 +12,9 @@ mako=.mako
 scss=.scss
 --type-set
 ejs=.ejs
+--type-set
+smarty=.tpl
+--type-set
+patch=.patch
+--type-set
+txt=.txt
