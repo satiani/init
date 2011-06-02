@@ -81,8 +81,8 @@ function! ToggleOverLengthMatch()
         match OverLength /\%81v.*/
         let b:overlength_match_flag = 1
         let b:previous_text_width = &tw
-        setlocal tw=80
-        echo "Changed textwidth to 80"
+        setlocal tw=110
+        echo "Changed textwidth to 110"
     else
         match none
         unlet b:overlength_match_flag
