@@ -167,3 +167,5 @@ def EvaluateCurrentRange():
 vim.command( 'map <C-h> :py EvaluateCurrentRange()<cr>')
 EOF
 endif
+
+source $HOME/.vim/local/*.vim
