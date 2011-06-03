@@ -30,6 +30,10 @@ filetype plugin on
 let NERDTreeHijackNetrw=0
 let NERDTreeWinSize=40
 
+" Better filename matching
+" Same as VIM default but without '=' and ','
+let &isfname="@,48-57,/,.,-,_,+,#,$,%,~"
+
 " Key mappings
 inoremap <silent><A-Left> <Esc>:tabprevious<CR>
 inoremap <silent><A-Right> <Esc>:tabnext<CR>
