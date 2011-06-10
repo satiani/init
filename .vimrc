@@ -168,4 +168,7 @@ vim.command( 'map <C-h> :py EvaluateCurrentRange()<cr>')
 EOF
 endif
 
-source $HOME/.vim/local/*.vim
+let local_path="$HOME/.vim/local/*.vim"
+if glob(local_path) != ""
+    exec("source " . local_path)
+endif
