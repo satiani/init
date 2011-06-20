@@ -1,1 +1,2 @@
 loremipsum.vba: call delete('/home/satiani/.vim/autoload/loremipsum.vim')|call delete('/home/satiani/.vim/autoload/loremipsum.txt')|call delete('/home/satiani/.vim/plugin/loremipsum.vim')|call delete('/home/satiani/.vim/doc/loremipsum.txt')
+visincr.vba: call delete('/Users/satiani/.vim/plugin/visincrPlugin.vim')|call delete('/Users/satiani/.vim/autoload/visincr.vim')|call delete('/Users/satiani/.vim/doc/visincr.txt')|call delete('/Users/satiani/.vim/autoload/calutil.vim')
