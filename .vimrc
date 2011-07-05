@@ -105,6 +105,7 @@ endfunction
 
 " General Settings
 au FileType ruby call SetTwoLineStyle()
+au BufRead,BufNewFile *.thrift set filetype=thrift
 syntax on
 colorscheme desert256
 highlight OverLength ctermbg=red ctermfg=white guibg=#592929
