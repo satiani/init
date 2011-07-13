@@ -3,7 +3,9 @@ set wildmenu
 set hidden
 set t_Co=256
 set completeopt=longest,menuone
-set directory=$HOME/vimswap/
+if expand("$USER") == "satiani"
+    set directory=$HOME/vimswap/
+endif
 set diffexpr="sdiff --strip-trailing-cr"
 set diffopt=vertical,filler
 set incsearch
