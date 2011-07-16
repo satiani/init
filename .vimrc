@@ -115,6 +115,9 @@ let Tlist_WinWidth = 50
 " For BufferList (F2)
 let g:BufferListMaxWidth = 60
 
+" For Command-T
+let g:CommandTMaxHeight = 10
+
 " Python extensions
 if has("python")
 python << EOF
