@@ -44,6 +44,7 @@ let &isfname="@,48-57,/,.,-,_,+,#,$,%,~"
 inoremap <silent><A-Left> <Esc>:tabprevious<CR>
 inoremap <silent><A-Right> <Esc>:tabnext<CR>
 inoremap  
+let mapleader=","
 map <Leader>\ :n<CR>
 map <Leader>- :prev<CR>
 " Replace word under cursor
