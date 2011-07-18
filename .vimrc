@@ -32,6 +32,10 @@ filetype plugin on
 let NERDTreeHijackNetrw=0
 let NERDTreeWinSize=40
 
+"" command-t settings
+let g:CommandTMatchWindowAtTop=1
+let g:CommandTMaxHeight=10
+
 " Better filename matching
 " Same as VIM default but without '=' and ','
 let &isfname="@,48-57,/,.,-,_,+,#,$,%,~"
