@@ -89,7 +89,7 @@ function! ToggleOverLengthMatch()
         "TODO: find a way to use a variable in the pattern used in the match
         "command. Without this, we'll have to use hardcoded overlength
         "thresholds. Using 'execute' trick doesn't work for some reason.
-        match OverLength /\%81v.*/
+        match OverLength /\%111v.*/
         let b:overlength_match_flag = 1
         let b:previous_text_width = &tw
         setlocal tw=110
