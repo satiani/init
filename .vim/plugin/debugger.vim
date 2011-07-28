@@ -127,8 +127,6 @@ else
   call confirm('debugger.vim: Unable to find debugger.py. Place it in either your home vim directory or in the Vim runtime directory.', 'OK')
 endif
 
-map <F1> :python debugger_resize()<cr>
-
 map <Leader>dr :python debugger_resize()<cr>
 map <Leader>di :python debugger_command('step_into')<cr>
 map <Leader>do :python debugger_command('step_over')<cr>

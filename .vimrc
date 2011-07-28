@@ -45,6 +45,7 @@ inoremap <silent><A-Left> <Esc>:tabprevious<CR>
 inoremap <silent><A-Right> <Esc>:tabnext<CR>
 inoremap  
 let mapleader=","
+map <F1> <nop>
 map <Leader>\ :n<CR>
 map <Leader>- :prev<CR>
 " Replace word under cursor
