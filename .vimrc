@@ -35,6 +35,7 @@ let NERDTreeWinSize=40
 "" command-t settings
 let g:CommandTMatchWindowAtTop=1
 let g:CommandTMaxHeight=10
+let g:CommandTMaxFiles=20000
 
 " Better filename matching
 " Same as VIM default but without '=' and ','
