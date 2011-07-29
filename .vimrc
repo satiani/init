@@ -27,6 +27,7 @@ set modeline
 set tags=tags;/
 set laststatus=2
 set statusline=%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %P
+set grepprg=ack
 filetype plugin on
 "" NERDTree settings
 let NERDTreeHijackNetrw=0
@@ -49,6 +50,7 @@ let mapleader=","
 map <F1> <nop>
 map <Leader>\ :n<CR>
 map <Leader>- :prev<CR>
+map <Leader>q :cope<CR>
 " Replace word under cursor
 map <Leader>s :%s/\<<C-r><C-w>\>/
 map <Leader>S :%s/\(\<<C-r><C-w>\>\)/
