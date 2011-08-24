@@ -120,9 +120,28 @@ function! SetTwoLineStyle()
     set sts=2
 endfunction
 
+" Inspired by VIM tip 1380
+" http://vim.wikia.com/wiki/Highlight_cursor_line_after_cursor_jump
+function s:Cursor_Moved()
+  let cur_pos = line(".")
+  if g:last_pos == 0
+    let g:last_pos = cur_pos
+    return
+  endif
+  let diff = g:last_pos - cur_pos
+  if diff > 1 || diff < -1
+    set cul
+  else
+    set nocul
+  endif
+  let g:last_pos = cur_pos
+endfunction
+
 " General Settings
 au FileType ruby call SetTwoLineStyle()
 au BufRead,BufNewFile *.thrift set filetype=thrift
+let g:last_pos = 0
+autocmd CursorMoved,CursorMovedI * call s:Cursor_Moved()
 syntax on
 colorscheme desert256
 highlight OverLength ctermbg=red ctermfg=white guibg=#592929
