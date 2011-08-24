@@ -28,6 +28,8 @@ set tags=tags;/
 set laststatus=2
 set statusline=%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %P
 set grepprg=ack
+set ignorecase
+set smartcase
 filetype plugin on
 "" NERDTree settings
 let NERDTreeHijackNetrw=0
