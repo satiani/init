@@ -39,6 +39,8 @@ let NERDTreeWinSize=40
 let g:CommandTMatchWindowAtTop=1
 let g:CommandTMaxHeight=10
 let g:CommandTMaxFiles=20000
+" map cancel to Escape
+let g:CommandTCancelMap=''
 
 " Better filename matching
 " Same as VIM default but without '=' and ','
