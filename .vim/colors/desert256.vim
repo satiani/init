@@ -242,7 +242,7 @@ if has("gui_running") || &t_Co == 88 || &t_Co == 256
 
     call <SID>X("Normal", "cccccc", "000000", "")
 
-    exec "hi CursorLine cterm=NONE ctermbg=" . <SID>rgb("202020")
+    exec "hi CursorLine cterm=NONE ctermbg=" . <SID>rgb("252525")
 
     " highlight groups
     call <SID>X("Cursor", "708090", "f0e68c", "")

@@ -54,7 +54,7 @@ let mapleader=","
 map <F1> <nop>
 map <Leader>\ :n<CR>
 map <Leader>- :prev<CR>
-map <Leader>q :botright cwindow<CR>
+map <Leader>q :botright cwindow<CR>:setlocal nocul<CR>
 map <Leader>n :cnewer<CR>
 map <Leader>p :colder<CR>
 " Replace word under cursor
@@ -68,7 +68,7 @@ map <silent><A-Right> :tabnext<CR>
 map <silent><A-Up> :tabnew .<CR>
 map <silent><F3>  :let NERDTreeQuitOnOpen=1<CR>:call SwitchToNerdTree()<CR>
 map <silent><F4>  :let NERDTreeQuitOnOpen=0<CR>:call SwitchToNerdTree()<CR>
-map <silent> <F2> :call BufferList()<CR>
+map <silent> <F2> :call BufferList()<CR>:call ToggleCursorLine("__BUFFERLIST__")<CR>
 map <silent>  :call ToggleOverLengthMatch()<CR>
 
 " Utility functions
@@ -137,11 +137,19 @@ function s:Cursor_Moved()
   let g:last_pos = cur_pos
 endfunction
 
+function ToggleCursorLine(buf_name)
+    if bufname("%") == a:buf_name
+        setlocal nocul
+        return
+    endif
+endfunction
+
 " General Settings
 au FileType ruby call SetTwoLineStyle()
 au BufRead,BufNewFile *.thrift set filetype=thrift
 let g:last_pos = 0
 autocmd CursorMoved,CursorMovedI * call s:Cursor_Moved()
+set cul
 syntax on
 colorscheme desert256
 highlight OverLength ctermbg=red ctermfg=white guibg=#592929
