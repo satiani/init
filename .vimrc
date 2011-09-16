@@ -1,4 +1,7 @@
 " Vim Options
+set modeline
+" see :help fo-table for meaning
+set fo+=t
 set wildmenu
 set hidden
 set t_Co=256
@@ -23,7 +26,6 @@ set fileencodings=ucs-bom,utf-8,latin1
 set backspace=indent,eol,start
 set autoindent
 set cpo&vim
-set modeline
 set tags=tags;/
 set laststatus=2
 set grepprg=ack
