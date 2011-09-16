@@ -26,7 +26,6 @@ set cpo&vim
 set modeline
 set tags=tags;/
 set laststatus=2
-set statusline=%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %P
 set grepprg=ack
 set ignorecase
 set smartcase
@@ -34,6 +33,11 @@ filetype plugin on
 "" NERDTree settings
 let NERDTreeHijackNetrw=0
 let NERDTreeWinSize=40
+
+"" TagList settings
+let Tlist_Ctags_Cmd = '/usr/local/bin/ctags'
+let g:tlist_php_settings='php;f:function'
+set statusline=%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %-20.30(%{Tlist_Get_Tagname_By_Line()}%)\ %P
 
 "" command-t settings
 let g:CommandTMatchWindowAtTop=1
