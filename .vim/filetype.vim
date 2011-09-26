@@ -3,4 +3,5 @@ augroup filetypedetect
         au BufNewFile,BufRead pakefile,*.lib,*.include,*.install,*.module setf php
         au BufNewFile,BufRead *.ejs setf eruby
         au BufNewFile,BufRead *.scss setf scss
+        au BufRead,BufNewFile *.thrift setf thrift
 augroup END
