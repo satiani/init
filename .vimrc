@@ -13,10 +13,9 @@ set diffexpr="sdiff --strip-trailing-cr"
 set diffopt=vertical,filler
 set incsearch
 set showmatch		" Show matching brackets.
-set sw=4
-set et
 set expandtab
 set sts=4
+set sw=4
 set viminfo='20,\"50
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 set ruler
