@@ -81,6 +81,7 @@ let NERDTreeWinSize=40
 let Tlist_Ctags_Cmd = '/usr/local/bin/ctags'
 let Tlist_WinWidth = 50
 let g:tlist_php_settings='php;f:function'
+let Tlist_Show_One_File = 1
 
 " command-t settings
 let g:CommandTMatchWindowAtTop=1
