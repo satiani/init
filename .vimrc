@@ -54,7 +54,7 @@ map <c-w>F <c-w>_<c-w><bar>
 map <c-w>O <c-w>w<c-w>_<c-w><bar>
 map <silent><F3>  :let NERDTreeQuitOnOpen=1<CR>:call SwitchToNerdTree("")<CR>
 map <silent><F4>  :let NERDTreeQuitOnOpen=1<CR>:call SwitchToNerdTree("%")<CR>
-map <silent><F5>  :let NERDTreeQuitOnOpen=0<CR>:call SwitchToNerdTree("")<CR>
+map <silent><F5>  :TlistToggle<CR>
 map <silent> <F2> :call BufferList()<CR>:call ToggleCursorLine("__BUFFERLIST__")<CR>
 map <silent> <c-g> :call ToggleOverLengthMatch()<CR>
 
@@ -82,6 +82,8 @@ let Tlist_Ctags_Cmd = '/usr/local/bin/ctags'
 let Tlist_WinWidth = 50
 let g:tlist_php_settings='php;f:function'
 let Tlist_Show_One_File = 1
+let Tlist_Close_On_Select = 1
+let Tlist_GainFocus_On_ToggleOpen = 1
 
 " command-t settings
 let g:CommandTMatchWindowAtTop=1

@@ -134,11 +134,6 @@ map <Leader>dt :python debugger_command('step_out')<cr>
 
 nnoremap ,e :python debugger_watch_input("eval")<cr>A
 
-map <F5> :python debugger_run()<cr>
-map OT :python debugger_run()<cr>
-map <F6> :python debugger_quit()<cr>
-map OU :python debugger_quit()<cr>
-
 map <F7> :python debugger_command('step_into')<cr>
 map OV :python debugger_command('step_into')<cr>
 map <F8> :python debugger_command('step_over')<cr>
