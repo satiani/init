@@ -4,4 +4,5 @@ augroup filetypedetect
         au BufNewFile,BufRead *.ejs setf eruby
         au BufNewFile,BufRead *.scss setf scss
         au BufRead,BufNewFile *.thrift setf thrift
+        au BufRead,BufNewFile /etc/nginx/*.conf setf nginx
 augroup END
