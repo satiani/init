@@ -26,6 +26,7 @@ set backspace=indent,eol,start
 set autoindent
 set cpo&vim
 set tags=tags;/
+set mouse=a
 set laststatus=2
 set grepprg=ack
 set ignorecase
@@ -149,7 +150,7 @@ function! ToggleOverLengthMatch()
     endif
 endfunction
 
-function ToggleCursorLine(buf_name)
+function! ToggleCursorLine(buf_name)
     if bufname("%") == a:buf_name
         setlocal nocul
         return
@@ -162,7 +163,7 @@ function! YankLineInfo(get_contents)
     let register = curr_buff . ":" . curr_line
     if a:get_contents
         let curr_contents = getline(line('.'))
-        let register .= ":" . curr_contents
+        let register .= ": " . curr_contents
     endif
     call setreg('*', register)
 endfunction
