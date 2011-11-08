@@ -1,38 +1,41 @@
 "" Vim Options
-set modeline
-" see :help fo-table for meaning
-set fo+=t
-set wildmenu
-set hidden
-set t_Co=256
-set completeopt=longest,menuone
 if expand("$USER") == "satiani"
     set directory=$HOME/vimswap/
 endif
 set diffexpr="sdiff --strip-trailing-cr"
 set diffopt=vertical,filler
-set incsearch
-set showmatch		" Show matching brackets.
 set expandtab
-set sts=4
-set sw=4
-set viminfo='20,\"50
-set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
-set ruler
-set printoptions=paper:letter
-set history=50
 set fileencodings=ucs-bom,utf-8,latin1
 set backspace=indent,eol,start
 set autoindent
 set cpo&vim
+set completeopt=longest,menuone
+set cul
 set tags=tags;/
 set mouse=a
 set laststatus=2
+" see :help fo-table for meaning
+set fo+=t
 set grepprg=ack
+set hidden
+set history=50
 set ignorecase
+set incsearch
+set laststatus=2
+set modeline
+set mouse=a
+set printoptions=paper:letter
+set ruler
+set showmatch		" Show matching brackets.
 set smartcase
-set cul
-filetype plugin on
+set sts=4
+set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
+set sw=4
+set t_Co=256
+set tags=tags;/
+set viminfo='20,\"50
+set wildmenu
+filetype plugin indent on
 
 "#############################################
 
@@ -58,6 +61,11 @@ map <silent><F4>  :let NERDTreeQuitOnOpen=1<CR>:call SwitchToNerdTree("%")<CR>
 map <silent><F5>  :TlistToggle<CR>
 map <silent> <F2> :call BufferList()<CR>:call ToggleCursorLine("__BUFFERLIST__")<CR>
 map <silent> <c-g> :call ToggleOverLengthMatch()<CR>
+map tk :tabfirst<CR>
+map tl :tabnext<CR>
+map th :tabprev<CR>
+map tj :tablast<CR>
+map tn :tabnew<CR>
 
 "#############################################
 
@@ -134,11 +142,11 @@ function! ToggleOverLengthMatch()
         "TODO: find a way to use a variable in the pattern used in the match
         "command. Without this, we'll have to use hardcoded overlength
         "thresholds. Using 'execute' trick doesn't work for some reason.
-        match OverLength /\%91v.*/
+        match OverLength /\%111v.*/
         let b:overlength_match_flag = 1
         let b:previous_text_width = &tw
         setlocal tw=110
-        echo "Changed textwidth to 90"
+        echo "Changed textwidth to 110"
     else
         match none
         unlet b:overlength_match_flag
