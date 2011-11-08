@@ -1,1 +1,1 @@
-/Users/satiani/code/async-scp/async-scp.vim
+/Users/satiani/code/async-scp-vim/async-scp.vim
