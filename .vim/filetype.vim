@@ -5,4 +5,6 @@ augroup filetypedetect
         au BufNewFile,BufRead *.scss setf scss
         au BufRead,BufNewFile *.thrift setf thrift
         au BufRead,BufNewFile /etc/nginx/*.conf setf nginx
+        au BufRead,BufNewFile nginx*.conf setf nginx
+        au BufRead,BufNewFile *.md setf markdown
 augroup END

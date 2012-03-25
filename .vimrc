@@ -48,6 +48,7 @@ map <Leader>n :cnewer<CR>
 map <Leader>p :colder<CR>
 map <Leader>y :call YankLineInfo(0)<CR>
 map <Leader>Y :call YankLineInfo(1)<CR>
+map <Leader>m :call PutClockMd5Sum()<CR>
 " Replace word under cursor
 map <Leader>s :%s/\<<C-r><C-w>\>/
 map <Leader>S :%s/\(\<<C-r><C-w>\>\)/
@@ -171,6 +172,12 @@ function! YankLineInfo(get_contents)
         let register .= ": " . curr_contents
     endif
     call setreg('*', register)
+endfunction
+
+function! PutClockMd5Sum()
+    let md5 = system("date +%F%R%N | md5sum | cut -d ' ' -f1")
+    let md5 = tr(md5, "\n", " ")
+    let result = feedkeys("a" . md5)
 endfunction
 
 "#############################################
