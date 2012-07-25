@@ -7,3 +7,6 @@
 [submodule "git-vim"]
 	path = git-vim
 	url = http://github.com/motemen/git-vim.git
+[submodule "rainbow_parentheses.vim"]
+	path = rainbow_parentheses.vim
+	url = https://github.com/kien/rainbow_parentheses.vim
