@@ -20,7 +20,6 @@ set ignorecase
 set incsearch
 set laststatus=2
 set modeline
-set mouse=a
 set printoptions=paper:letter
 set ruler
 set showmatch		" Show matching brackets.
@@ -32,7 +31,8 @@ set t_Co=256
 set tags=tags;/
 set viminfo='20,\"50
 set wildmenu
-filetype plugin indent on
+set wildignore+=*.class
+filetype plugin on
 
 "#############################################
 

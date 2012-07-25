@@ -1,4 +1,3 @@
-set smartindent
 set statusline=%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %-35.35(%{Tlist_Get_Tagname_By_Line()}%)\ %P
 au BufWritePost,BufRead <buffer> TlistUpdate
 " The reason we need to have an extra call here to TlistUpdate is that a
