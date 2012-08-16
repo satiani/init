@@ -32,6 +32,9 @@ set tags=tags;/
 set viminfo='20,\"50
 set wildmenu
 set wildignore+=*.class
+filetype off
+call pathogen#runtime_append_all_bundles()
+call pathogen#helptags()
 filetype plugin on
 
 "#############################################
@@ -104,6 +107,12 @@ let g:BufferListMaxWidth = 60
 
 " For Command-T
 let g:CommandTMaxHeight = 10
+
+" Rainbow Parentheses
+au VimEnter * RainbowParenthesesToggle
+au Syntax * RainbowParenthesesLoadRound
+au Syntax * RainbowParenthesesLoadSquare
+au Syntax * RainbowParenthesesLoadBraces
 
 "#############################################
 
