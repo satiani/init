@@ -1,6 +1,8 @@
 "" Vim Options
 if expand("$USER") == "satiani"
     set directory=$HOME/vimswap/
+    set undofile
+    set undodir=$HOME/vimswap/
 endif
 set autoindent
 set backspace=indent,eol,start
@@ -52,6 +54,7 @@ map <Leader>p :colder<CR>
 map <Leader>y :call YankLineInfo(0)<CR>
 map <Leader>Y :call YankLineInfo(1)<CR>
 map <Leader>m :call PutClockMd5Sum()<CR>
+map <Leader>u :GundoToggle<CR>
 " Replace word under cursor
 map <Leader>s :%s/\<<C-r><C-w>\>/
 map <Leader>S :%s/\(\<<C-r><C-w>\>\)/
@@ -120,6 +123,9 @@ let g:ctrlp_clear_cache_on_exit = 0
 let g:ctrlp_cmd = 'CtrlPLastMode'
 let g:ctrlp_max_files = 50000
 let g:ctrlp_extensions = ['buffertag', 'line', 'mixed']
+
+" Gundo
+let g:gundo_help = 0
 
 "#############################################
 

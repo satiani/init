@@ -67,7 +67,7 @@ if [ ! -z "$TMUX" ]; then
 fi
 
 export JAVA_HOME=/usr/lib/jvm/java-6-sun
-export PATH=$JAVA_HOME/bin:$HOME/bin:/usr/local/bin:$PATH:/usr/sbin:~/development/DevTools
+export PATH=$JAVA_HOME/bin:$HOME/bin:/usr/local/bin:$PATH:/usr/sbin:~/development/DevTools:$HOME/pear/bin
 export EDITOR=vim
 export LC_ALL=C
 export RUBYOPT=rubygems
