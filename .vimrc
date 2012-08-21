@@ -55,6 +55,7 @@ map <Leader>y :call YankLineInfo(0)<CR>
 map <Leader>Y :call YankLineInfo(1)<CR>
 map <Leader>m :call PutClockMd5Sum()<CR>
 map <Leader>u :GundoToggle<CR>
+map <Leader>r :YRShow<CR>
 " Replace word under cursor
 map <Leader>s :%s/\<<C-r><C-w>\>/
 map <Leader>S :%s/\(\<<C-r><C-w>\>\)/
@@ -108,9 +109,6 @@ let g:CommandTCancelMap=''
 " For BufferList (F2)
 let g:BufferListMaxWidth = 60
 
-" For Command-T
-let g:CommandTMaxHeight = 10
-
 " Rainbow Parentheses
 au VimEnter * RainbowParenthesesToggle
 au Syntax * RainbowParenthesesLoadRound
@@ -126,6 +124,12 @@ let g:ctrlp_extensions = ['buffertag', 'line', 'mixed']
 
 " Gundo
 let g:gundo_help = 0
+
+" Yank Ring
+let g:yankring_min_element_length = 2
+let g:yankring_manual_clipboard_check = 0
+let g:yankring_replace_n_pkey = 'p' " Alt - P
+let g:yankring_replace_n_nkey = 'n' " Alt - N
 
 "#############################################
 
