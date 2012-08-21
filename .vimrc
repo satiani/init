@@ -100,13 +100,6 @@ let Tlist_Show_One_File = 1
 let Tlist_Close_On_Select = 1
 let Tlist_GainFocus_On_ToggleOpen = 1
 
-" command-t settings
-let g:CommandTMatchWindowAtTop=1
-let g:CommandTMaxHeight=10
-let g:CommandTMaxFiles=20000
-" map cancel to Escape
-let g:CommandTCancelMap=''
-
 " For BufferList (F2)
 let g:BufferListMaxWidth = 60
 
