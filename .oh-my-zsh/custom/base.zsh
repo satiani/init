@@ -50,10 +50,16 @@ bindkey '' run-help
 export EDITOR=vim
 export ON_A_MAC=`([ $( uname ) == "Darwin" ] && echo "true") || echo "false"`
 
-([ $ON_A_MAC == "false" ] && alias ls='ls --color=auto') || alias ls='ls -G'
+if [ $ON_A_MAC == "false" ]; then 
+    alias ls='ls --color=auto'
+    alias tmux='tmux -2'
+else
+    alias ls='ls -G'
+    alias tmux='reattach-to-user-namespace -l tmux -2'
+fi
+
 alias grep='grep --color=auto'
 alias sqlplus='rlwrap sqlplus'
-([ $ON_A_MAC == "false" ] && alias tmux='tmux -2') || alias tmux='reattach-to-user-namespace -l tmux -2'
 #fuck vi
 alias vi='vim'
 alias svi='sudo vim'
