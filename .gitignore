@@ -6,3 +6,4 @@
 .vim/ruby/command-t/ext.so
 !.vim/local/README
 *.o
+.cgdb/readline_history.txt

@@ -1,0 +1,4 @@
+set as=long
+set cgdbmodekey=<Insert>
+set showtgdbcommands
+set ts=4
