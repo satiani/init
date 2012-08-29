@@ -5,18 +5,18 @@
 "==============================================================================
 
 let s:pairs = [
+	\ ['gray',    'SeaGreen3'],
 	\ ['brown',       'RoyalBlue3'],
-	\ ['Darkblue',    'SeaGreen3'],
 	\ ['darkgray',    'DarkOrchid3'],
 	\ ['darkgreen',   'firebrick3'],
+	\ ['gray',        'RoyalBlue3'],
 	\ ['darkcyan',    'RoyalBlue3'],
 	\ ['darkred',     'SeaGreen3'],
 	\ ['darkmagenta', 'DarkOrchid3'],
+	\ ['darkgray',       'SeaGreen3'],
 	\ ['brown',       'firebrick3'],
-	\ ['gray',        'RoyalBlue3'],
-	\ ['black',       'SeaGreen3'],
 	\ ['darkmagenta', 'DarkOrchid3'],
-	\ ['Darkblue',    'firebrick3'],
+	\ ['gray',    'firebrick3'],
 	\ ['darkgreen',   'RoyalBlue3'],
 	\ ['darkcyan',    'SeaGreen3'],
 	\ ['darkred',     'DarkOrchid3'],
