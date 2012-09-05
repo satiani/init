@@ -55,7 +55,7 @@ if [ $ON_A_MAC == "false" ]; then
     alias tmux='tmux -2'
 else
     alias ls='ls -G'
-    alias tmux='reattach-to-user-namespace -l tmux -2'
+    alias tmux='reattach-to-user-namespace -l tmux -2 -f ~/.tmux-osx.conf'
 fi
 
 alias grep='grep --color=auto'
