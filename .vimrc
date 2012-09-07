@@ -115,6 +115,7 @@ let g:ctrlp_clear_cache_on_exit = 0
 let g:ctrlp_cmd = 'CtrlPLastMode'
 let g:ctrlp_max_files = 50000
 let g:ctrlp_extensions = ['buffertag', 'line', 'mixed']
+let g:ctrlp_lazy_update = 100
 
 " Gundo
 let g:gundo_help = 0
