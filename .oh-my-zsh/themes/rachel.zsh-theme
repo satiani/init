@@ -11,14 +11,14 @@ HOSTNAME=$(hostname)
 #associative array for translation
 # syntax: NAME=(KEY VALUE KEY VALUE ...)
 typeset -A dict
-dict=(host115.office.etsy.com MyMac \
-      Samer-Atianis-MacBook-Air MacAir \
-      Samer-Atianis-MacBook-Air.local MacAir \
-      ETSYNY-L209.office.etsy.com MyMac \
-      satiani.ny4dev.etsy.com MyOldVM \
-      satiani.vm.ny4dev.etsy.com MyVM )
+dict=(host115.office.etsy.com %{$fg_bold[red]%}MyMac \
+      Samer-Atianis-MacBook-Air %{$fg_bold[red]%}MacAir \
+      Samer-Atianis-MacBook-Air.local %{$fg_bold[red]%}MacAir \
+      ETSYNY-L209.office.etsy.com %{$fg_bold[red]%}MyMac \
+      ETSYNY-L209.local %{$fg_bold[red]%}MyMac \
+      satiani.vm.ny4dev.etsy.com %{$fg_bold[green]%}MyVM )
 
-HOSTNAME="%{$fg_bold[red]%}${dict[$HOSTNAME]-$HOSTNAME}%{$reset_color%}"
+HOSTNAME="${dict[$HOSTNAME]-$HOSTNAME}%{$reset_color%}"
 
 PROMPT='[%n @ $HOSTNAME ($IP_ADDR)]$(git_prompt_info)
 %{${fg_bold[yellow]}%}%~%{$reset_color%} %{${fg_bold[$CARETCOLOR]}%}%%%{${reset_color}%} '
