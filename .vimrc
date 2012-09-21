@@ -57,6 +57,8 @@ map <Leader>Y :call YankLineInfo(1)<CR>
 map <Leader>m :call PutClockMd5Sum()<CR>
 map <Leader>u :GundoToggle<CR>
 map <Leader>r :YRShow<CR>
+map <Leader>f :exec("gr " . expand("<cword>"))<CR>
+map <Leader>g :Gstatus<CR>
 " Replace word under cursor
 map <Leader>s :%s/\<<C-r><C-w>\>/
 map <Leader>S :%s/\(\<<C-r><C-w>\>\)/
