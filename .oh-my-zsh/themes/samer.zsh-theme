@@ -16,7 +16,8 @@ dict=(host115.office.etsy.com %{$fg_bold[red]%}MyMac \
       Samer-Atianis-MacBook-Air.local %{$fg_bold[red]%}MacAir \
       ETSYNY-L209.office.etsy.com %{$fg_bold[red]%}MyMac \
       ETSYNY-L209.local %{$fg_bold[red]%}MyMac \
-      satiani.vm.ny4dev.etsy.com %{$fg_bold[green]%}MyVM )
+      satiani.vm.ny4dev.etsy.com %{$fg_bold[green]%}MyVM 
+      satiani-VirtualBox %{$fg_bold[yellow]%}VirtualBox)
 
 HOSTNAME="${dict[$HOSTNAME]-$HOSTNAME}%{$reset_color%}"
 
