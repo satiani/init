@@ -79,4 +79,6 @@ export LC_ALL=C
 export RUBYOPT=rubygems
 export SEARCH_SERVER_ENV=dev
 
-source ~/.profile
+if [ -f ~/.profile ]; then
+    source ~/.profile
+fi
