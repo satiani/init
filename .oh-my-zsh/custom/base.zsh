@@ -72,11 +72,8 @@ if [ ! -z "$TMUX" ]; then
     alias vim='TERM=xterm-256color vim'
 fi
 
-export JAVA_HOME=/usr/lib/jvm/java-6-sun
-export PATH=$JAVA_HOME/bin:$HOME/bin:/usr/local/bin:$PATH:/usr/sbin:~/development/DevTools:$HOME/pear/bin
 export EDITOR=vim
 export LC_ALL=C
-export RUBYOPT=rubygems
 export SEARCH_SERVER_ENV=dev
 
 if [ -f ~/.profile ]; then
