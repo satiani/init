@@ -75,6 +75,7 @@ fi
 export EDITOR=vim
 export LC_ALL=C
 export SEARCH_SERVER_ENV=dev
+export PATH=$PATH:~/bin
 
 if [ -f ~/.profile ]; then
     source ~/.profile
