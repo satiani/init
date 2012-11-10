@@ -142,6 +142,12 @@ let g:vdebug_keymap = {
 \    "eval_under_cursor" : "<Leader><F12>",
 \}
 
+let g:vdebug_options = {
+\    'marker_default' : '*',
+\    'marker_closed_tree' : '+',
+\    'marker_open_tree' : '-',
+\}
+
 "#############################################
 
 "" Utility functions
