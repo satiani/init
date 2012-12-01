@@ -59,6 +59,7 @@ map <Leader>u :GundoToggle<CR>
 map <Leader>r :YRShow<CR>
 map <Leader>f :exec("gr " . expand("<cword>"))<CR>
 map <Leader>g :Gstatus<CR>
+map <Leader>d :call StartPyclewn()<CR>
 " Replace word under cursor
 map <Leader>s :%s/\<<C-r><C-w>\>/
 map <Leader>S :%s/\(\<<C-r><C-w>\>\)/
@@ -177,6 +178,58 @@ function! SwitchToNerdTree(path)
         exec("NERDTree " . a:path)
     endif
 endfunction
+
+function! MakeReversibleMapping(name, mapped)
+    if !exists("g:satiani_reversible_maps")
+        let g:satiani_reversible_maps = {}
+    endif
+
+    " Only supports normal mode ("n") for now
+    let _current_map = maparg(a:name, "n")
+    let g:satiani_reversible_maps[a:name] = _current_map
+    if len(_current_map) > 0
+        exec("unmap " . a:name)
+    endif
+    exec("map " . a:name . " " . a:mapped)
+endfunction
+
+function! RevertMap(name)
+    if exists("g:satiani_reversible_maps[a:name]")
+        let _old_map = g:satiani_reversible_maps[a:name]
+        exec("unmap " . a:name)
+        if len(_old_map) > 0
+            exec("map " . a:name . " " . _old_map)
+        endif
+    else
+        exec("unmap " . a:name)
+    endif
+endfunction
+
+function! RevertAllMaps()
+    if exists("g:satiani_reversible_maps")
+        for key in keys(g:satiani_reversible_maps)
+            call RevertMap(key)
+        endfor
+    endif
+endfunction
+
+function! StartPyclewn()
+    Pyclewn
+    call MakeReversibleMapping("<Leader><F2>", ":Cnext<CR>")
+    call MakeReversibleMapping("<Leader><F3>", ":Cstep<CR>")
+    call MakeReversibleMapping("<Leader><F4>", ":Cfinish<CR>")
+    call MakeReversibleMapping("<Leader><F6>", ":call QuitPyclewn()<CR>")
+    call MakeReversibleMapping("<Leader><F9>", ":exec('Cuntil ' . line('.'))<CR>")
+    call MakeReversibleMapping("<Leader><F10>", ":Cbreak<CR>")
+    call MakeReversibleMapping("<Leader><F11>", ":Cclear<CR>")
+    call MakeReversibleMapping("<Leader><F12>", ":exec('Cprint ' . expand('<cword>'))<CR>")
+endfunction
+
+function! QuitPyclewn()
+    Cquit
+    call RevertAllMaps()
+endfunction
+    
 
 function! ToggleOverLengthMatch()
     if !exists("b:overlength_match_flag")
