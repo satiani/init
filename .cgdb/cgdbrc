@@ -2,3 +2,8 @@ set as=long
 set cgdbmodekey=<Insert>
 set showtgdbcommands
 set ts=4
+map <F2> in<CR><Insert>
+imap <F2> n
+map <F3> is<CR><Insert>
+imap <F3> s
+imap <F5> c
