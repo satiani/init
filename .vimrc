@@ -218,16 +218,18 @@ function! StartPyclewn()
     call MakeReversibleMapping("<Leader><F2>", ":Cnext<CR>")
     call MakeReversibleMapping("<Leader><F3>", ":Cstep<CR>")
     call MakeReversibleMapping("<Leader><F4>", ":Cfinish<CR>")
+    call MakeReversibleMapping("<Leader><F5>", ":Ccontinue<CR>")
     call MakeReversibleMapping("<Leader><F6>", ":call QuitPyclewn()<CR>")
     call MakeReversibleMapping("<Leader><F9>", ":exec('Cuntil ' . line('.'))<CR>")
-    call MakeReversibleMapping("<Leader><F10>", ":Cbreak<CR>")
-    call MakeReversibleMapping("<Leader><F11>", ":Cclear<CR>")
+    call MakeReversibleMapping("<Leader><F10>", ":exec('Cbreak ' . expand('%:p') . ':' . line('.'))<CR>")
+    call MakeReversibleMapping("<Leader><F11>", ":exec('Cclear ' . expand('%:p') . ':' . line('.'))<CR>")
     call MakeReversibleMapping("<Leader><F12>", ":exec('Cprint ' . expand('<cword>'))<CR>")
 endfunction
 
 function! QuitPyclewn()
     Cquit
     call RevertAllMaps()
+    nbclose
 endfunction
     
 
