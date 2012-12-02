@@ -34,7 +34,7 @@ set t_Co=256
 set tags=tags;/
 set viminfo='20,\"50
 set wildmenu
-set wildignore+=*.class
+set wildignore+=*.class,*.o,*.lo
 filetype off
 call pathogen#runtime_append_all_bundles()
 call pathogen#helptags()
@@ -91,11 +91,11 @@ let &isfname="@,48-57,/,.,-,_,+,#,$,%,~"
 
 "" Plugin settings:
 
-" NERDTree settings
+" NERDTree
 let NERDTreeHijackNetrw=0
 let NERDTreeWinSize=40
 
-" TagList settings
+" TagList
 let Tlist_Ctags_Cmd = '/usr/local/bin/ctags'
 let Tlist_WinWidth = 50
 let g:tlist_php_settings='php;f:function'
@@ -103,7 +103,7 @@ let Tlist_Show_One_File = 1
 let Tlist_Close_On_Select = 1
 let Tlist_GainFocus_On_ToggleOpen = 1
 
-" For BufferList (F2)
+" BufferList (F2)
 let g:BufferListMaxWidth = 60
 
 " Rainbow Parentheses
@@ -131,22 +131,22 @@ let g:yankring_replace_n_nkey = 'n' " Alt - N
 
 " Vdebug
 let g:vdebug_keymap = {
-\    "run" : "<Leader><F5>",
-\    "run_to_cursor" : "<Leader><F9>",
-\    "step_over" : "<Leader><F2>",
-\    "step_into" : "<Leader><F3>",
-\    "step_out" : "<Leader><F4>",
-\    "close" : "<Leader><F6>",
-\    "detach" : "<Leader><F7>",
-\    "set_breakpoint" : "<Leader><F10>",
-\    "get_context" : "<Leader><F11>",
-\    "eval_under_cursor" : "<Leader><F12>",
+\    "step_over"            : "<Leader><F2>",
+\    "step_into"            : "<Leader><F3>",
+\    "step_out"             : "<Leader><F4>",
+\    "run"                  : "<Leader><F5>",
+\    "close"                : "<Leader><F6>",
+\    "detach"               : "<Leader><F7>",
+\    "run_to_cursor"        : "<Leader><F9>",
+\    "set_breakpoint"       : "<Leader><F10>",
+\    "get_context"          : "<Leader><F11>",
+\    "eval_under_cursor"    : "<Leader><F12>",
 \}
 
 let g:vdebug_options = {
-\    'marker_default' : '*',
-\    'marker_closed_tree' : '+',
-\    'marker_open_tree' : '-',
+\    'marker_default'       : '*',
+\    'marker_closed_tree'   : '+',
+\    'marker_open_tree'     : '-',
 \}
 
 "#############################################
