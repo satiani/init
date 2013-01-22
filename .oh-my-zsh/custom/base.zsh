@@ -52,10 +52,10 @@ export ON_A_MAC=`([ $( uname ) == "Darwin" ] && echo "true") || echo "false"`
 
 if [ $ON_A_MAC == "false" ]; then 
     alias ls='ls --color=auto'
-    alias tmux='tmux -2'
+    alias tmux='tmux -u -2'
 else
     alias ls='ls -G'
-    alias tmux='reattach-to-user-namespace -l tmux -2 -f ~/.tmux-osx.conf'
+    alias tmux='reattach-to-user-namespace -l tmux -u -2 -f ~/.tmux-osx.conf'
 fi
 
 alias grep='grep --color=auto'
@@ -73,8 +73,7 @@ if [ ! -z "$TMUX" ]; then
 fi
 
 export EDITOR=vim
-export LC_ALL=C
-export SEARCH_SERVER_ENV=dev
+export LC_ALL=en_US.UTF-8
 export PATH=/usr/local/bin:$PATH:~/bin
 
 if [ -f ~/.profile ]; then
