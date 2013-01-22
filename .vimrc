@@ -55,11 +55,7 @@ map <Leader>p :colder<CR>
 map <Leader>y :call YankLineInfo(0)<CR>
 map <Leader>Y :call YankLineInfo(1)<CR>
 map <Leader>m :call PutClockMd5Sum()<CR>
-map <Leader>u :GundoToggle<CR>
-map <Leader>r :YRShow<CR>
 map <Leader>f :exec("gr " . expand("<cword>"))<CR>
-map <Leader>g :Gstatus<CR>
-map <Leader>d :call StartPyclewn()<CR>
 " Replace word under cursor
 map <Leader>s :%s/\<<C-r><C-w>\>/
 map <Leader>S :%s/\(\<<C-r><C-w>\>\)/
@@ -86,6 +82,7 @@ highlight OverLength ctermbg=red ctermfg=white guibg=#592929
 " Better filename matching
 " Same as VIM default but without '=' and ','
 let &isfname="@,48-57,/,.,-,_,+,#,$,%,~"
+au BufReadPost * if getfsize(bufname("%")) > 250000 | set syntax= | endif
 
 "#############################################
 
@@ -122,12 +119,27 @@ let g:ctrlp_working_path_mode = '0'
 
 " Gundo
 let g:gundo_help = 0
+map <Leader>u :GundoToggle<CR>
 
 " Yank Ring
 let g:yankring_min_element_length = 2
 let g:yankring_manual_clipboard_check = 0
 let g:yankring_replace_n_pkey = 'p' " Alt - P
 let g:yankring_replace_n_nkey = 'n' " Alt - N
+map <Leader>r :YRShow<CR>
+
+" Fugitive
+map <Leader>g :Gstatus<CR>
+
+" Pyclewn
+map <Leader>d :call StartPyclewn()<CR>
+
+" Eclim
+map <Leader>js :JavaSearchContext<CR>
+map <Leader>jo :JavaImportOrganize<CR>
+map <Leader>ji :JavaImport<CR>
+map <Leader>jl :botright lwindow<CR>:setlocal nocul<CR>
+let g:EclimValidateSortResults = 'severity'
 
 " Vdebug
 let g:vdebug_keymap = {
