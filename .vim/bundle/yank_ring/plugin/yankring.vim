@@ -1644,6 +1644,9 @@ function! s:YRMapsCreate(...)
         for key in split(g:yankring_zap_keys)
             try
                 if key != '@'
+                    if key == 'o'
+                        echomsg 'trying to map o!!'
+                    endif
                     exec 'omap <expr>' key 'YRMapsExpression("<SID>", "'. key. '", 1)'
                 endif
             catch

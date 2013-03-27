@@ -11,6 +11,7 @@ set completeopt=longest,menuone
 set cpo&vim
 set cul
 set diffexpr="sdiff --strip-trailing-cr"
+set tw=0
 set diffopt=vertical,filler
 set expandtab
 set fileencodings=ucs-bom,utf-8,latin1
@@ -35,6 +36,7 @@ set tags=tags;/
 set viminfo='20,\"50
 set wildmenu
 set wildignore+=*.class,*.o,*.lo
+set nohlsearch
 filetype off
 call pathogen#runtime_append_all_bundles()
 call pathogen#helptags()

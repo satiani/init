@@ -3,3 +3,4 @@ au BufWritePost,BufRead <buffer> TlistUpdate
 " The reason we need to have an extra call here to TlistUpdate is that a
 " BufRead event is not setup for a php file before this plugin is called
 TlistUpdate
+set keywordprg=pman
