@@ -1636,6 +1636,7 @@ endfunction
 
 " Create the default maps
 function! s:YRMapsCreate(...)
+    return
     " 7.1.patch205 introduces the v:operator function which was
     " essential to gain the omap support.
     if s:yr_has_voperator == 1
