@@ -1,9 +1,7 @@
 .vim/.netrwhist
 .vim/local/*
-.vim/ruby/command-t/Makefile
-.vim/ruby/command-t/mkmf.log
-.vim/ruby/command-t/ext.bundle
-.vim/ruby/command-t/ext.so
 !.vim/local/README
+.zsh/local/*
+!.zsh/local/README
 *.o
 .cgdb/readline_history.txt

@@ -85,4 +85,4 @@ if [ -f ~/.profile ]; then
 fi
 
 # load all zsh files in .zsh
-for zsh_file (~/.zsh/*.zsh) source $zsh_file
+for zsh_file (~/.zsh/**/*.zsh) source $zsh_file
