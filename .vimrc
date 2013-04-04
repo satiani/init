@@ -3,8 +3,13 @@ if expand("$USER") == "satiani"
     set directory=$HOME/vimswap/
     set undofile
     set undodir=$HOME/vimswap/
-    let g:yankring_history_dir='$HOME/vimswap'
 endif
+
+let g:yankring_history_dir= expand('$HOME') . '/.yankring'
+if ! isdirectory(g:yankring_history_dir)
+    call mkdir(g:yankring_history_dir, "p")
+endif
+
 set autoindent
 set backspace=indent,eol,start
 set completeopt=longest,menuone
