@@ -98,6 +98,7 @@ au BufReadPost * if getfsize(bufname("%")) > 250000 | set syntax= | endif
 " NERDTree
 let NERDTreeHijackNetrw=0
 let NERDTreeWinSize=40
+let NERDTreeIgnore=['\.pyc$']
 
 " TagList
 let Tlist_Ctags_Cmd = '/usr/local/bin/ctags'
@@ -302,5 +303,7 @@ endfunction
 " load files in a directory that is not tracked by git
 let local_path="$HOME/.vim/local/*.vim"
 if glob(local_path) != ""
-    exec("source " . local_path)
+    for f in split(glob(local_path), '\n')
+        exec("source " . f)
+    endfor
 endif
