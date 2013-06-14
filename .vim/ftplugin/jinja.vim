@@ -1,6 +1,6 @@
-set ts=2
-set sw=2
-set sts=2
+setlocal ts=2
+setlocal sw=2
+setlocal sts=2
 
 " Copied from https://github.com/marionline/dotvim/blob/master/eclim/ftplugin/htmljinja.vim
 let g:HtmlJinjaBodyElements = [
