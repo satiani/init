@@ -17,7 +17,7 @@ let g:HtmlJinjaBodyElements = [
 
 " add matchit.vim support for jinja tags
 if !exists('b:match_words')
-    let b:match_words = ''
+    let b:match_words = '<:>,<\@<=[ou]l\>[^>]*\%(>\|$\):<\@<=li\>:<\@<=/[ou]l>,<\@<=dl\>[^>]*\%(>\|$\):<\@<=d[td]\>:<\@<=/dl>,<\@<=\([^/][^ \t>]*\)[^>]*\%(>\|$\):<\@<=/\1>'
 endif
 for element in g:HtmlJinjaBodyElements
 let pattern = ''
