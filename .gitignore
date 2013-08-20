@@ -5,3 +5,4 @@
 !.zsh/local/README
 *.o
 .cgdb/readline_history.txt
+*.pyc

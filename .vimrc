@@ -169,6 +169,11 @@ let g:vdebug_options = {
 \    'marker_open_tree'     : '-',
 \}
 
+" Supertab
+let g:SuperTabDefaultCompletionType = "context"
+let g:SuperTabMappingForward = '<c-space>'
+let g:SuperTabMappingBackward = '<s-c-space>'
+
 "#############################################
 
 "" Utility functions
