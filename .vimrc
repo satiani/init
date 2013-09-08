@@ -169,6 +169,10 @@ let g:vdebug_options = {
 \    'marker_open_tree'     : '-',
 \}
 
+" Jedi-Vim
+let g:jedi#rename_command = '<Leader>n'
+let g:jedi#related_names = ''
+
 " Supertab
 let g:SuperTabDefaultCompletionType = "context"
 let g:SuperTabMappingForward = '<c-space>'

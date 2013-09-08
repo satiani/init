@@ -18,3 +18,5 @@ smarty=.tpl
 patch=.patch
 --type-set
 txt=.txt
+--type-set
+jinja=.jinja
