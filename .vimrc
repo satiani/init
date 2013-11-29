@@ -57,6 +57,7 @@ map <F1> <nop>
 map <Leader>\ :n<CR>
 map <Leader>- :prev<CR>
 map <Leader>q :botright cwindow<CR>:setlocal nocul<CR>
+map <Leader>Q :botright lwindow<CR>:setlocal nocul<CR>
 map <Leader>n :cnewer<CR>
 map <Leader>p :colder<CR>
 map <Leader>y :call YankLineInfo(0)<CR>
@@ -78,6 +79,8 @@ map tl :tabnext<CR>
 map th :tabprev<CR>
 map tj :tablast<CR>
 map tn :tabnew<CR>
+vmap <Leader>t di{{ _('<Esc>pa') }}<Esc>
+vmap <Leader>T di{{ _("""<Esc>pa""") }}<Esc>
 
 "#############################################
 
@@ -130,14 +133,14 @@ let g:gundo_help = 0
 map <Leader>u :GundoToggle<CR>
 
 " Yank Ring
-let g:yankring_min_element_length = 2
+let g:yankring_min_element_length = 1
 let g:yankring_manual_clipboard_check = 0
 let g:yankring_replace_n_pkey = 'p' " Alt - P
 let g:yankring_replace_n_nkey = 'n' " Alt - N
 map <Leader>r :YRShow<CR>
 
 " Fugitive
-map <Leader>g :Gstatus<CR>
+map <Leader>G :Gstatus<CR>
 
 " Pyclewn
 map <Leader>d :call StartPyclewn()<CR>
