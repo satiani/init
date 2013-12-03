@@ -139,7 +139,6 @@ nmenu <silent> &Python.Next\ Line\ wrt\ indent<Tab>]<down>
 :com! PEoB execute "normal ".PythonBoB(line('.'), 1, 1)."G"
 :com! UpdateMenu call UpdateMenu()
 
-
 " Go to a block boundary (-1: previous, 1: next)
 " If force_sel_comments is true, 'g:py_select_trailing_comments' is ignored
 function! PythonBoB(line, direction, force_sel_comments)

@@ -142,36 +142,6 @@ map <Leader>r :YRShow<CR>
 " Fugitive
 map <Leader>G :Gstatus<CR>
 
-" Pyclewn
-map <Leader>d :call StartPyclewn()<CR>
-
-" Eclim
-map <Leader>js :JavaSearchContext<CR>
-map <Leader>jo :JavaImportOrganize<CR>
-map <Leader>ji :JavaImport<CR>
-map <Leader>jl :botright lwindow<CR>:setlocal nocul<CR>
-let g:EclimValidateSortResults = 'severity'
-
-" Vdebug
-let g:vdebug_keymap = {
-\    "step_over"            : "<Leader><F2>",
-\    "step_into"            : "<Leader><F3>",
-\    "step_out"             : "<Leader><F4>",
-\    "run"                  : "<Leader><F5>",
-\    "close"                : "<Leader><F6>",
-\    "detach"               : "<Leader><F7>",
-\    "run_to_cursor"        : "<Leader><F9>",
-\    "set_breakpoint"       : "<Leader><F10>",
-\    "get_context"          : "<Leader><F11>",
-\    "eval_under_cursor"    : "<Leader><F12>",
-\}
-
-let g:vdebug_options = {
-\    'marker_default'       : '*',
-\    'marker_closed_tree'   : '+',
-\    'marker_open_tree'     : '-',
-\}
-
 " Jedi-Vim
 let g:jedi#rename_command = '<Leader>n'
 let g:jedi#related_names = ''
