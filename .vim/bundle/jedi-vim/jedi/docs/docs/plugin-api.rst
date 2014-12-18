@@ -8,8 +8,20 @@ The Plugin API
 Note: This documentation is for Plugin developers, who want to improve their
 editors/IDE autocompletion 
 
-If you want to use |jedi|, you first need to
-``import jedi``. You then have direct access to the :class:`.Script`.
+If you want to use |jedi|, you first need to ``import jedi``.  You then have
+direct access to the :class:`.Script`. You can then call the functions
+documented here. These functions return :ref:`API classes
+<plugin-api-classes>`.
+
+
+Deprecations
+------------
+
+The deprecation process is as follows:
+
+1. A deprecation is announced in the next major/minor release.
+2. We wait either at least a year & at least two minor releases until we remove
+   the deprecated functionality.
 
 
 API documentation
@@ -18,23 +30,10 @@ API documentation
 API Interface
 ~~~~~~~~~~~~~
 
-.. automodule:: api
+.. automodule:: jedi.api
     :members:
     :undoc-members:
 
-
-
-API Return Classes
-~~~~~~~~~~~~~~~~~~
-
-.. automodule:: api_classes
-    :members:
-    :undoc-members:
-
-Settings Module
-~~~~~~~~~~~~~~~
-
-.. automodule:: settings
 
 Examples
 --------
@@ -73,10 +72,10 @@ Definitions / Goto:
     ... inception()'''
     >>> script = jedi.Script(source, 8, 1, '')
     >>>
-    >>> script.goto()
+    >>> script.goto_assignments()
     [<Definition inception=my_list[2]>]
     >>>
-    >>> script.get_definition()
+    >>> script.goto_definitions()
     [<Definition def my_func>]
 
 Related names:

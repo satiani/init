@@ -126,6 +126,16 @@ class A():
 #? int()
 A().addition
 
+# should also work before `=`
+#? 8 int()
+A().addition = None
+#? 8 int()
+A(1).addition = None
+a = A()
+#? 8 int()
+a.addition = None
+
+
 # -----------------
 # inheritance
 # -----------------
@@ -168,6 +178,18 @@ SubClass.method_
 SubClass.var
 #? ['class_sub', 'class_super']
 SubClass.class_
+
+# -----------------
+# inheritance of builtins
+# -----------------
+
+class Base(str):
+    pass
+
+#? ['upper']
+Base.upper
+#? ['upper']
+Base().upper
 
 # -----------------
 # __call__
@@ -334,6 +356,14 @@ Wrapper(Base()).ret(3)
 #? int()
 Wrapper2(Base()).ret(3)
 
+class GetattrArray():
+    def __getattr__(self, name):
+        return [1]
+
+#? int()
+GetattrArray().something[0]
+
+
 # -----------------
 # private vars
 # -----------------
@@ -387,3 +417,15 @@ class TestX(object):
         var = self.conditional_method()
         #? int()
         var
+
+# -----------------
+# mro method
+# -----------------
+
+class A(object):
+    pass
+
+#? ['mro']
+A.mro
+#? []
+A().mro

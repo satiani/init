@@ -10,6 +10,13 @@ def abc(): pass
 abc.d.a.bsaasd.abc.d
 
 abc
+# unicode chars shouldn't be a problem.
+x['smörbröd'].abc
+
+if 1:
+    abc = 
+else:
+    (abc) = 
 
 abc = 
 
@@ -136,9 +143,9 @@ class NestedClass():
     def __getattr__(self, name):
         return self
 
-# Shouldn't find a definition, because there's no name defined (used ``getattr``).
-
-#< (0, 14),
+# Shouldn't find a definition, because there's other `instance`.
+# TODO reenable that test
+##< (0, 14),
 NestedClass().instance
 
 
@@ -231,3 +238,26 @@ def f(**kwargs):
 if isinstance(j, int):
     #< 
     j
+
+# -----------------
+# Dynamic Param Search
+# -----------------
+
+class DynamicParam():
+    def foo(self):
+        return
+
+def check(instance):
+    #< 13 (-5,8), (0,13)
+    instance.foo()
+
+check(DynamicParam())
+
+# -----------------
+# Compiled Objects
+# -----------------
+
+import _sre
+
+#< 0 (-3,7), (0,0), ('_sre', None, None)
+_sre

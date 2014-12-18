@@ -11,7 +11,12 @@ Jedi - an awesome autocompletion library for Python
     :alt: Coverage Status
 
 .. image:: https://pypip.in/d/jedi/badge.png
-        :target: https://crate.io/packages/jedi/
+    :target: https://crate.io/packages/jedi/
+    :alt: Number of PyPI downloads
+
+.. image:: https://pypip.in/v/jedi/badge.png
+    :target: https://crate.io/packages/jedi/
+    :alt: Latest PyPI version
 
 Jedi is an autocompletion tool for Python that can be used in IDEs/editors.
 Jedi works. Jedi is fast. It understands all of the basic Python syntax
@@ -29,12 +34,16 @@ me.
 Jedi can be used with the following editors:
 
 - Vim (jedi-vim_, YouCompleteMe_)
-- Emacs (Jedi.el_)
+- Emacs (Jedi.el_, elpy_, company-jedi_)
 - Sublime Text (SublimeJEDI_ [ST2 + ST3], anaconda_ [only ST3])
+- SynWrite_
+- TextMate_ (Not sure if it's actually working)
+- Kate_ version 4.13+ supports it natively, you have to enable it, though. [`proof
+  <https://projects.kde.org/projects/kde/applications/kate/repository/show?rev=KDE%2F4.13>`_]
 
 And it powers the following projects:
 
-- wdb_
+- wdb_ - Web Debugger
 
 
 Here are some pictures:
@@ -56,8 +65,8 @@ There is also support for goto and renaming.
 Get the latest version from `github <https://github.com/davidhalter/jedi>`_
 (master branch should always be kind of stable/working).
 
-Docs are available at `https://jedi.readthedocs.org/
-<https://jedi.readthedocs.org/>`_. Pull requests with documentation
+Docs are available at `https://jedi.jedidjah.ch/
+<https://jedi.jedidjah.ch/>`_. Pull requests with documentation
 enhancements and/or fixes are awesome and most welcome. Jedi uses `semantic
 versioning <http://semver.org/>`_.
 
@@ -72,7 +81,7 @@ information about how to make it work with your editor, refer to the
 corresponding documentation.
 
 You don't want to use ``pip``? Please refer to the `manual
-<https://jedi.readthedocs.org/en/latest/docs/installation.html>`_.
+<https://jedi.jedidjah.ch/en/latest/docs/installation.html>`_.
 
 
 Feature Support and Caveats
@@ -80,29 +89,32 @@ Feature Support and Caveats
 
 Jedi really understands your Python code. For a comprehensive list what Jedi
 can do, see: `Features
-<https://jedi.readthedocs.org/en/latest/docs/features.html>`_. A list of
+<https://jedi.jedidjah.ch/en/latest/docs/features.html>`_. A list of
 caveats can be found on the same page.
 
 You can run Jedi on cPython 2.6, 2.7, 3.2 or 3.3, but it should also
 understand/parse code older than those versions.
 
 Tips on how to use Jedi efficiently can be found `here
-<https://jedi.readthedocs.org/en/latest/docs/recipes.html>`_.
+<https://jedi.jedidjah.ch/en/latest/docs/recipes.html>`_.
 
 
 API for IDEs
 ============
 
 It's very easy to create an editor plugin that uses Jedi. See `Plugin API
-<https://jedi.readthedocs.org/en/latest/docs/plugin-api.html>`_ for more
+<https://jedi.jedidjah.ch/en/latest/docs/plugin-api.html>`_ for more
 information.
+
+If you have specific questions, please add an issue or ask on `stackoverflow
+<https://stackoverflow.com>`_ with the label ``python-jedi``.
 
 
 Development
 ===========
 
 There's a pretty good and extensive `development documentation
-<https://jedi.readthedocs.org/en/latest/docs/development.html>`_.
+<https://jedi.jedidjah.ch/en/latest/docs/development.html>`_.
 
 
 Testing
@@ -125,12 +137,17 @@ Tests are also run automatically on `Travis CI
 <https://travis-ci.org/davidhalter/jedi/>`_.
 
 For more detailed information visit the `testing documentation
-<https://jedi.readthedocs.org/en/latest/docs/testing.html>`_
+<https://jedi.jedidjah.ch/en/latest/docs/testing.html>`_
 
 
 .. _jedi-vim: https://github.com/davidhalter/jedi-vim
 .. _youcompleteme: http://valloric.github.io/YouCompleteMe/
 .. _Jedi.el: https://github.com/tkf/emacs-jedi
+.. _elpy: https://github.com/jorgenschaefer/elpy
+.. _company-jedi: https://github.com/proofit404/company-jedi
 .. _sublimejedi: https://github.com/srusskih/SublimeJEDI
 .. _anaconda: https://github.com/DamnWidget/anaconda
+.. _SynWrite: http://uvviewsoft.com/synjedi/
 .. _wdb: https://github.com/Kozea/wdb
+.. _TextMate: https://github.com/lawrenceakka/python-jedi.tmbundle
+.. _Kate: http://kate-editor.org

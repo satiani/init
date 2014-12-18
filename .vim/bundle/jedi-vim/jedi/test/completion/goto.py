@@ -76,6 +76,26 @@ c
 #! 0 ['def c']
 c()
 
+
+class ClassVar():
+    x = 3
+
+#! ['x = 3']
+ClassVar.x
+#! ['x = 3']
+ClassVar().x
+
+# before assignments
+#! 10 ['x = 3']
+ClassVar.x = ''
+#! 12 ['x = 3']
+ClassVar().x = ''
+
+# Recurring use of the same var name, github #315
+def f(t=None):
+    #! 9 ['t = None']
+    t = t or 1
+
 # -----------------
 # imports
 # -----------------
@@ -165,7 +185,7 @@ for i in range(1):
     i
 
 for key, value in [(1,2)]:
-    #! ['for key,value in [(1...']
+    #! ['for key,value in [(1, 2)]:    key']
     key
 
 for i in []:
