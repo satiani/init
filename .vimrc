@@ -40,7 +40,7 @@ set t_Co=256
 set tags=tags;/
 set viminfo='20,\"50
 set wildmenu
-set wildignore+=*.class,*.o,*.lo
+set wildignore+=*/*.class,*/*.o,*/*.lo,*/*.pyc,*/*.pyo
 set nohlsearch
 filetype off
 call pathogen#runtime_append_all_bundles()
@@ -275,7 +275,7 @@ function! YankLineInfo(get_contents)
 endfunction
 
 function! PutClockMd5Sum()
-    let md5 = system("date +%F%R%N | md5sum | cut -d ' ' -f1")
+    let md5 = system("date +%F%R%N | md5 | cut -d ' ' -f1")
     let md5 = tr(md5, "\n", " ")
     let result = feedkeys("a" . md5)
 endfunction

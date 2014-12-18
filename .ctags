@@ -1,5 +1,24 @@
+-R
+--exclude=.svn
+--exclude=.git
+--exclude=vendor
+--exclude=*.min.js
+--exclude=CACHE
+--c++-kinds=+p
+--fields=+iaS
+--extra=+qf
+--totals=yes
+--tag-relative=yes
 --langdef=js
 --langmap=js:.js
 --regex-js=/([A-Za-z0-9._$]+)[ \t]*[:=][ \t]*\{/\1/,object/
---regex-js=/([A-Za-z0-9._$()]+\.)?([A-Za-z0-9_$()]+)[ \t]*[:=][ \t]*(\([ \t]*)?function[ \t]*\(/\2/,function/
+--regex-js=/([A-Za-z0-9._$()]+)[ \t]*[:=][ \t]*function[ \t]*\(/\1/,function/
 --regex-js=/function[ \t]+([A-Za-z0-9._$]+)[ \t]*\(([^)])\)/\1/,function/
+--regex-js=/([A-Za-z0-9._$]+)[ \t]*[:=][ \t]*\[/\1/,array/
+--regex-js=/([^= ]+)[ \t]*=[ \t]*[^"]'[^']*/\1/,string/
+--regex-js=/([^= ]+)[ \t]*=[ \t]*[^']"[^"]*/\1/,string/
+--langdef=scss
+--langmap=scss:.scss
+--regex-scss=/^[ \t]*([^\t {][^{]{1,100})(\t| )*\{/| \1/d,definition/
+--regex-scss=/^[@]mixin ([^ (]+).*/\1/m,mixin/
+--regex-scss=/^[@]function ([^ (]+).*/\1/f,function/

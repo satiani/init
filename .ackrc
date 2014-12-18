@@ -2,8 +2,6 @@
 php=.module,.install,.inc,.lib
 --type-set
 velocity=.vm
---type-set
-php-module=.module
 --pager
 less -RF
 --type-set
@@ -20,3 +18,6 @@ patch=.patch
 txt=.txt
 --type-set
 jinja=.jinja
+--ignore-dir=.git
+--ignore-dir=staticfiles
+--ignore-file=is:tags
