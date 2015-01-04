@@ -67,6 +67,7 @@ alias grep='grep --color=auto'
 #fuck vi
 alias vi='vim'
 alias svi='sudo vim'
+alias speedtest='wget -O /dev/null http://speedtest.wdc01.softlayer.com/downloads/test100.zip'
 
 #ack-grep and vim don't work perfectly within tmux 
 #changing the TERM fixes their problems
@@ -78,7 +79,7 @@ fi
 
 export EDITOR=vim
 export LC_ALL=en_US.UTF-8
-export PATH=/usr/local/bin:$PATH:~/bin
+export PATH=/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/bin:$PATH:~/bin
 
 if [ -f ~/.profile ]; then
     source ~/.profile
@@ -86,3 +87,6 @@ fi
 
 # load all zsh files in .zsh
 for zsh_file (~/.zsh/**/*.zsh) source $zsh_file
+
+### Added by the Heroku Toolbelt
+export PATH="/usr/local/heroku/bin:$PATH"
