@@ -18,6 +18,4 @@ patch=.patch
 txt=.txt
 --type-set
 jinja=.jinja
---ignore-dir=.git
---ignore-dir=staticfiles
---ignore-file=is:tags
+--ignore-dir=gen

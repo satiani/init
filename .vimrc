@@ -151,6 +151,12 @@ let g:SuperTabDefaultCompletionType = "context"
 let g:SuperTabMappingForward = '<c-space>'
 let g:SuperTabMappingBackward = '<s-c-space>'
 
+" UtilSnips
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-j>"
+let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+let g:UltiSnipsEditSplit="vertical"
+
 "#############################################
 
 "" Utility functions
@@ -214,26 +220,6 @@ function! RevertAllMaps()
         endfor
     endif
 endfunction
-
-function! StartPyclewn()
-    Pyclewn
-    call MakeReversibleMapping("<Leader><F2>", ":Cnext<CR>")
-    call MakeReversibleMapping("<Leader><F3>", ":Cstep<CR>")
-    call MakeReversibleMapping("<Leader><F4>", ":Cfinish<CR>")
-    call MakeReversibleMapping("<Leader><F5>", ":Ccontinue<CR>")
-    call MakeReversibleMapping("<Leader><F6>", ":call QuitPyclewn()<CR>")
-    call MakeReversibleMapping("<Leader><F9>", ":exec('Cuntil ' . line('.'))<CR>")
-    call MakeReversibleMapping("<Leader><F10>", ":exec('Cbreak ' . expand('%:p') . ':' . line('.'))<CR>")
-    call MakeReversibleMapping("<Leader><F11>", ":exec('Cclear ' . expand('%:p') . ':' . line('.'))<CR>")
-    call MakeReversibleMapping("<Leader><F12>", ":exec('Cprint ' . expand('<cword>'))<CR>")
-endfunction
-
-function! QuitPyclewn()
-    Cquit
-    call RevertAllMaps()
-    nbclose
-endfunction
-    
 
 function! ToggleOverLengthMatch()
     if !exists("b:overlength_match_flag")
