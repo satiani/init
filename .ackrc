@@ -19,3 +19,8 @@ txt=.txt
 --type-set
 jinja=.jinja
 --ignore-dir=gen
+--ignore-file=is:tags
+--ignore-file=ext:po
+--ignore-file=ext:mo
+--ignore-file=ext:pot
+--ignore-file=ext:log
