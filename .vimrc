@@ -260,6 +260,11 @@ function! YankLineInfo(get_contents)
     call setreg('*', register)
 endfunction
 
+function WriteCreatingDirs()
+    execute ':silent !mkdir -p %:h'
+    write
+endfunction
+
 function! PutClockMd5Sum()
     let md5 = system("date +%F%R%N | md5 | cut -d ' ' -f1")
     let md5 = tr(md5, "\n", " ")
