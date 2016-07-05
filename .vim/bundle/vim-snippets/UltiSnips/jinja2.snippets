@@ -7,7 +7,7 @@ priority -50
 # environment, widely used and BSD licensed.
 
 # possible extends:
-#extends html
+extends html
 
 
 snippet block "block" b
@@ -203,6 +203,25 @@ endsnippet
 
 snippet indent "indent" w
 indent(width=${1:4}, indentfirst=${2:False})
+endsnippet
+
+snippet additional_css "create additional_css block" w
+{% block additional_css %}
+  {% assets filters="cssmin,cssrewrite,datauri", 
+    output='gen/new_design/css/$1.%(version)s.css', 
+    "$2" %}
+    <link rel="stylesheet" href="{{ ASSET_URL }}"/>
+  {% endassets %}
+{% endblock %}
+endsnippet
+
+snippet pagescript "create pagescript block" w
+{% block pagescript %}
+  {% assets filters="requireJS", output='gen/$1.%(version)s.js',
+  "$2" %}
+    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+  {% endassets %}
+{% endblock %}
 endsnippet
 
 # vim:ft=snippets:

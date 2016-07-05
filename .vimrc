@@ -42,6 +42,7 @@ set viminfo='20,\"50
 set wildmenu
 set wildignore+=*/*.class,*/*.o,*/*.lo,*/*.pyc,*/*.pyo
 set nohlsearch
+set mouse=n
 filetype off
 call pathogen#runtime_append_all_bundles()
 call pathogen#helptags()

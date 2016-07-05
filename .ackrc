@@ -19,6 +19,8 @@ txt=.txt
 --type-set
 jinja=.jinja
 --ignore-dir=gen
+--ignore-dir=venv
+--ignore-dir=.webassets-cache
 --ignore-file=is:tags
 --ignore-file=ext:po
 --ignore-file=ext:mo
