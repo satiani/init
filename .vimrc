@@ -128,6 +128,7 @@ let g:ctrlp_cmd = 'CtrlPLastMode'
 let g:ctrlp_max_files = 50000
 let g:ctrlp_lazy_update = 100
 let g:ctrlp_working_path_mode = '0'
+let g:ctrlp_custom_ignore = 'node_modules\|.git'
 
 " Gundo
 let g:gundo_help = 0
