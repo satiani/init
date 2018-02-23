@@ -40,9 +40,8 @@ set t_Co=256
 set tags=tags;/
 set viminfo='20,\"50
 set wildmenu
-set wildignore+=*/*.class,*/*.o,*/*.lo,*/*.pyc,*/*.pyo
+set wildignore+=*/*.class,*/*.o,*/*.lo,*/*.pyc,*/*.pyo,uploads/*
 set nohlsearch
-set mouse=n
 filetype off
 call pathogen#runtime_append_all_bundles()
 call pathogen#helptags()
@@ -63,25 +62,21 @@ map <Leader>n :cnewer<CR>
 map <Leader>p :colder<CR>
 map <Leader>y :call YankLineInfo(0)<CR>
 map <Leader>Y :call YankLineInfo(1)<CR>
-map <Leader>m :call PutClockMd5Sum()<CR>
 map <Leader>f :exec("gr " . expand("<cword>"))<CR>
 " Replace word under cursor
 map <Leader>s :%s/\<<C-r><C-w>\>/
-map <Leader>S :%s/\(\<<C-r><C-w>\>\)/
+map <Leader>S :!~/bin/parse_sql.py<CR>
 map <c-w>F <c-w>_<c-w><bar>
 map <c-w>O <c-w>w<c-w>_<c-w><bar>
 map <silent><F3>  :let NERDTreeQuitOnOpen=1<CR>:call SwitchToNerdTree("")<CR>
 map <silent><F4>  :let NERDTreeQuitOnOpen=1<CR>:call SwitchToNerdTree("%")<CR>
 map <silent><F5>  :TlistToggle<CR>
 map <silent> <F2> :call BufferList()<CR>:call ToggleCursorLine("__BUFFERLIST__")<CR>
-map <silent> <c-g> :call ToggleOverLengthMatch()<CR>
 map tk :tabfirst<CR>
 map tl :tabnext<CR>
 map th :tabprev<CR>
 map tj :tablast<CR>
 map tn :tabnew<CR>
-vmap <Leader>t di{{ _('<Esc>pa') }}<Esc>
-vmap <Leader>T di{{ _("""<Esc>pa""") }}<Esc>
 
 "#############################################
 
@@ -147,6 +142,8 @@ map <Leader>G :Gstatus<CR>
 " Jedi-Vim
 let g:jedi#rename_command = '<Leader>n'
 let g:jedi#related_names = ''
+let g:jedi#popup_on_dot = 0
+let g:jedi#show_call_signatures = 0
 
 " Supertab
 let g:SuperTabDefaultCompletionType = "context"
@@ -158,6 +155,12 @@ let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<c-j>"
 let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 let g:UltiSnipsEditSplit="vertical"
+
+" ale
+let g:ale_fixers = {
+\    'python': ['isort', 'autopep8'],
+\}
+nmap <Leader>F <Plug>(ale_fix)
 
 "#############################################
 
@@ -265,12 +268,6 @@ endfunction
 function WriteCreatingDirs()
     execute ':silent !mkdir -p %:h'
     write
-endfunction
-
-function! PutClockMd5Sum()
-    let md5 = system("date +%F%R%N | md5 | cut -d ' ' -f1")
-    let md5 = tr(md5, "\n", " ")
-    let result = feedkeys("a" . md5)
 endfunction
 
 "#############################################

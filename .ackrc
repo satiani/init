@@ -18,11 +18,10 @@ patch=.patch
 txt=.txt
 --type-set
 jinja=.jinja
+--type-set
+accounting=.etxt
 --ignore-dir=gen
 --ignore-dir=venv
 --ignore-dir=.webassets-cache
---ignore-file=is:tags
---ignore-file=ext:po
---ignore-file=ext:mo
---ignore-file=ext:pot
---ignore-file=ext:log
+--ignore-dir=admin_inbound_mail
+--noaccounting
