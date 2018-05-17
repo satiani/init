@@ -18,9 +18,7 @@ def CamelCase(text):
 endglobal
 
 snippet acct "boilerplate for accounting rules" 
-from sqlalchemy import (
-    Column, String, Integer, Numeric, ForeignKey, Float
-)
+from sqlalchemy import Column, String, Integer, Numeric, ForeignKey, Float
 from flask.ext.babel import gettext as _
 
 from app.accounting.events import query_final_events
@@ -29,12 +27,13 @@ from app.accounting.registry import posting_rule, CREDIT_FACILITY, EQUITY_CAPITA
 from app.accounting.events import EventProcessor
 from app.accounting.liwwa_accounts import LiwwaPropAccount
 
+
 class Acct`!p snip.rv = CamelCase(t[1])`Event(AcctEvent):
     __mapper_args__ = {
         'polymorphic_identity' : EventType.`!p snip.rv = t[1]`
     }
 
-    id = Column(Integer, ForeignKey("accounting_events.id"), primary_key = True)
+    id = Column(Integer, ForeignKey("accounting_events.id"), primary_key=True)
     ${2}
 
     @property

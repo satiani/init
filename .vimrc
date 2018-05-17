@@ -142,8 +142,9 @@ map <Leader>G :Gstatus<CR>
 " Jedi-Vim
 let g:jedi#rename_command = '<Leader>n'
 let g:jedi#related_names = ''
-let g:jedi#popup_on_dot = 0
-let g:jedi#show_call_signatures = 0
+" Uncomment lines below to help with performance
+" let g:jedi#popup_on_dot = 0
+" let g:jedi#show_call_signatures = 0
 
 " Supertab
 let g:SuperTabDefaultCompletionType = "context"
@@ -157,10 +158,17 @@ let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 let g:UltiSnipsEditSplit="vertical"
 
 " ale
-let g:ale_fixers = {
+let g:ale_fixers={
 \    'python': ['isort', 'autopep8'],
+\    'javascript': ['standard']
+\}
+let g:ale_linters={
+\    'javascript': ['standard'],
 \}
 nmap <Leader>F <Plug>(ale_fix)
+nmap <Leader>D <Plug>(ale_toggle_buffer)
+highlight ALEError ctermbg=140
+
 
 "#############################################
 
