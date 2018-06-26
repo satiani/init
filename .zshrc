@@ -90,3 +90,4 @@ for zsh_file (~/.zsh/**/*.zsh) source $zsh_file
 
 ### Added by the Heroku Toolbelt
 export PATH="/usr/local/heroku/bin:$PATH"
+alias site='cd ~/code/web && source venv/bin/activate'
