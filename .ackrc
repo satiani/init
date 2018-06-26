@@ -24,4 +24,6 @@ accounting=.etxt
 --ignore-dir=venv
 --ignore-dir=.webassets-cache
 --ignore-dir=admin_inbound_mail
+--ignore-dir=node_modules
+--ignore-dir=dist
 --noaccounting
