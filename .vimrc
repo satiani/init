@@ -16,7 +16,7 @@ set completeopt=longest,menuone
 set cpo&vim
 set cul
 set diffexpr="sdiff --strip-trailing-cr"
-set tw=0
+set tw=120
 set diffopt=vertical,filler
 set expandtab
 set fileencodings=ucs-bom,utf-8,latin1
@@ -70,7 +70,7 @@ map <c-w>F <c-w>_<c-w><bar>
 map <c-w>O <c-w>w<c-w>_<c-w><bar>
 map <silent><F3>  :let NERDTreeQuitOnOpen=1<CR>:call SwitchToNerdTree("")<CR>
 map <silent><F4>  :let NERDTreeQuitOnOpen=1<CR>:call SwitchToNerdTree("%")<CR>
-map <silent><F5>  :TlistToggle<CR>
+map <silent><F5>  :TagbarToggle<CR>
 map <silent> <F2> :call BufferList()<CR>:call ToggleCursorLine("__BUFFERLIST__")<CR>
 map tk :tabfirst<CR>
 map tl :tabnext<CR>
@@ -100,7 +100,7 @@ let NERDTreeWinSize=40
 let NERDTreeIgnore=['\.pyc$']
 
 " TagList
-let Tlist_Ctags_Cmd = '/usr/local/bin/ctags'
+let Tlist_Ctags_Cmd = '/usr/bin/ctags'
 let Tlist_WinWidth = 50
 let g:tlist_php_settings='php;f:function'
 let Tlist_Show_One_File = 1
@@ -166,9 +166,17 @@ let g:ale_linters={
 \    'javascript': ['standard'],
 \}
 nmap <Leader>F <Plug>(ale_fix)
-nmap <Leader>D <Plug>(ale_toggle_buffer)
+nmap <Leader>D <Plug>(ale_toggle_buffer)<CR>:GitGutterToggle<CR>
 highlight ALEError ctermbg=140
 
+" Gitgutter
+set updatetime=100
+nmap ]h <Plug>GitGutterNextHunk
+nmap [h <Plug>GitGutterPrevHunk
+
+" Airline
+let g:airline_theme='angr'
+let g:airline_powerline_fonts = 1
 
 "#############################################
 
