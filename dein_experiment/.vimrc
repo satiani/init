@@ -1,0 +1,190 @@
+"dein Scripts-----------------------------
+if &compatible
+  set nocompatible               " Be iMproved
+endif
+
+" Required:
+set runtimepath+=/home/satiani/.cache/dein/repos/github.com/Shougo/dein.vim
+
+" Required:
+if dein#load_state('/home/satiani/.cache/dein')
+  call dein#begin('/home/satiani/.cache/dein')
+
+  " Let dein manage dein
+  " Required:
+  call dein#add('/home/satiani/.cache/dein/repos/github.com/Shougo/dein.vim')
+
+  " Add or remove your plugins here:
+  call dein#add('airblade/vim-gitgutter')
+  call dein#add('davidhalter/jedi-vim')
+  call dein#add('flazz/vim-colorschemes')
+  call dein#add('SirVer/ultisnips')
+  call dein#add('honza/vim-snippets')
+  call dein#add('isRuslan/vim-es6')
+  call dein#add('junegunn/fzf', { 'build': './install' })
+  call dein#add('junegunn/fzf.vim', { 'depends': 'junegunn/fzf' })
+  call dein#add('junegunn/vim-easy-align')
+  call dein#add('luochen1990/rainbow')
+  call dein#add('mattn/emmet-vim')
+  call dein#add('maxbrunsfeld/vim-yankstack')
+  call dein#add('roblillack/vim-bufferlist')
+  call dein#add('scrooloose/nerdtree')
+  call dein#add('tpope/vim-fugitive')
+  call dein#add('tpope/vim-unimpaired')
+  call dein#add('vim-airline/vim-airline')
+  call dein#add('vim-airline/vim-airline-themes')
+  call dein#add('w0rp/ale')
+
+  " Required:
+  call dein#end()
+  call dein#save_state()
+endif
+
+" Required:
+filetype plugin indent on
+syntax enable
+
+if dein#check_install()
+  call dein#install()
+endif
+
+"End dein Scripts-------------------------
+
+set backspace=indent,eol,start
+set completeopt=longest,menuone
+set tw=120
+set diffopt=vertical,filler
+set expandtab
+if executable("rg")
+    set grepprg=rg\ --vimgrep\ --no-heading
+    set grepformat=%f:%l:%c:%m,%f:%l:%m
+endif
+set autoindent
+set hidden
+set history=50
+set ignorecase
+set incsearch
+set modeline
+set showmatch		" Show matching brackets.
+set smartcase
+set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
+set sts=4
+set sw=4
+set t_Co=256
+set tags=tags;/
+set wildmenu
+set wildignore+=*/*.class,*/*.o,*/*.lo,*/*.pyc,*/*.pyo,uploads/*
+
+"#############################################
+
+"" Key mappings
+let mapleader=","
+map <F1> <nop>
+map <Leader>\ :n<CR>
+map <Leader>- :prev<CR>
+map <Leader>q :botright cwindow<CR>
+map <Leader>Q :botright lwindow<CR>
+map <Leader>n :cnewer<CR>
+map <Leader>p :colder<CR>
+map <Leader>f :exec("gr " . expand("<cword>"))<CR>
+" Replace word under cursor
+map <Leader>s :%s/\<<C-r><C-w>\>/
+map <Leader>S :!~/bin/parse_sql.py<CR>
+map <c-w>F <c-w>_<c-w><bar>
+map <c-w>O <c-w>w<c-w>_<c-w><bar>
+map <silent><F3>  :let NERDTreeQuitOnOpen=1<CR>:call SwitchToNerdTree("")<CR>
+map <silent><F4>  :let NERDTreeQuitOnOpen=1<CR>:call SwitchToNerdTree("%")<CR>
+map <silent> <F2> :call BufferList()<CR>
+map tk :tabfirst<CR>
+map tl :tabnext<CR>
+map th :tabprev<CR>
+map tj :tablast<CR>
+map tn :tabnew<CR>
+
+" If you want to install not installed plugins on startup.
+"if dein#check_install()
+"  call dein#install()
+"endif
+
+"End dein Scripts-------------------------
+
+set directory=$HOME/vimswap/
+set undofile
+set undodir=$HOME/vimswap/
+syntax on
+colorscheme desert256v2
+
+" Bufferlist
+map <silent> <F2> :call BufferList()<CR>:call ToggleCursorLine("__BUFFERLIST__")<CR>
+hi BufferSelected term=reverse ctermfg=black ctermbg=white cterm=bold
+hi BufferNormal term=NONE ctermfg=lightgrey ctermbg=black cterm=NONE
+let g:BufferListMaxWidth = 60
+
+" Rainbow Parentheses
+let g:rainbow_active = 1
+
+" FZF
+nnoremap <C-p> :Files<CR>
+nnoremap <C-l> :BLines<CR>
+nnoremap <C-b> :Buffers<CR>
+nnoremap <C-c> :Colors<CR>
+let $FZF_DEFAULT_OPTS = '--bind ctrl-d:page-down,ctrl-u:page-up'
+let $FZF_DEFAULT_COMMAND = 'rg --files --follow --glob "!.git/*"'
+let g:fzf_history_dir = '~/.local/share/fzf-history'
+
+" deoplete
+let g:deoplete#enable_at_startup = 1
+
+" Gitgutter
+set updatetime=100
+nmap ]h <Plug>GitGutterNextHunk
+nmap [h <Plug>GitGutterPrevHunk
+
+" Airline
+let g:airline_powerline_fonts = 1
+let g:airline_theme='distinguished'
+
+" ale
+let g:ale_fixers={
+\    'python': ['isort', 'autopep8'],
+\    'javascript': ['standard']
+\}
+let g:ale_linters={
+\    'javascript': ['standard'],
+\}
+nmap <Leader>F <Plug>(ale_fix)
+nmap <Leader>D <Plug>(ale_toggle_buffer)<CR>:GitGutterToggle<CR>
+highlight ALEError ctermbg=140
+
+" Fugitive
+map <Leader>G :Gstatus<CR>
+
+" NERDTree
+function! SwitchToNerdTree(path)
+    if exists("t:NERDTreeBufName")
+        let winnr = bufwinnr(t:NERDTreeBufName)
+        let currwinnr = bufwinnr("%")
+        if winnr != -1 && winnr != currwinnr
+            exec(winnr . "wincmd w")
+            return
+        elseif winnr != -1
+            NERDTreeToggle
+            return
+        endif
+    endif
+
+    if a:path == "" 
+        NERDTreeToggle
+    else
+        exec("NERDTree " . a:path)
+    endif
+endfunction
+let NERDTreeHijackNetrw=0
+let NERDTreeWinSize=40
+let NERDTreeIgnore=['\.pyc$']
+
+" UtilSnips
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-j>"
+let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+let g:UltiSnipsEditSplit="vertical"

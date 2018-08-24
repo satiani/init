@@ -70,7 +70,6 @@ map <c-w>F <c-w>_<c-w><bar>
 map <c-w>O <c-w>w<c-w>_<c-w><bar>
 map <silent><F3>  :let NERDTreeQuitOnOpen=1<CR>:call SwitchToNerdTree("")<CR>
 map <silent><F4>  :let NERDTreeQuitOnOpen=1<CR>:call SwitchToNerdTree("%")<CR>
-map <silent><F5>  :TagbarToggle<CR>
 map <silent> <F2> :call BufferList()<CR>:call ToggleCursorLine("__BUFFERLIST__")<CR>
 map tk :tabfirst<CR>
 map tl :tabnext<CR>
@@ -177,6 +176,11 @@ nmap [h <Plug>GitGutterPrevHunk
 " Airline
 let g:airline_theme='angr'
 let g:airline_powerline_fonts = 1
+
+" Tagbar
+map <silent><F5>  :TagbarToggle<CR>
+let g:tagbar_left = 1
+let g:tagbar_autoclose = 1
 
 "#############################################
 
