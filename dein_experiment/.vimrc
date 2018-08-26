@@ -15,25 +15,56 @@ if dein#load_state('/home/satiani/.cache/dein')
   call dein#add('/home/satiani/.cache/dein/repos/github.com/Shougo/dein.vim')
 
   " Add or remove your plugins here:
-  call dein#add('airblade/vim-gitgutter')
-  call dein#add('davidhalter/jedi-vim')
-  call dein#add('flazz/vim-colorschemes')
+  " Snippets
   call dein#add('SirVer/ultisnips')
   call dein#add('honza/vim-snippets')
+  " Syntax
   call dein#add('isRuslan/vim-es6')
+  call dein#add('ap/vim-css-color')
+  " Navigation
   call dein#add('junegunn/fzf', { 'build': './install' })
   call dein#add('junegunn/fzf.vim', { 'depends': 'junegunn/fzf' })
-  call dein#add('junegunn/vim-easy-align')
-  call dein#add('luochen1990/rainbow')
-  call dein#add('mattn/emmet-vim')
-  call dein#add('maxbrunsfeld/vim-yankstack')
+  call dein#add('easymotion/vim-easymotion')
   call dein#add('roblillack/vim-bufferlist')
   call dein#add('scrooloose/nerdtree')
+  call dein#add('majutsushi/tagbar')
+  " Text manipulation
+  call dein#add('junegunn/vim-easy-align')
+  call dein#add('mattn/emmet-vim')
+  call dein#add('maxbrunsfeld/vim-yankstack')
+  call dein#add('tpope/vim-speeddating')
+  " Code completion
+  call dein#add('davidhalter/jedi-vim')
+  " Version control
   call dein#add('tpope/vim-fugitive')
-  call dein#add('tpope/vim-unimpaired')
+  call dein#add('airblade/vim-gitgutter')
+  call dein#add('xuyuanp/nerdtree-git-plugin')
+  " Styling
   call dein#add('vim-airline/vim-airline')
   call dein#add('vim-airline/vim-airline-themes')
+  call dein#add('flazz/vim-colorschemes')
+  call dein#add('luochen1990/rainbow')
+  call dein#add('edkolev/tmuxline.vim')
+  " External integrations
   call dein#add('w0rp/ale')
+  call dein#add('benmills/vimux')
+  call dein#add('pitluga/vimux-nose-test')
+  call dein#add('tmux-plugins/vim-tmux-focus-events')
+  call dein#add('roxma/vim-tmux-clipboard', { 'depends': 'tmux-plugins/vim-tmux-focus-events' })
+  " Enhanced Vim behavior
+  call dein#add('tpope/vim-eunuch')
+  call dein#add('tpope/vim-unimpaired')
+  call dein#add('tpope/vim-sleuth')
+  call dein#add('tpope/vim-repeat')
+  call dein#add('henrik/vim-indexed-search')
+  " Modes
+  call dein#add('jceb/vim-orgmode')
+  call dein#add('leafgarland/typescript-vim')
+  call dein#add('Quramy/tsuquyomi')
+  call dein#add('Shougo/vimproc.vim', { 'build' : 'make', })
+  call dein#add('Valloric/YouCompleteMe', {
+       \ 'build' : './install.sh --clang-completer --system-libclang --omnisharp-completer'
+       \ })
 
   " Required:
   call dein#end()
@@ -44,9 +75,9 @@ endif
 filetype plugin indent on
 syntax enable
 
-if dein#check_install()
-  call dein#install()
-endif
+" if dein#check_install()
+"   call dein#install()
+" endif
 
 "End dein Scripts-------------------------
 
@@ -112,7 +143,7 @@ set directory=$HOME/vimswap/
 set undofile
 set undodir=$HOME/vimswap/
 syntax on
-colorscheme desert256v2
+colorscheme zenburn
 
 " Bufferlist
 map <silent> <F2> :call BufferList()<CR>:call ToggleCursorLine("__BUFFERLIST__")<CR>
@@ -127,7 +158,8 @@ let g:rainbow_active = 1
 nnoremap <C-p> :Files<CR>
 nnoremap <C-l> :BLines<CR>
 nnoremap <C-b> :Buffers<CR>
-nnoremap <C-c> :Colors<CR>
+nnoremap <C-c> :History:<CR>
+nnoremap <C-h> :Helptags<CR>
 let $FZF_DEFAULT_OPTS = '--bind ctrl-d:page-down,ctrl-u:page-up'
 let $FZF_DEFAULT_COMMAND = 'rg --files --follow --glob "!.git/*"'
 let g:fzf_history_dir = '~/.local/share/fzf-history'
@@ -142,7 +174,10 @@ nmap [h <Plug>GitGutterPrevHunk
 
 " Airline
 let g:airline_powerline_fonts = 1
-let g:airline_theme='distinguished'
+let g:airline_theme='lucius'
+let g:airline_section_x=airline#section#create_right(['tagbar', ' ', 'filetype'])
+let g:airline_section_y=airline#section#create_right([])
+let g:airline#extensions#fugitiveline#enabled = 0
 
 " ale
 let g:ale_fixers={
@@ -173,7 +208,7 @@ function! SwitchToNerdTree(path)
         endif
     endif
 
-    if a:path == "" 
+    if a:path == ""
         NERDTreeToggle
     else
         exec("NERDTree " . a:path)
@@ -188,3 +223,17 @@ let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<c-j>"
 let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 let g:UltiSnipsEditSplit="vertical"
+
+" LanguageClient
+let g:LanguageClient_serverCommands = {
+    \ 'javascript': ['/home/satiani/javascript-typescript-stdio'],
+    \ }
+
+" vim-easy-align
+xmap ga <Plug>(EasyAlign)
+let g:easy_align_ignore_groups = []
+
+" Tagbar
+map <silent><F5>  :TagbarToggle<CR>
+let g:tagbar_left = 1
+let g:tagbar_autoclose = 1
