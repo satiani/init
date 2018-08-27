@@ -59,12 +59,6 @@ if dein#load_state('/home/satiani/.cache/dein')
   call dein#add('henrik/vim-indexed-search')
   " Modes
   call dein#add('jceb/vim-orgmode')
-  call dein#add('leafgarland/typescript-vim')
-  call dein#add('Quramy/tsuquyomi')
-  call dein#add('Shougo/vimproc.vim', { 'build' : 'make', })
-  call dein#add('Valloric/YouCompleteMe', {
-       \ 'build' : './install.sh --clang-completer --system-libclang --omnisharp-completer'
-       \ })
 
   " Required:
   call dein#end()
@@ -75,12 +69,15 @@ endif
 filetype plugin indent on
 syntax enable
 
-" if dein#check_install()
-"   call dein#install()
-" endif
+if dein#check_install()
+  call dein#install()
+endif
 
 "End dein Scripts-------------------------
 
+"#############################################
+
+" Vim options
 set backspace=indent,eol,start
 set completeopt=longest,menuone
 set tw=120
@@ -106,13 +103,10 @@ set tags=tags;/
 set wildmenu
 set wildignore+=*/*.class,*/*.o,*/*.lo,*/*.pyc,*/*.pyo,uploads/*
 
-"#############################################
-
 "" Key mappings
 let mapleader=","
+let maplocalleader="\\"
 map <F1> <nop>
-map <Leader>\ :n<CR>
-map <Leader>- :prev<CR>
 map <Leader>q :botright cwindow<CR>
 map <Leader>Q :botright lwindow<CR>
 map <Leader>n :cnewer<CR>
@@ -121,11 +115,6 @@ map <Leader>f :exec("gr " . expand("<cword>"))<CR>
 " Replace word under cursor
 map <Leader>s :%s/\<<C-r><C-w>\>/
 map <Leader>S :!~/bin/parse_sql.py<CR>
-map <c-w>F <c-w>_<c-w><bar>
-map <c-w>O <c-w>w<c-w>_<c-w><bar>
-map <silent><F3>  :let NERDTreeQuitOnOpen=1<CR>:call SwitchToNerdTree("")<CR>
-map <silent><F4>  :let NERDTreeQuitOnOpen=1<CR>:call SwitchToNerdTree("%")<CR>
-map <silent> <F2> :call BufferList()<CR>
 map tk :tabfirst<CR>
 map tl :tabnext<CR>
 map th :tabprev<CR>
@@ -146,7 +135,7 @@ syntax on
 colorscheme zenburn
 
 " Bufferlist
-map <silent> <F2> :call BufferList()<CR>:call ToggleCursorLine("__BUFFERLIST__")<CR>
+map <silent> <F2> :call BufferList()<CR>
 hi BufferSelected term=reverse ctermfg=black ctermbg=white cterm=bold
 hi BufferNormal term=NONE ctermfg=lightgrey ctermbg=black cterm=NONE
 let g:BufferListMaxWidth = 60
@@ -174,7 +163,7 @@ nmap [h <Plug>GitGutterPrevHunk
 
 " Airline
 let g:airline_powerline_fonts = 1
-let g:airline_theme='lucius'
+let g:airline_theme='zenburn'
 let g:airline_section_x=airline#section#create_right(['tagbar', ' ', 'filetype'])
 let g:airline_section_y=airline#section#create_right([])
 let g:airline#extensions#fugitiveline#enabled = 0
@@ -214,20 +203,18 @@ function! SwitchToNerdTree(path)
         exec("NERDTree " . a:path)
     endif
 endfunction
-let NERDTreeHijackNetrw=0
-let NERDTreeWinSize=40
-let NERDTreeIgnore=['\.pyc$']
+let NERDTreeHijackNetrw = 0
+let NERDTreeWinSize = 40
+let NERDTreeIgnore = ['\.pyc$']
+let NERDTreeQuitOnOpen = 1
+map <silent><F3> :call SwitchToNerdTree("")<CR>
+map <silent><F4> :call SwitchToNerdTree("%")<CR>
 
 " UtilSnips
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<c-j>"
 let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 let g:UltiSnipsEditSplit="vertical"
-
-" LanguageClient
-let g:LanguageClient_serverCommands = {
-    \ 'javascript': ['/home/satiani/javascript-typescript-stdio'],
-    \ }
 
 " vim-easy-align
 xmap ga <Plug>(EasyAlign)
