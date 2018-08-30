@@ -21,6 +21,10 @@ if dein#load_state('/home/satiani/.cache/dein')
   " Syntax
   call dein#add('isRuslan/vim-es6')
   call dein#add('ap/vim-css-color')
+  call dein#add('lepture/vim-jinja')
+  call dein#add('ElmCast/elm-vim')
+  call dein#add('mklabs/vim-backbone')
+  call dein#add('aaronj1335/underscore-templates.vim')
   " Navigation
   call dein#add('junegunn/fzf', { 'build': './install' })
   call dein#add('junegunn/fzf.vim', { 'depends': 'junegunn/fzf' })
@@ -37,7 +41,6 @@ if dein#load_state('/home/satiani/.cache/dein')
   call dein#add('davidhalter/jedi-vim')
   " Version control
   call dein#add('tpope/vim-fugitive')
-  call dein#add('airblade/vim-gitgutter')
   call dein#add('xuyuanp/nerdtree-git-plugin')
   " Styling
   call dein#add('vim-airline/vim-airline')
@@ -57,6 +60,7 @@ if dein#load_state('/home/satiani/.cache/dein')
   call dein#add('tpope/vim-sleuth')
   call dein#add('tpope/vim-repeat')
   call dein#add('henrik/vim-indexed-search')
+  call dein#add('tmhedberg/matchit')
   " Modes
   call dein#add('jceb/vim-orgmode')
 
@@ -65,19 +69,24 @@ if dein#load_state('/home/satiani/.cache/dein')
   call dein#save_state()
 endif
 
-" Required:
-filetype plugin indent on
-syntax enable
 
-if dein#check_install()
-  call dein#install()
-endif
+" if dein#check_install()
+"   call dein#install()
+" endif
 
 "End dein Scripts-------------------------
 
 "#############################################
 
 " Vim options
+colorscheme zenburn
+filetype plugin on
+filetype indent off
+syntax enable
+
+set directory=$HOME/vimswap/
+set undofile
+set undodir=$HOME/vimswap/
 set backspace=indent,eol,start
 set completeopt=longest,menuone
 set tw=120
@@ -114,30 +123,21 @@ map <Leader>p :colder<CR>
 map <Leader>f :exec("gr " . expand("<cword>"))<CR>
 " Replace word under cursor
 map <Leader>s :%s/\<<C-r><C-w>\>/
-map <Leader>S :!~/bin/parse_sql.py<CR>
 map tk :tabfirst<CR>
 map tl :tabnext<CR>
 map th :tabprev<CR>
 map tj :tablast<CR>
 map tn :tabnew<CR>
-
-" If you want to install not installed plugins on startup.
-"if dein#check_install()
-"  call dein#install()
-"endif
-
-"End dein Scripts-------------------------
-
-set directory=$HOME/vimswap/
-set undofile
-set undodir=$HOME/vimswap/
-syntax on
-colorscheme zenburn
+" Click F10 to get the highlight group under cursor
+" (http://vim.wikia.com/wiki/Identify_the_syntax_highlighting_group_used_at_the_cursor)
+map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
+\ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
+\ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
 " Bufferlist
 map <silent> <F2> :call BufferList()<CR>
-hi BufferSelected term=reverse ctermfg=black ctermbg=white cterm=bold
-hi BufferNormal term=NONE ctermfg=lightgrey ctermbg=black cterm=NONE
+hi BufferSelected term=reverse ctermfg=black ctermbg=white cterm=NONE
+hi BufferNormal term=NONE ctermfg=188 ctermbg=237 cterm=NONE
 let g:BufferListMaxWidth = 60
 
 " Rainbow Parentheses
@@ -224,3 +224,25 @@ let g:easy_align_ignore_groups = []
 map <silent><F5>  :TagbarToggle<CR>
 let g:tagbar_left = 1
 let g:tagbar_autoclose = 1
+
+" vim-sleuth
+" Disables behavior by vim-sleuth where it will turn on filetype indent
+let g:did_indent_on = 0
+
+
+" vmux
+function! VimuxIPython()
+    call VimuxSendText(@v)
+endfunction
+
+au BufEnter *.py vmap <buffer> <Leader>vr "vy :call VimuxIPython()<CR>
+map <Leader>vn :VimuxRunCommand("cd ~/code/web; ./npm_dev.sh")<CR>
+map <Leader>vi :VimuxRunCommand("cd ~/code/web; source venv/bin/activate; python manage.py shell")<CR>
+map <Leader>vl :VimuxRunCommand("tail -f /var/liwwa/log/**/*.log~**/*apache_access.log")<CR>
+map <Leader>vp :VimuxPromptCommand<CR>
+map <Leader>vc :VimuxCloseRunner<CR>
+
+" liwwa
+au BufWritePost *.py :silent !~/code/web/bin/compile_all.sh
+au BufEnter ~/code/web/app/static/**/*.html :set syntax=underscore_template
+au BufEnter *.html :silent RainbowToggleOff
