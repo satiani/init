@@ -1,37 +1,37 @@
 #!/bin/bash
-
+# vim:foldmethod=marker
+# Preamble {{{
 set -e
-
 SCRIPT_DIR=$(cd `dirname $0` && pwd)
-
-# install rust/cargo
+# }}}
+# rust/cargo {{{
 if ! [ -x "$(command -v cargo)" ]; then 
     curl http://sh.rustup.rs -sSf | sh
 fi
 export PATH=~/.cargo/bin/:$PATH
-
-# install tmux plugin manager
+# }}}
+# tmux plugin manager {{{
 if ! [ -d ~/.tmux ]; then
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 fi
-
-# install ripgrep using rust package manager
+# }}}
+# ripgrep {{{
 if ! [ -x "$(command -v rg)" ]; then 
     cargo install ripgrep
 fi
-
-# install fzf
+# }}}
+# fzf {{{
 if ! [ -d ~/.fzf ]; then
     git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
     ~/.fzf/install
 else
     echo "Skipping fzf installation"
 fi
-
-# install language servers
+# }}}
+# language servers {{{
 [ -d ~/.langservers ] || mkdir ~/.langservers
-
-# python
+# }}}
+# python language server {{{
 if [ -x "$(command -v virtualenv)" ] && ! [ -d ~/.langservers/python ]; then
     bash<<EOF
     mkdir ~/.langservers/python
@@ -45,15 +45,17 @@ EOF
 else
     echo "Skipping python language server installation."
 fi
-
-# install dein
+# }}}
+# install dein {{{
 source $SCRIPT_DIR/lib.sh
 install_dein ~/.cache/dein > /dev/null
-
+# }}}
+# vim {{{
 mkdir -pv $HOME/vimswap
-
+# }}}
+# dotfiles {{{
 for i in .*; do
-    if [ $i == "." ] || [ $i == ".." ]; then
+    if [ $i == "." ] || [ $i == ".." ] || [ $i == ".git" ]; then
         continue
     fi
     home_path=$HOME/`basename $i`
@@ -62,11 +64,12 @@ for i in .*; do
     fi;
     ln -s $PWD/$i $HOME
 done
-
+# }}}
+# configure git {{{
 git config --global user.name "Samer Atiani"
 git config --global user.email "satiani@gmail.com"
 git config --global color.ui auto
 git config --global alias.st status
 git config --global push.default simple
-
+# }}}
 echo "Done."

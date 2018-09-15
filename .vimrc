@@ -1,11 +1,15 @@
-"dein Scripts-----------------------------
+" Vim config
+" Samer Atiani - 2018
+" Preamble {{{
+" vim:foldmethod=marker
 if &compatible
   set nocompatible               " Be iMproved
 endif
 
 " Required:
 set runtimepath+=/home/satiani/.cache/dein/repos/github.com/Shougo/dein.vim
-
+" }}}
+" dein init {{{
 " Required:
 if dein#load_state('/home/satiani/.cache/dein')
   call dein#begin('/home/satiani/.cache/dein')
@@ -13,31 +17,35 @@ if dein#load_state('/home/satiani/.cache/dein')
   " Let dein manage dein
   " Required:
   call dein#add('/home/satiani/.cache/dein/repos/github.com/Shougo/dein.vim')
-
-  " Add or remove your plugins here:
-  " Snippets
+  " }}}
+" 3rd party plugins
+  " Snippets {{{
   call dein#add('SirVer/ultisnips')
   call dein#add('honza/vim-snippets')
-  " Syntax
+  " }}}
+  " Syntax {{{
   call dein#add('isRuslan/vim-es6')
   call dein#add('ap/vim-css-color')
   call dein#add('lepture/vim-jinja')
   call dein#add('ElmCast/elm-vim')
   call dein#add('mklabs/vim-backbone')
   call dein#add('aaronj1335/underscore-templates.vim')
-  " Navigation
+  " }}}
+  " Navigation {{{
   call dein#add('junegunn/fzf', { 'build': './install' })
   call dein#add('junegunn/fzf.vim', { 'depends': 'junegunn/fzf' })
   call dein#add('easymotion/vim-easymotion')
   call dein#add('roblillack/vim-bufferlist')
   call dein#add('scrooloose/nerdtree')
   call dein#add('majutsushi/tagbar')
-  " Text manipulation
+  " }}}
+  " Text manipulation {{{
   call dein#add('junegunn/vim-easy-align')
   call dein#add('mattn/emmet-vim')
   call dein#add('maxbrunsfeld/vim-yankstack')
   call dein#add('tpope/vim-speeddating')
-  " Code completion
+  " }}}
+  " Code completion {{{
   call dein#add('Shougo/deoplete.nvim')
   if !has('nvim')
     call dein#add('roxma/nvim-yarp')
@@ -46,47 +54,49 @@ if dein#load_state('/home/satiani/.cache/dein')
   endif
   call dein#add('carlitux/deoplete-ternjs')
   call dein#add('autozimu/LanguageClient-neovim', {'build': 'bash install.sh'})
-  " Version control
+  " }}}
+  " Version control {{{
   call dein#add('tpope/vim-fugitive')
   call dein#add('xuyuanp/nerdtree-git-plugin')
-  " Styling
+  " }}}
+  " Styling {{{
   call dein#add('vim-airline/vim-airline')
   call dein#add('vim-airline/vim-airline-themes')
   call dein#add('flazz/vim-colorschemes')
   call dein#add('luochen1990/rainbow')
-  call dein#add('edkolev/tmuxline.vim')
-  " External integrations
+  " }}}
+  " External integrations {{{
   call dein#add('w0rp/ale')
   call dein#add('benmills/vimux')
   call dein#add('pitluga/vimux-nose-test')
   call dein#add('tmux-plugins/vim-tmux-focus-events')
   call dein#add('roxma/vim-tmux-clipboard', { 'depends': 'tmux-plugins/vim-tmux-focus-events' })
   call dein#add('Shougo/vimshell.vim')
-  " Enhanced Vim behavior
+  " }}}
+  " Enhanced Vim behavior {{{
   call dein#add('tpope/vim-eunuch')
   call dein#add('tpope/vim-unimpaired')
   call dein#add('tpope/vim-sleuth')
   call dein#add('tpope/vim-repeat')
   call dein#add('henrik/vim-indexed-search')
   call dein#add('tmhedberg/matchit')
-  " Modes
+  " }}}
+  " Modes {{{
   call dein#add('jceb/vim-orgmode')
-
+  " }}}
+  " dein save state {{{
   " Required:
   call dein#end()
   call dein#save_state()
 endif
-
-
+" }}}
+" dein install on startup? {{{
 " if dein#check_install()
 "   call dein#install()
 " endif
-
-"End dein Scripts-------------------------
-
-"#############################################
-
-" Vim options
+" }}}
+" User settings
+" Vim options {{{
 colorscheme zenburn
 filetype plugin on
 filetype indent off
@@ -141,17 +151,17 @@ map tn :tabnew<CR>
 map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
 \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
 \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
-
-" Bufferlist
+" }}}
+" Bufferlist {{{
 map <silent> <F2> :call BufferList()<CR>
 hi BufferSelected term=reverse ctermfg=black ctermbg=white cterm=NONE
 hi BufferNormal term=NONE ctermfg=188 ctermbg=237 cterm=NONE
 let g:BufferListMaxWidth = 60
-
-" Rainbow Parentheses
+" }}}
+" Rainbow Parentheses {{{
 let g:rainbow_active = 1
-
-" FZF
+" }}}
+" FZF {{{
 nnoremap <C-p> :Files<CR>
 nnoremap <C-l> :BTags<CR>
 nnoremap <C-b> :Buffers<CR>
@@ -160,24 +170,23 @@ nnoremap <C-h> :Helptags<CR>
 let $FZF_DEFAULT_OPTS = '--bind ctrl-d:page-down,ctrl-u:page-up'
 let $FZF_DEFAULT_COMMAND = 'rg --files --follow --glob "!.git/*"'
 let g:fzf_history_dir = '~/.local/share/fzf-history'
-
-" deoplete
+" }}}
+" deoplete {{{
 let g:deoplete#enable_at_startup = 1
-
-" Gitgutter
+" }}}
+" Gitgutter {{{
 set updatetime=100
 nmap ]h <Plug>GitGutterNextHunk
 nmap [h <Plug>GitGutterPrevHunk
-
-" Airline
-let g:tmuxline_powerline_separators = 0
+" }}}
+" Airline {{{
 let g:airline_theme='lucius'
 let g:airline_section_x=airline#section#create_right(['tagbar', ' ', 'filetype'])
 let g:airline_section_y=airline#section#create_right([])
 let g:airline_symbols.branch=''
 let g:airline#extensions#fugitiveline#enabled = 0
-
-" ale
+" }}}
+" ale {{{
 let g:ale_fixers={
 \    'python': ['isort', 'autopep8'],
 \    'javascript': ['standard']
@@ -188,11 +197,11 @@ let g:ale_linters={
 nmap <Leader>F <Plug>(ale_fix)
 nmap <Leader>D <Plug>(ale_toggle_buffer)<CR>:GitGutterToggle<CR>
 highlight ALEError ctermbg=140
-
-" Fugitive
+" }}}
+" Fugitive {{{
 map <Leader>G :Gstatus<CR>
-
-" NERDTree
+" }}}
+" NERDTree {{{
 function! SwitchToNerdTree(path)
     if exists("t:NERDTreeBufName")
         let winnr = bufwinnr(t:NERDTreeBufName)
@@ -218,28 +227,27 @@ let NERDTreeIgnore = ['\.pyc$']
 let NERDTreeQuitOnOpen = 1
 map <silent><F3> :call SwitchToNerdTree("")<CR>
 map <silent><F4> :call SwitchToNerdTree("%")<CR>
-
-" UtilSnips
+" }}}
+" UtilSnips {{{
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<c-j>"
 let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 let g:UltiSnipsEditSplit="vertical"
-
-" vim-easy-align
+" }}}
+" vim-easy-align {{{
 xmap ga <Plug>(EasyAlign)
 let g:easy_align_ignore_groups = []
-
-" Tagbar
+" }}}
+" Tagbar {{{
 map <silent><F5>  :TagbarToggle<CR>
 let g:tagbar_left = 1
 let g:tagbar_autoclose = 1
-
-" vim-sleuth
+" }}}
+" vim-sleuth {{{
 " Disables behavior by vim-sleuth where it will turn on filetype indent
 let g:did_indent_on = 0
-
-
-" vmux
+" }}}
+" vimux {{{
 function! VimuxIPython()
     call VimuxSendText(@v)
 endfunction
@@ -250,16 +258,16 @@ map <Leader>vi :VimuxRunCommand("cd ~/code/web; source venv/bin/activate; python
 map <Leader>vl :VimuxRunCommand("tail -f /var/liwwa/log/**/*.log~**/*apache_access.log")<CR>
 map <Leader>vp :VimuxPromptCommand<CR>
 map <Leader>vc :VimuxCloseRunner<CR>
-
-" deoplete
+" }}}
+" deoplete {{{
 let g:deoplete#enable_at_startup = 1
-
-" deoplete-ternjs
+" }}}
+" deoplete-ternjs {{{
 let g:deoplete#sources#ternjs#tern_bin = '~/code/web/app/static/node_modules/ternjs/bin/tern'
 let g:deoplete#sources#ternjs#types = 1
 let g:deoplete#sources#ternjs#depths = 1
-
-" LanguageServer
+" }}}
+" LanguageServer {{{
 let g:LanguageClient_serverCommands = {
     \ 'python': ['~/.langservers/python/venv/bin/pyls'],
     \ }
@@ -267,8 +275,9 @@ let g:LanguageClient_diagnosticsEnable = 0
 map <Leader>d :call LanguageClient_textDocument_definition()<CR>
 map <Leader>r :call LanguageClient#textDocument_rename()<CR>
 map <Leader>t :call LanguageClient_textDocument_documentSymbol()<CR>
-
-" liwwa
+" }}}
+" liwwa {{{
 au BufWritePost *.py :silent !~/code/web/bin/compile_all.sh
 au BufEnter ~/code/web/app/static/**/*.html :set syntax=underscore_template
 au BufEnter *.html :silent RainbowToggleOff
+" }}}
