@@ -1,160 +1,178 @@
-"" Vim Options
-if expand("$USER") == "satiani"
-    set directory=$HOME/vimswap/
-    set undofile
-    set undodir=$HOME/vimswap/
+"dein Scripts-----------------------------
+if &compatible
+  set nocompatible               " Be iMproved
 endif
 
-let g:yankring_history_dir= expand('$HOME') . '/.yankring'
-if ! isdirectory(g:yankring_history_dir)
-    call mkdir(g:yankring_history_dir, "p")
+" Required:
+set runtimepath+=/home/satiani/.cache/dein/repos/github.com/Shougo/dein.vim
+
+" Required:
+if dein#load_state('/home/satiani/.cache/dein')
+  call dein#begin('/home/satiani/.cache/dein')
+
+  " Let dein manage dein
+  " Required:
+  call dein#add('/home/satiani/.cache/dein/repos/github.com/Shougo/dein.vim')
+
+  " Add or remove your plugins here:
+  " Snippets
+  call dein#add('SirVer/ultisnips')
+  call dein#add('honza/vim-snippets')
+  " Syntax
+  call dein#add('isRuslan/vim-es6')
+  call dein#add('ap/vim-css-color')
+  call dein#add('lepture/vim-jinja')
+  call dein#add('ElmCast/elm-vim')
+  call dein#add('mklabs/vim-backbone')
+  call dein#add('aaronj1335/underscore-templates.vim')
+  " Navigation
+  call dein#add('junegunn/fzf', { 'build': './install' })
+  call dein#add('junegunn/fzf.vim', { 'depends': 'junegunn/fzf' })
+  call dein#add('easymotion/vim-easymotion')
+  call dein#add('roblillack/vim-bufferlist')
+  call dein#add('scrooloose/nerdtree')
+  call dein#add('majutsushi/tagbar')
+  " Text manipulation
+  call dein#add('junegunn/vim-easy-align')
+  call dein#add('mattn/emmet-vim')
+  call dein#add('maxbrunsfeld/vim-yankstack')
+  call dein#add('tpope/vim-speeddating')
+  " Code completion
+  call dein#add('Shougo/deoplete.nvim')
+  if !has('nvim')
+    call dein#add('roxma/nvim-yarp')
+    call dein#add('roxma/vim-hug-neovim-rpc')
+  endif
+  call dein#add('carlitux/deoplete-ternjs')
+  call dein#add('autozimu/LanguageClient-neovim', {'build': 'bash install.sh'})
+  " Version control
+  call dein#add('tpope/vim-fugitive')
+  call dein#add('xuyuanp/nerdtree-git-plugin')
+  " Styling
+  call dein#add('vim-airline/vim-airline')
+  call dein#add('vim-airline/vim-airline-themes')
+  call dein#add('flazz/vim-colorschemes')
+  call dein#add('luochen1990/rainbow')
+  call dein#add('edkolev/tmuxline.vim')
+  " External integrations
+  call dein#add('w0rp/ale')
+  call dein#add('benmills/vimux')
+  call dein#add('pitluga/vimux-nose-test')
+  call dein#add('tmux-plugins/vim-tmux-focus-events')
+  call dein#add('roxma/vim-tmux-clipboard', { 'depends': 'tmux-plugins/vim-tmux-focus-events' })
+  " Enhanced Vim behavior
+  call dein#add('tpope/vim-eunuch')
+  call dein#add('tpope/vim-unimpaired')
+  call dein#add('tpope/vim-sleuth')
+  call dein#add('tpope/vim-repeat')
+  call dein#add('henrik/vim-indexed-search')
+  call dein#add('tmhedberg/matchit')
+  " Modes
+  call dein#add('jceb/vim-orgmode')
+
+  " Required:
+  call dein#end()
+  call dein#save_state()
 endif
 
-set autoindent
+
+" if dein#check_install()
+"   call dein#install()
+" endif
+
+"End dein Scripts-------------------------
+
+"#############################################
+
+" Vim options
+colorscheme zenburn
+filetype plugin on
+filetype indent off
+syntax enable
+
+set directory=$HOME/vimswap/
+set undofile
+set undodir=$HOME/vimswap/
 set backspace=indent,eol,start
 set completeopt=longest,menuone
-set cpo&vim
-set cul
-set diffexpr="sdiff --strip-trailing-cr"
 set tw=120
 set diffopt=vertical,filler
 set expandtab
-set fileencodings=ucs-bom,utf-8,latin1
-" see :help fo-table for meaning
-set fo+=t
-set grepprg=ack
+if executable("rg")
+    set grepprg=rg\ --vimgrep\ --no-heading
+    set grepformat=%f:%l:%c:%m,%f:%l:%m
+endif
+set autoindent
 set hidden
 set history=50
 set ignorecase
 set incsearch
-set laststatus=2
 set modeline
-set printoptions=paper:letter
-set ruler
 set showmatch		" Show matching brackets.
 set smartcase
-set sts=4
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
+set sts=4
 set sw=4
 set t_Co=256
 set tags=tags;/
-set viminfo='20,\"50
 set wildmenu
 set wildignore+=*/*.class,*/*.o,*/*.lo,*/*.pyc,*/*.pyo,uploads/*
-set nohlsearch
-filetype off
-call pathogen#runtime_append_all_bundles()
-call pathogen#helptags()
-filetype plugin on
-
-"#############################################
 
 "" Key mappings
 let mapleader=","
-" file name completion
-inoremap  
+let maplocalleader="\\"
 map <F1> <nop>
-map <Leader>\ :n<CR>
-map <Leader>- :prev<CR>
-map <Leader>q :botright cwindow<CR>:setlocal nocul<CR>
-map <Leader>Q :botright lwindow<CR>:setlocal nocul<CR>
+map <Leader>q :botright cwindow<CR>
+map <Leader>Q :botright lwindow<CR>
 map <Leader>n :cnewer<CR>
 map <Leader>p :colder<CR>
-map <Leader>y :call YankLineInfo(0)<CR>
-map <Leader>Y :call YankLineInfo(1)<CR>
 map <Leader>f :exec("gr " . expand("<cword>"))<CR>
 " Replace word under cursor
 map <Leader>s :%s/\<<C-r><C-w>\>/
-map <Leader>S :!~/bin/parse_sql.py<CR>
-map <c-w>F <c-w>_<c-w><bar>
-map <c-w>O <c-w>w<c-w>_<c-w><bar>
-map <silent><F3>  :let NERDTreeQuitOnOpen=1<CR>:call SwitchToNerdTree("")<CR>
-map <silent><F4>  :let NERDTreeQuitOnOpen=1<CR>:call SwitchToNerdTree("%")<CR>
-map <silent> <F2> :call BufferList()<CR>:call ToggleCursorLine("__BUFFERLIST__")<CR>
 map tk :tabfirst<CR>
 map tl :tabnext<CR>
 map th :tabprev<CR>
 map tj :tablast<CR>
 map tn :tabnew<CR>
+" Click F10 to get the highlight group under cursor
+" (http://vim.wikia.com/wiki/Identify_the_syntax_highlighting_group_used_at_the_cursor)
+map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
+\ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
+\ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
-"#############################################
-
-"" General Settings
-let g:last_pos = 0
-syntax on
-colorscheme desert256
-highlight OverLength ctermbg=red ctermfg=white guibg=#592929
-" Better filename matching
-" Same as VIM default but without '=' and ','
-let &isfname="@,48-57,/,.,-,_,+,#,$,%,~"
-au BufReadPost * if getfsize(bufname("%")) > 250000 | set syntax= | endif
-
-"#############################################
-
-"" Plugin settings:
-
-" NERDTree
-let NERDTreeHijackNetrw=0
-let NERDTreeWinSize=40
-let NERDTreeIgnore=['\.pyc$']
-
-" TagList
-let Tlist_Ctags_Cmd = '/usr/bin/ctags'
-let Tlist_WinWidth = 50
-let g:tlist_php_settings='php;f:function'
-let Tlist_Show_One_File = 1
-let Tlist_Close_On_Select = 1
-let Tlist_GainFocus_On_ToggleOpen = 1
-
-" BufferList (F2)
+" Bufferlist
+map <silent> <F2> :call BufferList()<CR>
+hi BufferSelected term=reverse ctermfg=black ctermbg=white cterm=NONE
+hi BufferNormal term=NONE ctermfg=188 ctermbg=237 cterm=NONE
 let g:BufferListMaxWidth = 60
 
 " Rainbow Parentheses
-au VimEnter * RainbowParenthesesToggle
-au Syntax * RainbowParenthesesLoadRound
-au Syntax * RainbowParenthesesLoadSquare
-au Syntax * RainbowParenthesesLoadBraces
+let g:rainbow_active = 1
 
-" CtrlP
-let g:ctrlp_match_window_bottom = 0
-let g:ctrlp_clear_cache_on_exit = 0
-let g:ctrlp_cmd = 'CtrlPLastMode'
-let g:ctrlp_max_files = 50000
-let g:ctrlp_lazy_update = 100
-let g:ctrlp_working_path_mode = '0'
-let g:ctrlp_custom_ignore = 'admin_inbound_mail\|web/whoosh\|node_modules\|.git\|web/venv'
+" FZF
+nnoremap <C-p> :Files<CR>
+nnoremap <C-l> :BTags<CR>
+nnoremap <C-b> :Buffers<CR>
+nnoremap <C-c> :History:<CR>
+nnoremap <C-h> :Helptags<CR>
+let $FZF_DEFAULT_OPTS = '--bind ctrl-d:page-down,ctrl-u:page-up'
+let $FZF_DEFAULT_COMMAND = 'rg --files --follow --glob "!.git/*"'
+let g:fzf_history_dir = '~/.local/share/fzf-history'
 
-" Gundo
-let g:gundo_help = 0
-map <Leader>u :GundoToggle<CR>
+" deoplete
+let g:deoplete#enable_at_startup = 1
 
-" Yank Ring
-let g:yankring_min_element_length = 1
-let g:yankring_manual_clipboard_check = 0
-let g:yankring_replace_n_pkey = 'p' " Alt - P
-let g:yankring_replace_n_nkey = 'n' " Alt - N
-map <Leader>r :YRShow<CR>
+" Gitgutter
+set updatetime=100
+nmap ]h <Plug>GitGutterNextHunk
+nmap [h <Plug>GitGutterPrevHunk
 
-" Fugitive
-map <Leader>G :Gstatus<CR>
-
-" Jedi-Vim
-let g:jedi#rename_command = '<Leader>n'
-let g:jedi#related_names = ''
-" Uncomment lines below to help with performance
-" let g:jedi#popup_on_dot = 0
-" let g:jedi#show_call_signatures = 0
-
-" Supertab
-let g:SuperTabDefaultCompletionType = "context"
-let g:SuperTabMappingForward = '<c-space>'
-let g:SuperTabMappingBackward = '<s-c-space>'
-
-" UtilSnips
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<c-j>"
-let g:UltiSnipsJumpBackwardTrigger="<c-k>"
-let g:UltiSnipsEditSplit="vertical"
+" Airline
+let g:airline_powerline_fonts = 1
+let g:airline_theme='lucius'
+let g:airline_section_x=airline#section#create_right(['tagbar', ' ', 'filetype'])
+let g:airline_section_y=airline#section#create_right([])
+let g:airline#extensions#fugitiveline#enabled = 0
 
 " ale
 let g:ale_fixers={
@@ -168,30 +186,10 @@ nmap <Leader>F <Plug>(ale_fix)
 nmap <Leader>D <Plug>(ale_toggle_buffer)<CR>:GitGutterToggle<CR>
 highlight ALEError ctermbg=140
 
-" Gitgutter
-set updatetime=100
-nmap ]h <Plug>GitGutterNextHunk
-nmap [h <Plug>GitGutterPrevHunk
+" Fugitive
+map <Leader>G :Gstatus<CR>
 
-" Airline
-let g:airline_theme='angr'
-let g:airline_powerline_fonts = 1
-
-" Tagbar
-map <silent><F5>  :TagbarToggle<CR>
-let g:tagbar_left = 1
-let g:tagbar_autoclose = 1
-
-"#############################################
-
-"" Utility functions
-function! ChangeCurrDir()
-    let _dir = expand("%:p:h")
-    exec join(["cd", escape(_dir, " ")])
-    echo "Changed current directory to " . _dir
-    unlet _dir
-endfunction
-
+" NERDTree
 function! SwitchToNerdTree(path)
     if exists("t:NERDTreeBufName")
         let winnr = bufwinnr(t:NERDTreeBufName)
@@ -205,97 +203,69 @@ function! SwitchToNerdTree(path)
         endif
     endif
 
-    if a:path == "" 
+    if a:path == ""
         NERDTreeToggle
     else
         exec("NERDTree " . a:path)
     endif
 endfunction
+let NERDTreeHijackNetrw = 0
+let NERDTreeWinSize = 40
+let NERDTreeIgnore = ['\.pyc$']
+let NERDTreeQuitOnOpen = 1
+map <silent><F3> :call SwitchToNerdTree("")<CR>
+map <silent><F4> :call SwitchToNerdTree("%")<CR>
 
-function! MakeReversibleMapping(name, mapped)
-    if !exists("g:satiani_reversible_maps")
-        let g:satiani_reversible_maps = {}
-    endif
+" UtilSnips
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-j>"
+let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+let g:UltiSnipsEditSplit="vertical"
 
-    " Only supports normal mode ("n") for now
-    let _current_map = maparg(a:name, "n")
-    let g:satiani_reversible_maps[a:name] = _current_map
-    if len(_current_map) > 0
-        exec("unmap " . a:name)
-    endif
-    exec("map " . a:name . " " . a:mapped)
+" vim-easy-align
+xmap ga <Plug>(EasyAlign)
+let g:easy_align_ignore_groups = []
+
+" Tagbar
+map <silent><F5>  :TagbarToggle<CR>
+let g:tagbar_left = 1
+let g:tagbar_autoclose = 1
+
+" vim-sleuth
+" Disables behavior by vim-sleuth where it will turn on filetype indent
+let g:did_indent_on = 0
+
+
+" vmux
+function! VimuxIPython()
+    call VimuxSendText(@v)
 endfunction
 
-function! RevertMap(name)
-    if exists("g:satiani_reversible_maps[a:name]")
-        let _old_map = g:satiani_reversible_maps[a:name]
-        exec("unmap " . a:name)
-        if len(_old_map) > 0
-            exec("map " . a:name . " " . _old_map)
-        endif
-    else
-        exec("unmap " . a:name)
-    endif
-endfunction
+au BufEnter *.py vmap <buffer> <Leader>vr "vy :call VimuxIPython()<CR>
+map <Leader>vn :VimuxRunCommand("cd ~/code/web; ./npm_dev.sh")<CR>
+map <Leader>vi :VimuxRunCommand("cd ~/code/web; source venv/bin/activate; python manage.py shell")<CR>
+map <Leader>vl :VimuxRunCommand("tail -f /var/liwwa/log/**/*.log~**/*apache_access.log")<CR>
+map <Leader>vp :VimuxPromptCommand<CR>
+map <Leader>vc :VimuxCloseRunner<CR>
 
-function! RevertAllMaps()
-    if exists("g:satiani_reversible_maps")
-        for key in keys(g:satiani_reversible_maps)
-            call RevertMap(key)
-        endfor
-    endif
-endfunction
+" deoplete
+let g:deoplete#enable_at_startup = 1
 
-function! ToggleOverLengthMatch()
-    if !exists("b:overlength_match_flag")
-        "TODO: find a way to use a variable in the pattern used in the match
-        "command. Without this, we'll have to use hardcoded overlength
-        "thresholds. Using 'execute' trick doesn't work for some reason.
-        match OverLength /\%111v.*/
-        let b:overlength_match_flag = 1
-        let b:previous_text_width = &tw
-        setlocal tw=110
-        echo "Changed textwidth to 110"
-    else
-        match none
-        unlet b:overlength_match_flag
-        "setlocal takes only number literals, to use variables
-        "one must construct the command dynamically
-        execute 'setlocal tw=' . b:previous_text_width
-        echo "Reset textwidth to " . b:previous_text_width
-        unlet b:previous_text_width
-    endif
-endfunction
+" deoplete-ternjs
+let g:deoplete#sources#ternjs#tern_bin = '~/code/web/app/static/node_modules/ternjs/bin/tern'
+let g:deoplete#sources#ternjs#types = 1
+let g:deoplete#sources#ternjs#depths = 1
 
-function! ToggleCursorLine(buf_name)
-    if bufname("%") == a:buf_name
-        setlocal nocul
-        return
-    endif
-endfunction
+" LanguageServer
+let g:LanguageClient_serverCommands = {
+    \ 'python': ['~/.langservers/python/venv/bin/pyls'],
+    \ }
+let g:LanguageClient_diagnosticsEnable = 0
+map <Leader>d :call LanguageClient_textDocument_definition()<CR>
+map <Leader>r :call LanguageClient#textDocument_rename()<CR>
+map <Leader>t :call LanguageClient_textDocument_documentSymbol()<CR>
 
-function! YankLineInfo(get_contents)
-    let curr_buff = bufname('%')
-    let curr_line = line('.')
-    let register = curr_buff . ":" . curr_line
-    if a:get_contents
-        let curr_contents = getline(line('.'))
-        let register .= ": " . curr_contents
-    endif
-    call setreg('*', register)
-endfunction
-
-function WriteCreatingDirs()
-    execute ':silent !mkdir -p %:h'
-    write
-endfunction
-
-"#############################################
-
-" load files in a directory that is not tracked by git
-let local_path="$HOME/.vim/local/*.vim"
-if glob(local_path) != ""
-    for f in split(glob(local_path), '\n')
-        exec("source " . f)
-    endfor
-endif
+" liwwa
+au BufWritePost *.py :silent !~/code/web/bin/compile_all.sh
+au BufEnter ~/code/web/app/static/**/*.html :set syntax=underscore_template
+au BufEnter *.html :silent RainbowToggleOff

@@ -94,3 +94,5 @@ add_jars_to_classpath(){
     fi
 }
 
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
