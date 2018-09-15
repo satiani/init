@@ -93,3 +93,8 @@ alias site='cd ~/code/web && source venv/bin/activate'
 export PATH="$HOME/.cargo/bin:$PATH"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+export FZF_COMPLETION_TRIGGER='/'
+
+_fzf_compgen_path() {
+  rg --files --follow --glob "!.git/*" "$1"
+}

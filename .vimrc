@@ -42,6 +42,7 @@ if dein#load_state('/home/satiani/.cache/dein')
   if !has('nvim')
     call dein#add('roxma/nvim-yarp')
     call dein#add('roxma/vim-hug-neovim-rpc')
+    call dein#add('Shougo/vimproc.vim', {'build' : 'make'})
   endif
   call dein#add('carlitux/deoplete-ternjs')
   call dein#add('autozimu/LanguageClient-neovim', {'build': 'bash install.sh'})
@@ -60,6 +61,7 @@ if dein#load_state('/home/satiani/.cache/dein')
   call dein#add('pitluga/vimux-nose-test')
   call dein#add('tmux-plugins/vim-tmux-focus-events')
   call dein#add('roxma/vim-tmux-clipboard', { 'depends': 'tmux-plugins/vim-tmux-focus-events' })
+  call dein#add('Shougo/vimshell.vim')
   " Enhanced Vim behavior
   call dein#add('tpope/vim-eunuch')
   call dein#add('tpope/vim-unimpaired')
@@ -168,10 +170,11 @@ nmap ]h <Plug>GitGutterNextHunk
 nmap [h <Plug>GitGutterPrevHunk
 
 " Airline
-let g:airline_powerline_fonts = 1
+let g:tmuxline_powerline_separators = 0
 let g:airline_theme='lucius'
 let g:airline_section_x=airline#section#create_right(['tagbar', ' ', 'filetype'])
 let g:airline_section_y=airline#section#create_right([])
+let g:airline_symbols.branch=''
 let g:airline#extensions#fugitiveline#enabled = 0
 
 " ale

@@ -10,9 +10,22 @@ if ! [ -x "$(command -v cargo)" ]; then
 fi
 export PATH=~/.cargo/bin/:$PATH
 
+# install tmux plugin manager
+if ! [ -d ~/.tmux ]; then
+    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+fi
+
 # install ripgrep using rust package manager
 if ! [ -x "$(command -v rg)" ]; then 
     cargo install ripgrep
+fi
+
+# install fzf
+if ! [ -d ~/.fzf ]; then
+    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+    ~/.fzf/install
+else
+    echo "Skipping fzf installation"
 fi
 
 # install language servers
