@@ -46,7 +46,11 @@ if dein#load_state('/home/satiani/.cache/dein')
   call dein#add('tpope/vim-speeddating')
   " }}}
   " Code completion {{{
+  
   call dein#add('Shougo/deoplete.nvim')
+  call dein#config('deoplete.nvim', {
+  \ 'lazy' : 1, 'on_i' : 1,
+  \ })
   if !has('nvim')
     call dein#add('roxma/nvim-yarp')
     call dein#add('roxma/vim-hug-neovim-rpc')
@@ -63,6 +67,8 @@ if dein#load_state('/home/satiani/.cache/dein')
   call dein#add('vim-airline/vim-airline')
   call dein#add('vim-airline/vim-airline-themes')
   call dein#add('flazz/vim-colorschemes')
+  call dein#add('xolox/vim-misc')
+  call dein#add('xolox/vim-colorscheme-switcher', { 'depends': 'xolox/vim-misc' })
   call dein#add('luochen1990/rainbow')
   " }}}
   " External integrations {{{
@@ -83,6 +89,8 @@ if dein#load_state('/home/satiani/.cache/dein')
   " }}}
   " Modes {{{
   call dein#add('jceb/vim-orgmode')
+  " }}}
+  " Vim tools {{{
   " }}}
   " dein save state {{{
   " Required:
@@ -172,7 +180,7 @@ let $FZF_DEFAULT_COMMAND = 'rg --files --follow --glob "!.git/*"'
 let g:fzf_history_dir = '~/.local/share/fzf-history'
 " }}}
 " deoplete {{{
-let g:deoplete#enable_at_startup = 1
+let g:deoplete#enable_at_startup = 0
 " }}}
 " Gitgutter {{{
 set updatetime=100

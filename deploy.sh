@@ -6,7 +6,7 @@ SCRIPT_DIR=$(cd `dirname $0` && pwd)
 # }}}
 # rust/cargo {{{
 if ! [ -x "$(command -v cargo)" ]; then 
-    curl http://sh.rustup.rs -sSf | sh
+    curl https://sh.rustup.rs -sSf | sh
 fi
 export PATH=~/.cargo/bin/:$PATH
 # }}}
