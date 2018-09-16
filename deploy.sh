@@ -50,13 +50,6 @@ fi
 source $SCRIPT_DIR/lib.sh
 install_dein ~/.cache/dein > /dev/null
 # }}}
-# vim/nvim {{{
-mkdir -pv $HOME/vimswap
-mkdir -pv $HOME/.config/nvim/
-if ! [ -e $HOME/.config/nvim/init.vim ]; then
-    ln -sv $HOME/.vimrc $HOME/.config/nvim/init.vim
-fi
-# }}}
 # dotfiles {{{
 for i in .*; do
     if [ $i == "." ] || [ $i == ".." ] || [ $i == ".git" ] || [ $i == *.old ]; then
@@ -69,6 +62,13 @@ for i in .*; do
     fi;
     ln -s $PWD/$i $HOME
 done
+# }}}
+# vim/nvim {{{
+mkdir -pv $HOME/vimswap
+mkdir -pv $HOME/.config/nvim/
+if ! [ -e $HOME/.config/nvim/init.vim ]; then
+    ln -sv $HOME/.vimrc $HOME/.config/nvim/init.vim
+fi
 # }}}
 # configure git {{{
 git config --global user.name "Samer Atiani"
