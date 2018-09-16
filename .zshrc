@@ -41,12 +41,12 @@ bindkey '[3~' delete-char
 bindkey '' run-help
 # }}}
 # Exports {{{
+export PATH="$HOME/.cargo/bin:/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/bin:$PATH:~/bin"
 export VIM_BIN="vim"
 [ "$(command -v nvim)" ] && export VIM_BIN="nvim"
 export ON_A_MAC=`([ $( uname ) == "Darwin" ] && echo "true") || echo "false"`
 export LSCOLORS="Gxfxcxdxbxegedabagacad"
 export LC_ALL=en_US.UTF-8
-export PATH="$HOME/.cargo/bin:/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/bin:$PATH:~/bin"
 export EDITOR="$VIM_BIN"
 export FZF_COMPLETION_TRIGGER='/'
 export FZF_DEFAULT_COMMAND='rg --files --follow -uu'
@@ -58,7 +58,7 @@ export SAVEHIST=1000
 alias vi="$VIM_BIN"
 alias vim="$VIM_BIN"
 alias speedtest='wget -O /dev/null http://speedtest.wdc01.softlayer.com/downloads/test100.zip'
-alias ls='ls --color=auto'
+[ "$ON_A_MAC" -eq "false" ] && alias ls='ls --color=auto' || alias ls='ls -G'
 alias grep='grep --color=auto'
 alias site='cd ~/code/web && source venv/bin/activate'
 # }}}

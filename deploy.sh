@@ -50,17 +50,22 @@ fi
 source $SCRIPT_DIR/lib.sh
 install_dein ~/.cache/dein > /dev/null
 # }}}
-# vim {{{
+# vim/nvim {{{
 mkdir -pv $HOME/vimswap
+mkdir -pv $HOME/.config/nvim/
+if ! [ -e $HOME/.config/nvim/init.vim ]; then
+    ln -sv $HOME/.vimrc $HOME/.config/nvim/init.vim
+fi
 # }}}
 # dotfiles {{{
 for i in .*; do
-    if [ $i == "." ] || [ $i == ".." ] || [ $i == ".git" ]; then
+    if [ $i == "." ] || [ $i == ".." ] || [ $i == ".git" ] || [ $i == *.old ]; then
         continue
     fi
     home_path=$HOME/`basename $i`
     if [ -f $home_path -o -L $home_path ]; then
-        mv $home_path ${home_path}.old;
+        rm ${home_path}.old
+        mv $home_path ${home_path}.old
     fi;
     ln -s $PWD/$i $HOME
 done

@@ -7,16 +7,16 @@ if &compatible
 endif
 
 " Required:
-set runtimepath+=/home/satiani/.cache/dein/repos/github.com/Shougo/dein.vim
+set runtimepath+=~/.cache/dein/repos/github.com/Shougo/dein.vim
 " }}}
 " dein init {{{
 " Required:
-if dein#load_state('/home/satiani/.cache/dein')
-  call dein#begin('/home/satiani/.cache/dein')
+if dein#load_state('~/.cache/dein')
+  call dein#begin('~/.cache/dein')
 
   " Let dein manage dein
   " Required:
-  call dein#add('/home/satiani/.cache/dein/repos/github.com/Shougo/dein.vim')
+  call dein#add('~/.cache/dein/repos/github.com/Shougo/dein.vim')
   " }}}
 " 3rd party plugins
   " Snippets {{{
