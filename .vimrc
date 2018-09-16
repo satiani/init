@@ -42,7 +42,7 @@ if dein#load_state('~/.cache/dein')
   " Text manipulation {{{
   call dein#add('junegunn/vim-easy-align')
   call dein#add('mattn/emmet-vim')
-  call dein#add('maxbrunsfeld/vim-yankstack')
+  call dein#add('bfredl/nvim-miniyank')
   call dein#add('tpope/vim-speeddating')
   " }}}
   " Code completion {{{
@@ -70,6 +70,7 @@ if dein#load_state('~/.cache/dein')
   call dein#add('xolox/vim-misc')
   call dein#add('xolox/vim-colorscheme-switcher', { 'depends': 'xolox/vim-misc' })
   call dein#add('luochen1990/rainbow')
+  call dein#add('fenetikm/falcon')
   " }}}
   " External integrations {{{
   call dein#add('w0rp/ale')
@@ -105,11 +106,12 @@ endif
 " }}}
 " User settings
 " Vim options {{{
-colorscheme zenburn
+colorscheme falcon
 filetype plugin on
 filetype indent off
 syntax enable
 
+set termguicolors
 set directory=$HOME/vimswap/
 set undofile
 set undodir=$HOME/vimswap/
@@ -160,6 +162,9 @@ map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans
 \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
 \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 " }}}
+" dein {{{
+map <F9> :call dein#install()<CR>
+" }}}
 " Bufferlist {{{
 map <silent> <F2> :call BufferList()<CR>
 hi BufferSelected term=reverse ctermfg=black ctermbg=white cterm=NONE
@@ -188,7 +193,7 @@ nmap ]h <Plug>GitGutterNextHunk
 nmap [h <Plug>GitGutterPrevHunk
 " }}}
 " Airline {{{
-let g:airline_theme='lucius'
+let g:airline_theme='falcon'
 let g:airline_section_x=airline#section#create_right(['tagbar', ' ', 'filetype'])
 let g:airline_section_y=airline#section#create_right([])
 let g:airline_symbols.branch=''
@@ -285,6 +290,11 @@ let g:LanguageClient_diagnosticsEnable = 0
 map <Leader>d :call LanguageClient_textDocument_definition()<CR>
 map <Leader>r :call LanguageClient#textDocument_rename()<CR>
 map <Leader>t :call LanguageClient_textDocument_documentSymbol()<CR>
+" }}}
+" miniyank {{{
+map p <Plug>(miniyank-autoput)
+map P <Plug>(miniyank-autoPut)
+map <localleader>[ <Plug>(miniyank-cycle)
 " }}}
 " liwwa {{{
 au BufWritePost *.py :silent !~/code/web/bin/compile_all.sh
