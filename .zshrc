@@ -86,4 +86,5 @@ for zsh_file (~/.zsh/**/*.zsh) source $zsh_file
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 export FZF_COMPLETION_TRIGGER='/'
 export FZF_DEFAULT_COMMAND='rg --no-ignore --files --follow -uu 2>/dev/null'
+export FZF_DEFAULT_OPTS='--bind ctrl-d:page-down,ctrl-u:page-up'
 # }}}

@@ -185,11 +185,6 @@ let $FZF_DEFAULT_OPTS = '--bind ctrl-d:page-down,ctrl-u:page-up'
 let $FZF_DEFAULT_COMMAND = 'rg --hidden --files --follow --glob "!.git/*" 2>/dev/null'
 let g:fzf_history_dir = '~/.local/share/fzf-history'
 " }}}
-" Gitgutter {{{
-set updatetime=100
-nmap ]h <Plug>GitGutterNextHunk
-nmap [h <Plug>GitGutterPrevHunk
-" }}}
 " Airline {{{
 let g:airline_theme='falcon'
 let g:airline_section_x=airline#section#create_right(['tagbar', ' ', 'filetype'])
@@ -206,7 +201,7 @@ let g:ale_linters={
 \    'javascript': ['standard'],
 \}
 nmap <Leader>F <Plug>(ale_fix)
-nmap <Leader>D <Plug>(ale_toggle_buffer)<CR>:GitGutterToggle<CR>
+nmap <Leader>D <Plug>(ale_toggle_buffer)<CR>
 highlight ALEError ctermbg=140
 " }}}
 " Fugitive {{{
@@ -261,7 +256,8 @@ let g:did_indent_on = 0
 " vimux/neovim terminal {{{
 if has('nvim')
   map <Leader>vn :10split term://~/code/web/npm_dev.sh \| startinsert<CR>
-  map <Leader>vi :20split term://zsh \| sleep 100m \| startinsert<CR>cd ~/code/web && source venv/bin/activate && python manage.py shell<CR>
+  map <Leader>vi :20split term://zsh \| sleep 100m \| startinsert<CR>cd ~/code/web && source venv/bin/activate && python manage.py shell<CR><C-\><C-n>
+  map <Leader>vl :10split term://zsh \| sleep 100m \| startinsert<CR>tail -f /var/liwwa/log/**/*.log~**/*apache_access.log<CR><C-\><C-n>
 else
   function! VimuxIPython()
       call VimuxSendText(@v)
@@ -277,9 +273,9 @@ endif
 " tern for vim {{{
 let g:tern#command = [expand("~/.langservers/javascript/run.sh")]
 let g:tern#arguments = ["--persistent"]
-au FileType javascript map <Leader>D :TernDef<CR>
-au FileType javascript map <Leader>d :TernDefPreview<CR>
-au FileType javascript map <Leader>r :TernRename<CR>
+au FileType javascript map <buffer> <Leader>D :TernDef<CR>
+au FileType javascript map <buffer> <Leader>d :TernDefPreview<CR>
+au FileType javascript map <buffer> <Leader>r :TernRename<CR>
 " }}}
 " deoplete {{{
 let g:deoplete#enable_at_startup = 1
@@ -302,9 +298,9 @@ let g:LanguageClient_serverCommands = {
     \ 'python': ['~/.langservers/python/run.sh', '~/code/web/venv/'],
     \ }
 let g:LanguageClient_diagnosticsEnable = 0
-au FileType python map <Leader>d :call LanguageClient_textDocument_definition()<CR>
-au FileType python map <Leader>r :call LanguageClient#textDocument_rename()<CR>
-au FileType python map <Leader>t :call LanguageClient_textDocument_documentSymbol()<CR>
+au FileType python map <buffer> <Leader>d :call LanguageClient_textDocument_definition()<CR>
+au FileType python map <buffer> <Leader>r :call LanguageClient#textDocument_rename()<CR>
+au FileType python map <buffer> <Leader>t :call LanguageClient_textDocument_documentSymbol()<CR>
 " }}}
 " miniyank {{{
 map p <Plug>(miniyank-autoput)
