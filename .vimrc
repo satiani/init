@@ -182,7 +182,7 @@ nnoremap <C-b> :Buffers<CR>
 nnoremap <C-c> :History:<CR>
 nnoremap <C-h> :Helptags<CR>
 let $FZF_DEFAULT_OPTS = '--bind ctrl-d:page-down,ctrl-u:page-up'
-let $FZF_DEFAULT_COMMAND = 'rg --hidden --files --follow --glob "!.git/*"'
+let $FZF_DEFAULT_COMMAND = 'rg --hidden --files --follow --glob "!.git/*" 2>/dev/null'
 let g:fzf_history_dir = '~/.local/share/fzf-history'
 " }}}
 " Gitgutter {{{

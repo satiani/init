@@ -73,7 +73,7 @@ compinit
 # }}}
 # Custom functions {{{
 _fzf_compgen_path() {
-  rg --files --follow --glob "!.git/*" "$1"
+  rg --files --follow --glob "!.git/*" "$1" 2>/dev/null
 }
 # }}}
 # Sourcing external files {{{
@@ -85,5 +85,5 @@ for zsh_file (~/.zsh/**/*.zsh) source $zsh_file
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 export FZF_COMPLETION_TRIGGER='/'
-export FZF_DEFAULT_COMMAND='rg --no-ignore --files --follow -uu'
+export FZF_DEFAULT_COMMAND='rg --no-ignore --files --follow -uu 2>/dev/null'
 # }}}
