@@ -48,8 +48,6 @@ export ON_A_MAC=`([ $( uname ) == "Darwin" ] && echo "true") || echo "false"`
 export LSCOLORS="Gxfxcxdxbxegedabagacad"
 export LC_ALL=en_US.UTF-8
 export EDITOR="$VIM_BIN"
-export FZF_COMPLETION_TRIGGER='/'
-export FZF_DEFAULT_COMMAND='rg --files --follow -uu'
 export HISTFILE=~/.histfile
 export HISTSIZE=1000
 export SAVEHIST=1000
@@ -86,4 +84,6 @@ fi
 for zsh_file (~/.zsh/**/*.zsh) source $zsh_file
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+export FZF_COMPLETION_TRIGGER='/'
+export FZF_DEFAULT_COMMAND='rg --no-ignore --files --follow -uu'
 # }}}

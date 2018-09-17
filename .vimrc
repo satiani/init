@@ -27,7 +27,6 @@ if dein#load_state('~/.cache/dein')
   call dein#add('isRuslan/vim-es6')
   call dein#add('ap/vim-css-color')
   call dein#add('lepture/vim-jinja')
-  call dein#add('ElmCast/elm-vim')
   call dein#add('mklabs/vim-backbone')
   call dein#add('aaronj1335/underscore-templates.vim')
   " }}}
@@ -35,7 +34,7 @@ if dein#load_state('~/.cache/dein')
   call dein#add('junegunn/fzf', { 'build': './install' })
   call dein#add('junegunn/fzf.vim', { 'depends': 'junegunn/fzf' })
   call dein#add('easymotion/vim-easymotion')
-  call dein#add('roblillack/vim-bufferlist')
+  call dein#add('satiani/bufferlist.vim')
   call dein#add('scrooloose/nerdtree')
   call dein#add('majutsushi/tagbar')
   " }}}
@@ -46,22 +45,20 @@ if dein#load_state('~/.cache/dein')
   call dein#add('tpope/vim-speeddating')
   " }}}
   " Code completion {{{
-  
   call dein#add('Shougo/deoplete.nvim')
   call dein#config('deoplete.nvim', {
   \ 'lazy' : 1, 'on_i' : 1,
   \ })
+  call dein#add('carlitux/deoplete-ternjs')
+  call dein#add('ternjs/tern_for_vim')
   if !has('nvim')
     call dein#add('roxma/nvim-yarp')
     call dein#add('roxma/vim-hug-neovim-rpc')
-    call dein#add('Shougo/vimproc.vim', {'build' : 'make'})
   endif
-  call dein#add('carlitux/deoplete-ternjs')
   call dein#add('autozimu/LanguageClient-neovim', {'build': 'bash install.sh'})
   " }}}
   " Version control {{{
   call dein#add('tpope/vim-fugitive')
-  call dein#add('xuyuanp/nerdtree-git-plugin')
   " }}}
   " Styling {{{
   call dein#add('vim-airline/vim-airline')
@@ -76,12 +73,16 @@ if dein#load_state('~/.cache/dein')
   call dein#add('w0rp/ale')
   call dein#add('benmills/vimux')
   call dein#add('pitluga/vimux-nose-test')
-  call dein#add('tmux-plugins/vim-tmux-focus-events')
-  call dein#add('roxma/vim-tmux-clipboard', { 'depends': 'tmux-plugins/vim-tmux-focus-events' })
-  call dein#add('Shougo/vimshell.vim')
+  if !has('nvim')
+    call dein#add('Shougo/vimshell.vim')
+  endif
   " }}}
   " Enhanced Vim behavior {{{
-  call dein#add('tpope/vim-eunuch')
+  if has('nvim')
+    call dein#add('lambdalisue/suda.vim')
+  else
+    call dein#add('tpope/vim-eunuch')
+  endif
   call dein#add('tpope/vim-unimpaired')
   call dein#add('tpope/vim-sleuth')
   call dein#add('tpope/vim-repeat')
@@ -126,7 +127,7 @@ if executable("rg")
 endif
 set autoindent
 set hidden
-set history=50
+set history=1000
 set ignorecase
 set incsearch
 set modeline
@@ -148,7 +149,7 @@ map <Leader>q :botright cwindow<CR>
 map <Leader>Q :botright lwindow<CR>
 map <Leader>n :cnewer<CR>
 map <Leader>p :colder<CR>
-map <Leader>f :exec("gr " . expand("<cword>"))<CR>
+map <Leader>f :exec("Rg " . expand("<cword>"))<CR>
 " Replace word under cursor
 map <Leader>s :%s/\<<C-r><C-w>\>/
 map tk :tabfirst<CR>
@@ -181,11 +182,8 @@ nnoremap <C-b> :Buffers<CR>
 nnoremap <C-c> :History:<CR>
 nnoremap <C-h> :Helptags<CR>
 let $FZF_DEFAULT_OPTS = '--bind ctrl-d:page-down,ctrl-u:page-up'
-let $FZF_DEFAULT_COMMAND = 'rg --files --follow --glob "!.git/*"'
+let $FZF_DEFAULT_COMMAND = 'rg --hidden --files --follow --glob "!.git/*"'
 let g:fzf_history_dir = '~/.local/share/fzf-history'
-" }}}
-" deoplete {{{
-let g:deoplete#enable_at_startup = 0
 " }}}
 " Gitgutter {{{
 set updatetime=100
@@ -260,36 +258,53 @@ let g:tagbar_autoclose = 1
 " Disables behavior by vim-sleuth where it will turn on filetype indent
 let g:did_indent_on = 0
 " }}}
-" vimux {{{
-function! VimuxIPython()
-    call VimuxSendText(@v)
-endfunction
-
-au BufEnter *.py vmap <buffer> <Leader>vr "vy :call VimuxIPython()<CR>
-map <Leader>vn :VimuxRunCommand("cd ~/code/web; ./npm_dev.sh")<CR>
-map <Leader>vi :VimuxRunCommand("cd ~/code/web; source venv/bin/activate; python manage.py shell")<CR>
-map <Leader>vl :VimuxRunCommand("tail -f /var/liwwa/log/**/*.log~**/*apache_access.log")<CR>
-map <Leader>vp :VimuxPromptCommand<CR>
-map <Leader>vc :VimuxCloseRunner<CR>
+" vimux/neovim terminal {{{
+if has('nvim')
+  map <Leader>vn :10split term://~/code/web/npm_dev.sh \| startinsert<CR>
+  map <Leader>vi :20split term://zsh \| sleep 100m \| startinsert<CR>cd ~/code/web && source venv/bin/activate && python manage.py shell<CR>
+else
+  function! VimuxIPython()
+      call VimuxSendText(@v)
+  endfunction
+  au BufEnter *.py vmap <buffer> <Leader>vr "vy :call VimuxIPython()<CR>
+  map <Leader>vn :VimuxRunCommand("cd ~/code/web; ./npm_dev.sh")<CR>
+  map <Leader>vi :VimuxRunCommand("cd ~/code/web; source venv/bin/activate; python manage.py shell")<CR>
+  map <Leader>vl :VimuxRunCommand("tail -f /var/liwwa/log/**/*.log~**/*apache_access.log")<CR>
+  map <Leader>vp :VimuxPromptCommand<CR>
+  map <Leader>vc :VimuxCloseRunner<CR>
+endif
+" }}}
+" tern for vim {{{
+let g:tern#command = [expand("~/.langservers/javascript/run.sh")]
+let g:tern#arguments = ["--persistent"]
+au FileType javascript map <Leader>D :TernDef<CR>
+au FileType javascript map <Leader>d :TernDefPreview<CR>
+au FileType javascript map <Leader>r :TernRename<CR>
 " }}}
 " deoplete {{{
 let g:deoplete#enable_at_startup = 1
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+au BufEnter * inoremap <expr> <Tab> pumvisible() == 1 ? "\<C-n>" : "\<Tab>"
+au BufEnter * inoremap <expr> <S-Tab> pumvisible() == 1 ? "\<C-p>" : "\<S-Tab>"
 " }}}
 " deoplete-ternjs {{{
-let g:deoplete#sources#ternjs#tern_bin = '~/code/web/app/static/node_modules/ternjs/bin/tern'
+let g:deoplete#sources#ternjs#tern_bin = '/home/satiani/.langservers/javascript/run.sh'
 let g:deoplete#sources#ternjs#types = 1
 let g:deoplete#sources#ternjs#depths = 1
+let g:tern#filetypes = [
+            \ 'jsx',
+            \ 'javascript.jsx',
+            \ 'vue',
+            \ 'javascript'
+            \ ]
 " }}}
 " LanguageServer {{{
 let g:LanguageClient_serverCommands = {
-    \ 'python': ['~/.langservers/python/venv/bin/pyls'],
+    \ 'python': ['~/.langservers/python/run.sh', '~/code/web/venv/'],
     \ }
 let g:LanguageClient_diagnosticsEnable = 0
-map <Leader>d :call LanguageClient_textDocument_definition()<CR>
-map <Leader>r :call LanguageClient#textDocument_rename()<CR>
-map <Leader>t :call LanguageClient_textDocument_documentSymbol()<CR>
+au FileType python map <Leader>d :call LanguageClient_textDocument_definition()<CR>
+au FileType python map <Leader>r :call LanguageClient#textDocument_rename()<CR>
+au FileType python map <Leader>t :call LanguageClient_textDocument_documentSymbol()<CR>
 " }}}
 " miniyank {{{
 map p <Plug>(miniyank-autoput)

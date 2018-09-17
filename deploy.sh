@@ -41,9 +41,22 @@ if [ -x "$(command -v virtualenv)" ] && ! [ -d ~/.langservers/python ]; then
     pip install python-language-server
     pip install python-language-server[rope]
     pip install python-language-server[mccabe]
+    cp $SCRIPT_DIR/pythonls.sh ./run.sh
 EOF
 else
     echo "Skipping python language server installation."
+fi
+# }}}
+# javascript language server {{{
+if [ -x "$(command -v npm)" ] && ! [ -d ~/.langservers/javascript ]; then
+    bash<<EOF
+    mkdir ~/.langservers/javascript
+    cd ~/.langservers/javascript
+    cp $SCRIPT_DIR/javascriptls.sh ./run.sh
+    npm install -E ternjs
+EOF
+else
+    echo "Skipping javascript language server installation."
 fi
 # }}}
 # install dein {{{
@@ -57,7 +70,7 @@ for i in .*; do
     fi
     home_path=$HOME/`basename $i`
     if [ -f $home_path -o -L $home_path ]; then
-        rm ${home_path}.old
+        rm -f ${home_path}.old
         mv $home_path ${home_path}.old
     fi;
     ln -s $PWD/$i $HOME
