@@ -181,10 +181,10 @@ map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans
 augroup general_autocmds
   au!
   au FileType   javascript,python,sh,c,cpp,java,html,css,php,vim
-\               au BufWritePost * %s/\s\+$//e
+\               au BufWrite * %s/\s\+$//e
 augroup END
 " }}}
-" }}}                
+" }}}
 " dein {{{
 map <F9> :call dein#install()<CR>
 " }}}
