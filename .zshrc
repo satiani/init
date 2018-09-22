@@ -51,6 +51,7 @@ export EDITOR="$VIM_BIN"
 export HISTFILE=~/.histfile
 export HISTSIZE=1000
 export SAVEHIST=1000
+export MANPATH=~/.man/:$MANPATH
 # }}}
 # Aliases {{{
 alias vi="$VIM_BIN"

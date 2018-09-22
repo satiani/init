@@ -24,6 +24,8 @@ fi
 if ! [ -d ~/.fzf ]; then
     git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
     ~/.fzf/install
+    mkdir -p ~/.man/man1
+    cp -r ~/.fzf/man/man1/* ~/.man/man1
 else
     echo "Skipping fzf installation"
 fi
@@ -57,6 +59,17 @@ if [ -x "$(command -v npm)" ] && ! [ -d ~/.langservers/javascript ]; then
 EOF
 else
     echo "Skipping javascript language server installation."
+fi
+# }}}
+# bash language server {{{
+if ! [ -d ~/.langservers/bash ]; then
+    bash<<EOF
+    mkdir ~/.langservers/bash
+    cd ~/.langservers/bash
+    npm install -E bash-language-server
+EOF
+else
+    echo "Skipping bash language server installation."
 fi
 # }}}
 # install dein {{{

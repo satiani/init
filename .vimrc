@@ -8,6 +8,7 @@ endif
 
 " Required:
 set runtimepath+=~/.cache/dein/repos/github.com/Shougo/dein.vim
+set runtimepath+=.
 " }}}
 " dein init {{{
 " Required:
@@ -29,6 +30,7 @@ if dein#load_state('~/.cache/dein')
   call dein#add('lepture/vim-jinja')
   call dein#add('mklabs/vim-backbone')
   call dein#add('aaronj1335/underscore-templates.vim')
+  call dein#add('Yggdroot/indentLine')
   " }}}
   " Navigation {{{
   call dein#add('junegunn/fzf', { 'build': './install' })
@@ -37,6 +39,7 @@ if dein#load_state('~/.cache/dein')
   call dein#add('satiani/bufferlist.vim')
   call dein#add('scrooloose/nerdtree')
   call dein#add('majutsushi/tagbar')
+  call dein#add('sjl/gundo.vim')
   " }}}
   " Text manipulation {{{
   call dein#add('junegunn/vim-easy-align')
@@ -107,23 +110,22 @@ endif
 " }}}
 " User settings
 " Vim options {{{
+" General options {{{
 colorscheme falcon
 filetype plugin on
 filetype indent off
 syntax enable
-
-set termguicolors
 set directory=$HOME/vimswap/
 set undofile
 set undodir=$HOME/vimswap/
 set backspace=indent,eol,start
 set completeopt=longest,menuone
-set tw=120
+set tw=100
 set diffopt=vertical,filler
 set expandtab
 if executable("rg")
-    set grepprg=rg\ --vimgrep\ --no-heading
-    set grepformat=%f:%l:%c:%m,%f:%l:%m
+  set grepprg=rg\ --vimgrep\ --no-heading
+  set grepformat=%f:%l:%c:%m,%f:%l:%m
 endif
 set autoindent
 set hidden
@@ -140,8 +142,20 @@ set t_Co=256
 set tags=tags;/
 set wildmenu
 set wildignore+=*/*.class,*/*.o,*/*.lo,*/*.pyc,*/*.pyo,uploads/*
-
-"" Key mappings
+" }}}
+" Neovim Specific options {{{
+if has('nvim')
+  tnoremap <C-w> <C-\><C-N><C-w>
+  augroup terminal
+    au!
+    " Temporarily prevent recording inside terminals until I develop the muscle memory
+    " no to click q after selecting text (which is how I exit copy mode in tmux)
+    au BufEnter,FocusGained,BufEnter,BufWinEnter,WinEnter term://* map <buffer> q <Nop>
+    au TermOpen * map <buffer> q <Nop>
+  augroup END
+endif
+" }}}
+" Key mappings {{{
 let mapleader=","
 let maplocalleader="\\"
 map <F1> <nop>
@@ -163,6 +177,7 @@ map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans
 \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
 \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 " }}}
+" }}}
 " dein {{{
 map <F9> :call dein#install()<CR>
 " }}}
@@ -176,10 +191,22 @@ let g:BufferListMaxWidth = 60
 let g:rainbow_active = 1
 " }}}
 " FZF {{{
+command! FZFMru call fzf#run({
+\ 'source':  reverse(s:all_files()),
+\ 'sink':    'edit',
+\ 'options': '-m -x +s',
+\ 'down':    '40%' })
+
+function! s:all_files()
+  return extend(
+  \ reverse(filter(copy(v:oldfiles),
+  \        "v:val !~ 'fugitive:\\|NERD_tree\\|^/tmp/\\|.git/\\|term:\\|_Gundo_'")),
+  \ map(filter(range(1, bufnr('$')), 'buflisted(v:val)'), 'bufname(v:val)'))
+endfunction
 nnoremap <C-p> :Files<CR>
 nnoremap <C-l> :BTags<CR>
-nnoremap <C-b> :Buffers<CR>
-nnoremap <C-c> :History:<CR>
+nnoremap <C-b> :FZFMru<CR>
+nnoremap <C-e> :History:<CR>
 nnoremap <C-h> :Helptags<CR>
 let $FZF_DEFAULT_OPTS = '--bind ctrl-d:page-down,ctrl-u:page-up'
 let $FZF_DEFAULT_COMMAND = 'rg --hidden --files --follow --glob "!.git/*" 2>/dev/null'
@@ -235,7 +262,7 @@ map <silent><F3> :call SwitchToNerdTree("")<CR>
 map <silent><F4> :call SwitchToNerdTree("%")<CR>
 " }}}
 " UtilSnips {{{
-let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsExpandTrigger="<s-tab>"
 let g:UltiSnipsJumpForwardTrigger="<c-j>"
 let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 let g:UltiSnipsEditSplit="vertical"
@@ -262,7 +289,10 @@ else
   function! VimuxIPython()
       call VimuxSendText(@v)
   endfunction
-  au BufEnter *.py vmap <buffer> <Leader>vr "vy :call VimuxIPython()<CR>
+  augroup vimux_python
+    au!
+    au BufEnter *.py vmap <buffer> <Leader>vr "vy :call VimuxIPython()<CR>
+  augroup END
   map <Leader>vn :VimuxRunCommand("cd ~/code/web; ./npm_dev.sh")<CR>
   map <Leader>vi :VimuxRunCommand("cd ~/code/web; source venv/bin/activate; python manage.py shell")<CR>
   map <Leader>vl :VimuxRunCommand("tail -f /var/liwwa/log/**/*.log~**/*apache_access.log")<CR>
@@ -279,8 +309,17 @@ au FileType javascript map <buffer> <Leader>r :TernRename<CR>
 " }}}
 " deoplete {{{
 let g:deoplete#enable_at_startup = 1
-au BufEnter * inoremap <expr> <Tab> pumvisible() == 1 ? "\<C-n>" : "\<Tab>"
-au BufEnter * inoremap <expr> <S-Tab> pumvisible() == 1 ? "\<C-p>" : "\<S-Tab>"
+let g:deoplete#sources = {}
+let g:deoplete#sources.python = ['LanguageClient', 'file', 'around', 'ultisnips']
+let g:deoplete#sources.javascript = ['tern', 'file', 'around', 'ultisnips']
+inoremap <silent><expr> <TAB> pumvisible() ? "\<C-n>" : "\<TAB>" 
+inoremap <silent><expr> <C-Space> deoplete#mappings#manual_complete()
+inoremap <silent><expr> <c-d> pumvisible() ? "\<PageDown>" : "\<c-d>"
+inoremap <silent><expr> <c-u> pumvisible() ? "\<PageUp>" : "\<c-u>"
+function! s:check_back_space() abort "{{{
+let col = col('.') - 1
+return getline('.')[col - 1]  =~ '\.'
+endfunction"}}}
 " }}}
 " deoplete-ternjs {{{
 let g:deoplete#sources#ternjs#tern_bin = '/home/satiani/.langservers/javascript/run.sh'
@@ -296,19 +335,37 @@ let g:tern#filetypes = [
 " LanguageServer {{{
 let g:LanguageClient_serverCommands = {
     \ 'python': ['~/.langservers/python/run.sh', '~/code/web/venv/'],
+    \ 'sh': ['~/.langservers/bash/node_modules/.bin/bash-language-server', 'start']
     \ }
 let g:LanguageClient_diagnosticsEnable = 0
-au FileType python map <buffer> <Leader>d :call LanguageClient_textDocument_definition()<CR>
-au FileType python map <buffer> <Leader>r :call LanguageClient#textDocument_rename()<CR>
-au FileType python map <buffer> <Leader>t :call LanguageClient_textDocument_documentSymbol()<CR>
+augroup language_client
+  au!
+  au FileType python map <buffer> <Leader>d :call LanguageClient#textDocument_definition({'gotoCmd': 'split'})<CR>
+  au FileType python map <buffer> <Leader>D :call LanguageClient_textDocument_definition()<CR>
+  au FileType python map <buffer> <Leader>r :call LanguageClient#textDocument_rename()<CR>
+  au FileType python map <buffer> <Leader>t :call LanguageClient_textDocument_documentSymbol()<CR>
+  au User LanguageClientStarted command References call LanguageClient#textDocument_references()
+  au User LanguageClientStopped delcommand References
+  au User LanguageClientStarted map <silent><buffer> K :call LanguageClient_textDocument_hover()<CR>
+augroup END
 " }}}
 " miniyank {{{
 map p <Plug>(miniyank-autoput)
 map P <Plug>(miniyank-autoPut)
 map <localleader>[ <Plug>(miniyank-cycle)
 " }}}
+" gundo {{{
+map <Leader>u :GundoShow<CR>
+" }}}
+" indentLine {{{
+let g:indentLine_fileType = ['python']
+" }}}
 " liwwa {{{
-au BufWritePost *.py :silent !~/code/web/bin/compile_all.sh
-au BufEnter ~/code/web/app/static/**/*.html :set syntax=underscore_template
-au BufEnter *.html :silent RainbowToggleOff
+augroup liwwa
+  au!
+  au BufWritePost *.py :silent !~/code/web/bin/compile_all.sh
+  au BufEnter ~/code/web/app/static/**/*.html :set syntax=underscore_template
+  au BufEnter *.html :silent RainbowToggleOff
+augroup END
+let g:python_host_prog  = '/usr/bin/python2'
 " }}}
