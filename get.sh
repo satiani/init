@@ -2,6 +2,9 @@
 
 set -e
 cd `dirname $0`
-git stash
+if ! git diff-index --quiet HEAD; then
+    git stash
+    STASHED=1
+fi
 git pull --rebase
-git stash pop
+[ -z $STASHED ] || git stash pop
