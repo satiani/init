@@ -1,6 +1,6 @@
-# vim:foldmethod=indent
+# vim:foldmethod=indent:foldnestmax=1
 function install_dein() {
-    if [ $# -ne 1 ]; then
+    if [ $# -ne 1 ]; then    
       echo "You must specify the installation directory!"
       exit 1
     fi

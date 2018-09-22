@@ -177,7 +177,14 @@ map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans
 \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
 \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 " }}}
+" autcmds {{{
+augroup general_autocmds
+  au!
+  au FileType   javascript,python,sh,c,cpp,java,html,css,php,vim
+\               au BufWritePost * %s/\s\+$//e
+augroup END
 " }}}
+" }}}                
 " dein {{{
 map <F9> :call dein#install()<CR>
 " }}}
@@ -312,7 +319,7 @@ let g:deoplete#enable_at_startup = 1
 let g:deoplete#sources = {}
 let g:deoplete#sources.python = ['LanguageClient', 'file', 'around', 'ultisnips']
 let g:deoplete#sources.javascript = ['tern', 'file', 'around', 'ultisnips']
-inoremap <silent><expr> <TAB> pumvisible() ? "\<C-n>" : "\<TAB>" 
+inoremap <silent><expr> <TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
 inoremap <silent><expr> <C-Space> deoplete#mappings#manual_complete()
 inoremap <silent><expr> <c-d> pumvisible() ? "\<PageDown>" : "\<c-d>"
 inoremap <silent><expr> <c-u> pumvisible() ? "\<PageUp>" : "\<c-u>"
