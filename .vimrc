@@ -33,8 +33,10 @@ if dein#load_state('~/.cache/dein')
   call dein#add('Yggdroot/indentLine')
   " }}}
   " Navigation {{{
-  call dein#add('junegunn/fzf', { 'build': './install' })
-  call dein#add('junegunn/fzf.vim', { 'depends': 'junegunn/fzf' })
+  if executable('fzf')
+    call dein#add('junegunn/fzf', { 'build': './install' })
+    call dein#add('junegunn/fzf.vim', { 'depends': 'junegunn/fzf' })
+  endif
   call dein#add('easymotion/vim-easymotion')
   call dein#add('satiani/bufferlist.vim')
   call dein#add('scrooloose/nerdtree')

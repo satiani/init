@@ -4,6 +4,7 @@
 set -e
 
 SCRIPT_DIR=$(cd `dirname $0` && pwd)
+RAPID_MODE=$([ "$1" == "--rapid" ] && echo "true" || echo "false")
 # }}}
 # functions {{{
 function link_bin () {
