@@ -335,7 +335,6 @@ let g:tern#filetypes = [
 " LanguageServer {{{
 let g:LanguageClient_serverCommands = {
     \ 'python': ['~/.langservers/python/run.sh', '~/code/web/venv/'],
-    \ 'sh': ['~/.langservers/bash/node_modules/.bin/bash-language-server', 'start']
     \ }
 let g:LanguageClient_diagnosticsEnable = 0
 augroup language_client

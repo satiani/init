@@ -61,17 +61,6 @@ else
     echo "Skipping javascript language server installation."
 fi
 # }}}
-# bash language server {{{
-if ! [ -d ~/.langservers/bash ]; then
-    bash<<EOF
-    mkdir ~/.langservers/bash
-    cd ~/.langservers/bash
-    npm install -E bash-language-server
-EOF
-else
-    echo "Skipping bash language server installation."
-fi
-# }}}
 # install dein {{{
 source $SCRIPT_DIR/lib.sh
 install_dein ~/.cache/dein > /dev/null
