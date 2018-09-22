@@ -41,9 +41,10 @@ bindkey '[3~' delete-char
 bindkey '' run-help
 # }}}
 # Exports {{{
-export PATH="$HOME/.cargo/bin:/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/bin:$PATH:~/bin"
+export PATH="$HOME/.local/bin:$HOME/.cargo/bin:/usr/local/bin:/usr/local/opt/gnu-sed/libexec/gnubin:/usr/bin/:/bin"
 export VIM_BIN="vim"
 [ "$(command -v nvim)" ] && export VIM_BIN="nvim"
+[ "$(command -v nvr)" ] && export VIM_BIN="nvr -s"
 export ON_A_MAC=`([ $( uname ) == "Darwin" ] && echo "true") || echo "false"`
 export LSCOLORS="Gxfxcxdxbxegedabagacad"
 export LC_ALL=en_US.UTF-8
@@ -78,10 +79,6 @@ _fzf_compgen_path() {
 }
 # }}}
 # Sourcing external files {{{
-if [ -f ~/.profile ]; then
-    source ~/.profile
-fi
-
 for zsh_file (~/.zsh/**/*.zsh) source $zsh_file
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

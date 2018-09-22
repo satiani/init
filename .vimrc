@@ -44,7 +44,9 @@ if dein#load_state('~/.cache/dein')
   " Text manipulation {{{
   call dein#add('junegunn/vim-easy-align')
   call dein#add('mattn/emmet-vim')
-  call dein#add('bfredl/nvim-miniyank')
+  if has('nvim')
+    call dein#add('bfredl/nvim-miniyank')
+  endif
   call dein#add('tpope/vim-speeddating')
   " }}}
   " Code completion {{{

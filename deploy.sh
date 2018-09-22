@@ -2,7 +2,18 @@
 # vim:foldmethod=marker
 # Preamble {{{
 set -e
+
 SCRIPT_DIR=$(cd `dirname $0` && pwd)
+# }}}
+# functions {{{
+function link_bin () {
+    [ -z $1 ] && echo "No input" && return 1
+    [ -e ~/bin ] || mkdir -pv ~/bin
+
+    BASENAME=`basename $1`
+    [ -e ~/bin/$BASENAME ] && echo "Skipping linking $1 to ~/bin" && return
+    ln -sv $1 ~/bin/$BASENAME
+}
 # }}}
 # rust/cargo {{{
 if ! [ -x "$(command -v cargo)" ]; then
@@ -79,22 +90,21 @@ for i in .*; do
 done
 # }}}
 # bin {{{
-[ -d ~/bin ] || mkdir -pv ~/bin
-
-function link_bin () {
-    [ -z $1 ] && echo "No input" && return 1
-    [ -f ~/bin/$1 ] && echo "Skipping linking $1 to ~/bin" && return
-    ln -sv $SCRIPT_DIR/$1 ~/bin/$1
-}
-
-link_bin push.sh
-link_bin get.sh
+link_bin $SCRIPT_DIR/push.sh
+link_bin $SCRIPT_DIR/get.sh
 # }}}
 # vim/nvim {{{
 mkdir -pv $HOME/vimswap
 mkdir -pv $HOME/.config/nvim/
+
 if ! [ -e $HOME/.config/nvim/init.vim ]; then
     ln -sv $HOME/.vimrc $HOME/.config/nvim/init.vim
+fi
+
+if ! [ -x "$(command -v nvr)" ]; then
+    pip3 install --user neovim-remote
+else
+    echo "Skipping nvr installation."
 fi
 # }}}
 # configure git {{{
