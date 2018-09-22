@@ -41,11 +41,12 @@ bindkey '[3~' delete-char
 bindkey '' run-help
 # }}}
 # Exports {{{
+export ON_A_MAC=`([ $( uname ) == "Darwin" ] && echo "true") || echo "false"`
 export PATH="$HOME/.local/bin:$HOME/.cargo/bin:/usr/local/bin:/usr/local/opt/gnu-sed/libexec/gnubin:/usr/bin/:/bin"
+[ "$ON_A_MAC" == "true" ] && export PATH="$PATH:$HOME/Library/Python/3.7/bin"
 export VIM_BIN="vim"
 [ "$(command -v nvim)" ] && export VIM_BIN="nvim"
-[ "$(command -v nvr)" ] && export VIM_BIN="nvr -s"
-export ON_A_MAC=`([ $( uname ) == "Darwin" ] && echo "true") || echo "false"`
+! [ -z "$NVIM_LISTEN_ADDRESS" ] && [ "$(command -v nvr)" ] && export VIM_BIN="nvr -s"
 export LSCOLORS="Gxfxcxdxbxegedabagacad"
 export LC_ALL=en_US.UTF-8
 export EDITOR="$VIM_BIN"
