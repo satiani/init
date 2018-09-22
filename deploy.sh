@@ -5,7 +5,7 @@ set -e
 SCRIPT_DIR=$(cd `dirname $0` && pwd)
 # }}}
 # rust/cargo {{{
-if ! [ -x "$(command -v cargo)" ]; then 
+if ! [ -x "$(command -v cargo)" ]; then
     curl https://sh.rustup.rs -sSf | sh
 fi
 export PATH=~/.cargo/bin/:$PATH
@@ -16,7 +16,7 @@ if ! [ -d ~/.tmux ]; then
 fi
 # }}}
 # ripgrep {{{
-if ! [ -x "$(command -v rg)" ]; then 
+if ! [ -x "$(command -v rg)" ]; then
     cargo install ripgrep
 fi
 # }}}
@@ -77,6 +77,18 @@ for i in .*; do
     fi;
     ln -s $PWD/$i $HOME
 done
+# }}}
+# bin {{{
+[ -d ~/bin ] || mkdir -pv ~/bin
+
+function link_bin () {
+    [ -z $1 ] && echo "No input" && return 1
+    [ -f ~/bin/$1 ] && echo "Skipping linking $1 to ~/bin" && return
+    ln -sv $SCRIPT_DIR/$1 ~/bin/$1
+}
+
+link_bin push.sh
+link_bin get.sh
 # }}}
 # vim/nvim {{{
 mkdir -pv $HOME/vimswap
