@@ -1,7 +1,7 @@
 " Vim config
 " Samer Atiani - 2018
 " Preamble {{{
-" vim:foldmethod=marker
+" vim:foldmethod=marker:number
 if &compatible
   set nocompatible               " Be iMproved
 endif
@@ -25,7 +25,8 @@ if dein#load_state('~/.cache/dein')
   call dein#add('honza/vim-snippets')
   " }}}
   " Syntax {{{
-  call dein#add('isRuslan/vim-es6')
+  call dein#add('pangloss/vim-javascript')
+  call dein#add('leafgarland/typescript-vim')
   call dein#add('ap/vim-css-color')
   call dein#add('lepture/vim-jinja')
   call dein#add('mklabs/vim-backbone')
@@ -52,17 +53,20 @@ if dein#load_state('~/.cache/dein')
   call dein#add('tpope/vim-speeddating')
   " }}}
   " Code completion {{{
-  call dein#add('Shougo/deoplete.nvim')
-  call dein#config('deoplete.nvim', {
-  \ 'lazy' : 1, 'on_i' : 1,
-  \ })
-  call dein#add('carlitux/deoplete-ternjs')
   call dein#add('ternjs/tern_for_vim')
+  call dein#add('mhartington/nvim-typescript')
+  call dein#add('roxma/nvim-yarp')
   if !has('nvim')
-    call dein#add('roxma/nvim-yarp')
     call dein#add('roxma/vim-hug-neovim-rpc')
   endif
   call dein#add('autozimu/LanguageClient-neovim', {'build': 'bash install.sh'})
+  call dein#add('ncm2/ncm2')
+  call dein#add('ncm2/ncm2-path')
+  call dein#add('ncm2/ncm2-tern', {'build': 'npm install'})
+  call dein#add('ncm2/ncm2-ultisnips')
+  call dein#add('ncm2/ncm2-vim', { 'depends': 'Shougo/neco-vim' })
+  call dein#add('Shougo/neco-vim')
+  call dein#add('ncm2/ncm2-html-subscope')
   " }}}
   " Version control {{{
   call dein#add('tpope/vim-fugitive')
@@ -100,6 +104,8 @@ if dein#load_state('~/.cache/dein')
   call dein#add('jceb/vim-orgmode')
   " }}}
   " Vim tools {{{
+  if has('nvim')
+  endif
   " }}}
   " dein save state {{{
   " Required:
@@ -123,7 +129,7 @@ set directory=$HOME/vimswap/
 set undofile
 set undodir=$HOME/vimswap/
 set backspace=indent,eol,start
-set completeopt=longest,menuone
+set completeopt=noinsert,menuone,noselect
 set tw=100
 set diffopt=vertical,filler
 set expandtab
@@ -155,7 +161,10 @@ if has('nvim')
     " Temporarily prevent recording inside terminals until I develop the muscle memory
     " no to click q after selecting text (which is how I exit copy mode in tmux)
     au BufEnter,FocusGained,BufEnter,BufWinEnter,WinEnter term://* map <buffer> q <Nop>
+    au BufEnter,FocusGained,BufEnter,BufWinEnter,WinEnter term://* startinsert
     au TermOpen * map <buffer> q <Nop>
+    au TermOpen * startinsert
+    au TermClose term://* close
   augroup END
 endif
 " }}}
@@ -168,6 +177,7 @@ map <Leader>Q :botright lwindow<CR>
 map <Leader>n :cnewer<CR>
 map <Leader>p :colder<CR>
 map <Leader>f :exec("Rg " . expand("<cword>"))<CR>
+map <Leader>o :belowright 10split +term<CR><C-\><C-n>:set wfh<CR>:set wfw<CR>i
 " Replace word under cursor
 map <Leader>s :%s/\<<C-r><C-w>\>/
 map tk :tabfirst<CR>
@@ -190,7 +200,7 @@ augroup END
 " }}}
 " }}}
 " dein {{{
-map <F9> :call dein#install()<CR>
+map <F9> :source ~/.vimrc<CR>:call dein#install()<CR>
 " }}}
 " Bufferlist {{{
 map <silent> <F2> :call BufferList()<CR>
@@ -241,6 +251,9 @@ let g:ale_linters={
 nmap <Leader>F <Plug>(ale_fix)
 nmap <Leader>D <Plug>(ale_toggle_buffer)<CR>
 highlight ALEError ctermbg=140
+let g:ale_sign_error = '●' " Less aggressive than the default '>>'
+let g:ale_sign_warning = '.'
+let g:ale_lint_on_enter = 0 " Less distracting when opening a new file
 " }}}
 " Fugitive {{{
 map <Leader>G :Gstatus<CR>
@@ -286,6 +299,7 @@ let g:easy_align_ignore_groups = []
 map <silent><F5>  :TagbarToggle<CR>
 let g:tagbar_left = 1
 let g:tagbar_autoclose = 1
+let g:tagbar_ctags_bin = '/usr/local/bin/ctags'
 " }}}
 " vim-sleuth {{{
 " Disables behavior by vim-sleuth where it will turn on filetype indent
@@ -318,45 +332,29 @@ au FileType javascript map <buffer> <Leader>D :TernDef<CR>
 au FileType javascript map <buffer> <Leader>d :TernDefPreview<CR>
 au FileType javascript map <buffer> <Leader>r :TernRename<CR>
 " }}}
-" deoplete {{{
-let g:deoplete#enable_at_startup = 1
-let g:deoplete#sources = {}
-let g:deoplete#sources.python = ['LanguageClient', 'file', 'around', 'ultisnips']
-let g:deoplete#sources.javascript = ['tern', 'file', 'around', 'ultisnips']
+" ncm2 {{{
+autocmd BufEnter  *  call ncm2#enable_for_buffer()
+inoremap <expr> <S-Tab> ncm2_ultisnips#expand_or("", 'n')
 inoremap <silent><expr> <TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
-inoremap <silent><expr> <C-Space> deoplete#mappings#manual_complete()
 inoremap <silent><expr> <c-d> pumvisible() ? "\<PageDown>" : "\<c-d>"
 inoremap <silent><expr> <c-u> pumvisible() ? "\<PageUp>" : "\<c-u>"
-function! s:check_back_space() abort "{{{
-let col = col('.') - 1
-return getline('.')[col - 1]  =~ '\.'
-endfunction"}}}
-" }}}
-" deoplete-ternjs {{{
-let g:deoplete#sources#ternjs#tern_bin = '/home/satiani/.langservers/javascript/run.sh'
-let g:deoplete#sources#ternjs#types = 1
-let g:deoplete#sources#ternjs#depths = 1
-let g:tern#filetypes = [
-            \ 'jsx',
-            \ 'javascript.jsx',
-            \ 'vue',
-            \ 'javascript'
-            \ ]
+inoremap <expr> <CR> (pumvisible() ? "\<c-y>" : "\<CR>")
 " }}}
 " LanguageServer {{{
 let g:LanguageClient_serverCommands = {
     \ 'python': ['~/.langservers/python/run.sh', '~/code/web/venv/'],
+    \ 'typescript': ['~/.langservers/typescript/tsserver/lib/language-server-stdio.js'],
     \ }
 let g:LanguageClient_diagnosticsEnable = 0
 augroup language_client
   au!
-  au FileType python map <buffer> <Leader>d :call LanguageClient#textDocument_definition({'gotoCmd': 'split'})<CR>
-  au FileType python map <buffer> <Leader>D :call LanguageClient_textDocument_definition()<CR>
-  au FileType python map <buffer> <Leader>r :call LanguageClient#textDocument_rename()<CR>
-  au FileType python map <buffer> <Leader>t :call LanguageClient_textDocument_documentSymbol()<CR>
+  au User LanguageClientStarted map <buffer> <Leader>d :call LanguageClient#textDocument_definition({'gotoCmd': 'split'})<CR>
+  au User LanguageClientStarted map <buffer> <Leader>D :call LanguageClient_textDocument_definition()<CR>
+  au User LanguageClientStarted map <buffer> <Leader>r :call LanguageClient#textDocument_rename()<CR>
+  au User LanguageClientStarted map <buffer> <Leader>t :call LanguageClient_textDocument_documentSymbol()<CR>
+  au User LanguageClientStarted map <buffer> K :call LanguageClient_textDocument_hover()<CR>
   au User LanguageClientStarted command References call LanguageClient#textDocument_references()
   au User LanguageClientStopped delcommand References
-  au User LanguageClientStarted map <silent><buffer> K :call LanguageClient_textDocument_hover()<CR>
 augroup END
 " }}}
 " miniyank {{{
@@ -377,5 +375,5 @@ augroup liwwa
   au BufEnter ~/code/web/app/static/**/*.html :set syntax=underscore_template
   au BufEnter *.html :silent RainbowToggleOff
 augroup END
-let g:python_host_prog  = '/usr/bin/python2'
+let g:python_host_prog  = '/usr/bin/python'
 " }}}

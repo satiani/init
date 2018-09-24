@@ -72,6 +72,21 @@ else
     echo "Skipping javascript language server installation."
 fi
 # }}}
+# typescript language server {{{
+if [ -x "$(command -v npm)" ] && ! [ -d ~/.langservers/typescript ]; then
+    bash<<EOF
+    mkdir ~/.langservers/typescript
+    cd ~/.langservers/typescript
+    git clone https://github.com/sourcegraph/javascript-typescript-langserver tsserver
+    cd tsserver
+    npm install
+    npm run build
+    chmod +x lib/language-server*.js
+EOF
+else
+    echo "Skipping typescript language server installation."
+fi
+# }}}
 # install dein {{{
 source $SCRIPT_DIR/lib.sh
 install_dein ~/.cache/dein > /dev/null
