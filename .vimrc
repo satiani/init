@@ -25,12 +25,17 @@ if dein#load_state('~/.cache/dein')
   call dein#add('honza/vim-snippets')
   " }}}
   " Syntax {{{
+  " javascript
   call dein#add('pangloss/vim-javascript')
   call dein#add('leafgarland/typescript-vim')
-  call dein#add('ap/vim-css-color')
-  call dein#add('lepture/vim-jinja')
   call dein#add('mklabs/vim-backbone')
   call dein#add('aaronj1335/underscore-templates.vim')
+  call dein#add('mxw/vim-jsx')
+  " css
+  call dein#add('ap/vim-css-color')
+  " jinja
+  call dein#add('lepture/vim-jinja')
+  " python
   call dein#add('Yggdroot/indentLine')
   " }}}
   " Navigation {{{
@@ -51,6 +56,7 @@ if dein#load_state('~/.cache/dein')
     call dein#add('bfredl/nvim-miniyank')
   endif
   call dein#add('tpope/vim-speeddating')
+  call dein#add('terryma/vim-multiple-cursors')
   " }}}
   " Code completion {{{
   call dein#add('ternjs/tern_for_vim')
@@ -121,6 +127,7 @@ endif
 " User settings
 " Vim options {{{
 " General options {{{
+set termguicolors
 colorscheme falcon
 filetype plugin on
 filetype indent off
@@ -160,9 +167,8 @@ if has('nvim')
     au!
     " Temporarily prevent recording inside terminals until I develop the muscle memory
     " no to click q after selecting text (which is how I exit copy mode in tmux)
-    au BufEnter,FocusGained,BufEnter,BufWinEnter,WinEnter term://* map <buffer> q <Nop>
-    au BufEnter,FocusGained,BufEnter,BufWinEnter,WinEnter term://* startinsert
     au TermOpen * map <buffer> q <Nop>
+    au BufEnter,FocusGained,BufEnter,BufWinEnter,WinEnter term://* map <buffer> q <Nop>
     au TermOpen * startinsert
     au TermClose term://* close
   augroup END
@@ -185,6 +191,7 @@ map tl :tabnext<CR>
 map th :tabprev<CR>
 map tj :tablast<CR>
 map tn :tabnew<CR>
+map î <A-n>
 " Click F10 to get the highlight group under cursor
 " (http://vim.wikia.com/wiki/Identify_the_syntax_highlighting_group_used_at_the_cursor)
 map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
@@ -280,7 +287,7 @@ function! SwitchToNerdTree(path)
 endfunction
 let NERDTreeHijackNetrw = 0
 let NERDTreeWinSize = 40
-let NERDTreeIgnore = ['\.pyc$']
+let NERDTreeIgnore = ['\.pyc$', '__pycache__']
 let NERDTreeQuitOnOpen = 1
 map <silent><F3> :call SwitchToNerdTree("")<CR>
 map <silent><F4> :call SwitchToNerdTree("%")<CR>
@@ -299,7 +306,7 @@ let g:easy_align_ignore_groups = []
 map <silent><F5>  :TagbarToggle<CR>
 let g:tagbar_left = 1
 let g:tagbar_autoclose = 1
-let g:tagbar_ctags_bin = '/usr/local/bin/ctags'
+let g:tagbar_ctags_bin = '/usr/bin/ctags'
 " }}}
 " vim-sleuth {{{
 " Disables behavior by vim-sleuth where it will turn on filetype indent
@@ -334,7 +341,6 @@ au FileType javascript map <buffer> <Leader>r :TernRename<CR>
 " }}}
 " ncm2 {{{
 autocmd BufEnter  *  call ncm2#enable_for_buffer()
-inoremap <expr> <S-Tab> ncm2_ultisnips#expand_or("", 'n')
 inoremap <silent><expr> <TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
 inoremap <silent><expr> <c-d> pumvisible() ? "\<PageDown>" : "\<c-d>"
 inoremap <silent><expr> <c-u> pumvisible() ? "\<PageUp>" : "\<c-u>"
@@ -348,11 +354,11 @@ let g:LanguageClient_serverCommands = {
 let g:LanguageClient_diagnosticsEnable = 0
 augroup language_client
   au!
-  au User LanguageClientStarted map <buffer> <Leader>d :call LanguageClient#textDocument_definition({'gotoCmd': 'split'})<CR>
-  au User LanguageClientStarted map <buffer> <Leader>D :call LanguageClient_textDocument_definition()<CR>
-  au User LanguageClientStarted map <buffer> <Leader>r :call LanguageClient#textDocument_rename()<CR>
-  au User LanguageClientStarted map <buffer> <Leader>t :call LanguageClient_textDocument_documentSymbol()<CR>
-  au User LanguageClientStarted map <buffer> K :call LanguageClient_textDocument_hover()<CR>
+  au FileType python,typescript map <buffer> <Leader>d :call LanguageClient#textDocument_definition({'gotoCmd': 'split'})<CR>
+  au FileType python,typescript map <buffer> <Leader>D :call LanguageClient_textDocument_definition()<CR>
+  au FileType python,typescript map <buffer> <Leader>r :call LanguageClient#textDocument_rename()<CR>
+  au FileType python,typescript map <buffer> <Leader>t :call LanguageClient_textDocument_documentSymbol()<CR>
+  au FileType python,typescript map <buffer> K :call LanguageClient_textDocument_hover()<CR>
   au User LanguageClientStarted command References call LanguageClient#textDocument_references()
   au User LanguageClientStopped delcommand References
 augroup END
