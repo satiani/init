@@ -4,6 +4,7 @@
 set -e
 
 SCRIPT_DIR=$(cd `dirname $0` && pwd)
+ON_A_MAC=`([ $( uname ) == "Darwin" ] && echo "true") || echo "false"`
 # }}}
 # functions {{{
 function link_bin () {
@@ -16,10 +17,14 @@ function link_bin () {
 }
 # }}}
 # rust/cargo {{{
-if ! [ -x "$(command -v cargo)" ]; then
-    curl https://sh.rustup.rs -sSf | sh
-fi
 export PATH=~/.cargo/bin/:$PATH
+if ! [ -x "$(command -v cargo)" ]; then
+    if [ "$ON_A_MAC" == "true" ]; then
+        cp -rv ~/code/init/binaries/osx/.cargo ~/
+    else
+        curl https://sh.rustup.rs -sSf | sh
+    fi
+fi
 # }}}
 # tmux plugin manager {{{
 if ! [ -d ~/.tmux ]; then
@@ -33,10 +38,14 @@ fi
 # }}}
 # fzf {{{
 if ! [ -d ~/.fzf ]; then
-    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-    ~/.fzf/install
-    mkdir -p ~/.man/man1
-    cp -r ~/.fzf/man/man1/* ~/.man/man1
+    if [ "$ON_A_MAC" == "true" ]; then
+        cp -rv ~/code/init/binaries/osx/.fzf ~/
+    else
+        git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+        ~/.fzf/install
+        mkdir -p ~/.man/man1
+        cp -r ~/.fzf/man/man1/* ~/.man/man1
+    fi
 else
     echo "Skipping fzf installation"
 fi
