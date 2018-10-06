@@ -6,6 +6,7 @@ set -e
 SCRIPT_DIR=$(cd `dirname $0` && pwd)
 ON_A_MAC=`([ $( uname ) == "Darwin" ] && echo "true") || echo "false"`
 MAC_BINARIES="$ON_A_MAC"
+LINUX_BINARIES=`$ON_A_MAC && echo "false" || echo "true"`
 # }}}
 # functions {{{
 function link_bin () {
@@ -22,6 +23,8 @@ export PATH=~/.cargo/bin/:$PATH
 if ! [ -x "$(command -v cargo)" ]; then
     if $MAC_BINARIES; then
         cp -rv ~/code/init/binaries/osx/.cargo ~/
+    elif $LINUX_BINARIES; then
+        cp -rv ~/code/init/binaries/linux/.cargo ~/
     else
         curl https://sh.rustup.rs -sSf | sh
     fi
@@ -41,6 +44,8 @@ fi
 if ! [ -d ~/.fzf ]; then
     if $MAC_BINARIES; then
         cp -rv ~/code/init/binaries/osx/.fzf ~/
+    elif $LINUX_BINARIES; then
+        cp -rv ~/code/init/binaries/linux/.fzf ~/
     else
         git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
         ~/.fzf/install
