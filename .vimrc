@@ -77,14 +77,16 @@ if dein#load_state('~/.cache/dein')
   " Version control {{{
   call dein#add('tpope/vim-fugitive')
   " }}}
-  " Styling {{{
-  call dein#add('vim-airline/vim-airline')
-  call dein#add('vim-airline/vim-airline-themes')
+"  " Styling {{{
+"  call dein#add('vim-airline/vim-airline')
+"  call dein#add('vim-airline/vim-airline-themes')
   call dein#add('flazz/vim-colorschemes')
   call dein#add('xolox/vim-misc')
   call dein#add('xolox/vim-colorscheme-switcher', { 'depends': 'xolox/vim-misc' })
   call dein#add('luochen1990/rainbow')
-  call dein#add('fenetikm/falcon')
+  call dein#add('fenetikm/falcon', {
+  \ 'build': 'patch -p0 < ~/code/init/falcon.patch'
+  \})
   " }}}
   " External integrations {{{
   call dein#add('w0rp/ale')
@@ -112,6 +114,7 @@ if dein#load_state('~/.cache/dein')
   " Vim tools {{{
   if has('nvim')
   endif
+  call dein#add('haya14busa/dein-command.vim')
   " }}}
   " dein save state {{{
   " Required:
@@ -241,11 +244,11 @@ let $FZF_DEFAULT_COMMAND = 'rg --hidden --files --follow --glob "!.git/*" 2>/dev
 let g:fzf_history_dir = '~/.local/share/fzf-history'
 " }}}
 " Airline {{{
-let g:airline_theme='falcon'
-let g:airline_section_x=airline#section#create_right(['tagbar', ' ', 'filetype'])
-let g:airline_section_y=airline#section#create_right([])
-let g:airline_symbols.branch=''
-let g:airline#extensions#fugitiveline#enabled = 0
+" let g:airline_theme='falcon'
+" let g:airline_section_x=airline#section#create_right(['tagbar', ' ', 'filetype'])
+" let g:airline_section_y=airline#section#create_right([])
+" let g:airline_symbols.branch=''
+" let g:airline#extensions#fugitiveline#enabled = 0
 " }}}
 " ale {{{
 let g:ale_fixers={
@@ -381,5 +384,5 @@ augroup liwwa
   au BufEnter ~/code/web/app/static/**/*.html :set syntax=underscore_template
   au BufEnter *.html :silent RainbowToggleOff
 augroup END
-let g:python_host_prog  = '/usr/bin/python'
+let g:python_host_prog  = '/usr/local/bin/python'
 " }}}

@@ -21,7 +21,7 @@ if [ "$PS1" ]; then
 
     # enable color support of ls and also add handy aliases
     if [ "$TERM" != "dumb" ]; then
-	alias ls='ls --color=auto'
+        alias ls='ls --color=auto'
     fi
 
     # some more ls aliases
