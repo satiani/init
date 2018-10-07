@@ -78,8 +78,8 @@ if dein#load_state('~/.cache/dein')
   call dein#add('tpope/vim-fugitive')
   " }}}
 "  " Styling {{{
-"  call dein#add('vim-airline/vim-airline')
-"  call dein#add('vim-airline/vim-airline-themes')
+  call dein#add('itchyny/lightline.vim')
+  call dein#add('maximbaz/lightline-ale')
   call dein#add('flazz/vim-colorschemes')
   call dein#add('xolox/vim-misc')
   call dein#add('xolox/vim-colorscheme-switcher', { 'depends': 'xolox/vim-misc' })
@@ -162,6 +162,7 @@ set t_Co=256
 set tags=tags;/
 set wildmenu
 set wildignore+=*/*.class,*/*.o,*/*.lo,*/*.pyc,*/*.pyo,uploads/*
+set noshowmode
 " }}}
 " Neovim Specific options {{{
 if has('nvim')
@@ -243,12 +244,45 @@ let $FZF_DEFAULT_OPTS = '--bind ctrl-d:page-down,ctrl-u:page-up'
 let $FZF_DEFAULT_COMMAND = 'rg --hidden --files --follow --glob "!.git/*" 2>/dev/null'
 let g:fzf_history_dir = '~/.local/share/fzf-history'
 " }}}
-" Airline {{{
-" let g:airline_theme='falcon'
-" let g:airline_section_x=airline#section#create_right(['tagbar', ' ', 'filetype'])
-" let g:airline_section_y=airline#section#create_right([])
-" let g:airline_symbols.branch=''
-" let g:airline#extensions#fugitiveline#enabled = 0
+" Lightline {{{
+function! LightlineMode()
+  return expand('%:t') ==# '__Tagbar__' ? 'Tagbar':
+        \ &filetype ==# 'fzf' ? 'FZF' :
+        \ lightline#mode()
+endfunction
+function! LightlineFilename()
+  return &filetype ==# 'fzf' ? '' :
+        \ expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
+endfunction
+let g:lightline = {
+      \ 'colorscheme': 'nord',
+      \ 'active': {
+      \     'right': [ [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok' ],
+      \                [ 'lineinfo' ],
+      \                [ 'percent' ],
+      \                [ 'tagbar', 'filetype', 'charvaluehex'] ]
+      \ },
+      \ 'component': {
+      \     'charvaluehex': '0x%B',
+      \     'tagbar': '%{tagbar#currenttag("%s", "", "f")}'
+      \ },
+      \ 'component_expand': {
+      \     'linter_checking': 'lightline#ale#checking',
+      \     'linter_warnings': 'lightline#ale#warnings',
+      \     'linter_errors': 'lightline#ale#errors',
+      \     'linter_ok': 'lightline#ale#ok',
+      \ },
+      \ 'component_type': {
+      \     'linter_checking': 'left',
+      \     'linter_warnings': 'warning',
+      \     'linter_errors': 'error',
+      \     'linter_ok': 'left',
+      \ },
+      \ 'component_function': {
+      \     'mode': 'LightlineMode',
+      \     'filename': 'LightlineFilename',
+      \ },
+      \ }
 " }}}
 " ale {{{
 let g:ale_fixers={
@@ -348,6 +382,8 @@ inoremap <silent><expr> <TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
 inoremap <silent><expr> <c-d> pumvisible() ? "\<PageDown>" : "\<c-d>"
 inoremap <silent><expr> <c-u> pumvisible() ? "\<PageUp>" : "\<c-u>"
 inoremap <expr> <CR> (pumvisible() ? "\<c-y>" : "\<CR>")
+" add tern to runtimepath so it gets caught by ncm2_tern
+let &runtimepath.=','.escape(expand('~/.langservers/javascript/'), '\,')
 " }}}
 " LanguageServer {{{
 let g:LanguageClient_serverCommands = {

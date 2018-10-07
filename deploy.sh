@@ -81,7 +81,7 @@ if [ -x "$(command -v npm)" ] && ! [ -d ~/.langservers/javascript ]; then
     mkdir ~/.langservers/javascript
     cd ~/.langservers/javascript
     cp $SCRIPT_DIR/javascriptls.sh ./run.sh
-    npm install -E ternjs
+    npm install -E ternjs tern
 EOF
 else
     echo "Skipping javascript language server installation."
