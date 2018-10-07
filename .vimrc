@@ -40,8 +40,8 @@ if dein#load_state('~/.cache/dein')
   " }}}
   " Navigation {{{
   if executable('fzf')
-    call dein#add('junegunn/fzf', { 'build': './install' })
-    call dein#add('junegunn/fzf.vim', { 'depends': 'junegunn/fzf' })
+    call dein#local('~/', {}, ['.fzf'])
+    call dein#add('junegunn/fzf.vim', {'depends' : '.fzf'})
   endif
   call dein#add('easymotion/vim-easymotion')
   call dein#add('satiani/bufferlist.vim')

@@ -5,6 +5,7 @@ set -e
 
 SCRIPT_DIR=$(cd `dirname $0` && pwd)
 ON_A_MAC=`([ $( uname ) == "Darwin" ] && echo "true") || echo "false"`
+MAC_BINARIES="$ON_A_MAC"
 # }}}
 # functions {{{
 function link_bin () {
@@ -19,7 +20,7 @@ function link_bin () {
 # rust/cargo {{{
 export PATH=~/.cargo/bin/:$PATH
 if ! [ -x "$(command -v cargo)" ]; then
-    if [ "$ON_A_MAC" == "true" ]; then
+    if $MAC_BINARIES; then
         cp -rv ~/code/init/binaries/osx/.cargo ~/
     else
         curl https://sh.rustup.rs -sSf | sh
@@ -38,7 +39,7 @@ fi
 # }}}
 # fzf {{{
 if ! [ -d ~/.fzf ]; then
-    if [ "$ON_A_MAC" == "true" ]; then
+    if $MAC_BINARIES; then
         cp -rv ~/code/init/binaries/osx/.fzf ~/
     else
         git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
