@@ -9,6 +9,7 @@ endif
 " Required:
 set runtimepath+=~/.cache/dein/repos/github.com/Shougo/dein.vim
 set runtimepath+=.
+let g:dein#types#git#clone_depth=1
 " }}}
 " dein init {{{
 " Required:
@@ -295,7 +296,8 @@ nmap <Leader>D <Plug>(ale_toggle_buffer)<CR>
 highlight ALEError ctermbg=140
 let g:ale_sign_error = '●' " Less aggressive than the default '>>'
 let g:ale_sign_warning = '.'
-let g:ale_lint_on_enter = 0 " Less distracting when opening a new file
+" let g:ale_lint_on_enter = 0 " Less distracting when opening a new file
+" let g:ale_python_mypy_options = '--py2 --silent-imports --fast-parser -i'
 " }}}
 " Fugitive {{{
 map <Leader>G :Gstatus<CR>
