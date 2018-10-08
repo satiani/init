@@ -106,13 +106,12 @@ if dein#load_state('~/.cache/dein')
   call dein#add('tpope/vim-repeat')
   call dein#add('henrik/vim-indexed-search')
   call dein#add('tmhedberg/matchit')
+  call dein#add('junegunn/vim-peekaboo')
   " }}}
   " Modes {{{
   call dein#add('jceb/vim-orgmode')
   " }}}
   " Vim tools {{{
-  if has('nvim')
-  endif
   call dein#add('haya14busa/dein-command.vim')
   " }}}
   " dein save state {{{
@@ -249,10 +248,12 @@ function! LightlineMode()
         \ &filetype ==# 'fzf' ? 'FZF' :
         \ lightline#mode()
 endfunction
+
 function! LightlineFilename()
   return &filetype ==# 'fzf' ? '' :
         \ expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
 endfunction
+
 let g:lightline = {
       \ 'colorscheme': 'nord',
       \ 'active': {
@@ -375,6 +376,23 @@ let g:tern#arguments = ["--persistent"]
 au FileType javascript map <buffer> <Leader>D :TernDef<CR>
 au FileType javascript map <buffer> <Leader>d :TernDefPreview<CR>
 au FileType javascript map <buffer> <Leader>r :TernRename<CR>
+
+fun! s:setLightlineColorscheme(name)
+    let g:lightline.colorscheme = a:name
+    call lightline#init()
+    call lightline#colorscheme()
+    call lightline#update()
+endfun
+
+fun! s:lightlineColorschemes(...)
+    return join(map(
+                \ globpath(&rtp,"autoload/lightline/colorscheme/*.vim",1,1),
+                \ "fnamemodify(v:val,':t:r')"),
+                \ "\n")
+endfun
+
+com! -nargs=1 -complete=custom,s:lightlineColorschemes LightlineColorscheme
+            \ call s:setLightlineColorscheme(<q-args>)
 " }}}
 " ncm2 {{{
 autocmd BufEnter  *  call ncm2#enable_for_buffer()
