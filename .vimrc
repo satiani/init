@@ -5,14 +5,13 @@
 if &compatible
   set nocompatible               " Be iMproved
 endif
+" }}}
 
-" Required:
+" dein init {{{
 set runtimepath+=~/.cache/dein/repos/github.com/Shougo/dein.vim
 set runtimepath+=.
 let g:dein#types#git#clone_depth=1
-" }}}
-" dein init {{{
-" Required:
+
 if dein#load_state('~/.cache/dein')
   call dein#begin('~/.cache/dein')
 
