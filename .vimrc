@@ -396,6 +396,4 @@ augroup liwwa
   au BufEnter ~/code/web/app/static/**/*.html :set syntax=underscore_template
   au BufEnter *.html :silent RainbowToggleOff
 augroup END
-let g:python_host_prog  = expand('~/.local/share/nvim/python2/venv/bin/python')
-let g:python3_host_prog  =  expand('~/.local/share/nvim/python3/venv/bin/python3.6')
 " }}}
