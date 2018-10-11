@@ -39,9 +39,6 @@ Plug 'sjl/gundo.vim'
 " Text manipulation {{{
 Plug 'junegunn/vim-easy-align'
 Plug 'mattn/emmet-vim'
-if has('nvim')
-  Plug 'bfredl/nvim-miniyank'
-endif
 Plug 'tpope/vim-speeddating'
 Plug 'terryma/vim-multiple-cursors'
 " }}}
@@ -357,23 +354,6 @@ let g:tern#arguments = ["--persistent"]
 au FileType javascript map <buffer> <Leader>D :TernDef<CR>
 au FileType javascript map <buffer> <Leader>d :TernDefPreview<CR>
 au FileType javascript map <buffer> <Leader>r :TernRename<CR>
-
-fun! s:setLightlineColorscheme(name)
-    let g:lightline.colorscheme = a:name
-    call lightline#init()
-    call lightline#colorscheme()
-    call lightline#update()
-endfun
-
-fun! s:lightlineColorschemes(...)
-    return join(map(
-                \ globpath(&rtp,"autoload/lightline/colorscheme/*.vim",1,1),
-                \ "fnamemodify(v:val,':t:r')"),
-                \ "\n")
-endfun
-
-com! -nargs=1 -complete=custom,s:lightlineColorschemes LightlineColorscheme
-            \ call s:setLightlineColorscheme(<q-args>)
 " }}}
 " ncm2 {{{
 autocmd BufEnter  *  call ncm2#enable_for_buffer()
@@ -402,11 +382,6 @@ augroup language_client
   au User LanguageClientStarted command References call LanguageClient#textDocument_references()
   au User LanguageClientStopped delcommand References
 augroup END
-" }}}
-" miniyank {{{
-map p <Plug>(miniyank-autoput)
-map P <Plug>(miniyank-autoPut)
-map <localleader>[ <Plug>(miniyank-cycle)
 " }}}
 " gundo {{{
 map <Leader>u :GundoShow<CR>
