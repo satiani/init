@@ -102,10 +102,6 @@ else
     echo "Skipping typescript language server installation."
 fi
 # }}}
-# install dein {{{
-source $SCRIPT_DIR/lib.sh
-install_dein ~/.cache/dein > /dev/null
-# }}}
 # dotfiles {{{
 for i in .*; do
     if [ $i == "." ] || [ $i == ".." ] || [ $i == ".git" ] || [ $i == *.old ]; then
@@ -118,6 +114,14 @@ for i in .*; do
     fi;
     ln -s $PWD/$i $HOME
 done
+# }}}
+# install vim plug {{{
+if [ ! -f ~/.local/share/nvim/site/autoload/plug.vim ]; then
+    curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
+        https://raw.githubusercontent.com/satiani/vim-plug/master/plug.vim
+    mkdir -pv ~/.vim/autoload
+    ln -sv ~/.local/share/nvim/site/autoload/plug.vim ~/.vim/autoload
+fi
 # }}}
 # bin {{{
 link_bin $SCRIPT_DIR/push.sh

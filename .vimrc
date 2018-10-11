@@ -7,124 +7,106 @@ if &compatible
 endif
 " }}}
 
-" dein init {{{
-set runtimepath+=~/.cache/dein/repos/github.com/Shougo/dein.vim
-set runtimepath+=.
-let g:dein#types#git#clone_depth=1
-
-if dein#load_state('~/.cache/dein')
-  call dein#begin('~/.cache/dein')
-
-  " Let dein manage dein
-  " Required:
-  call dein#add('~/.cache/dein/repos/github.com/Shougo/dein.vim')
-  " }}}
-" 3rd party plugins
-  " Snippets {{{
-  call dein#add('SirVer/ultisnips')
-  call dein#add('honza/vim-snippets')
-  " }}}
-  " Syntax {{{
-  " javascript
-  call dein#add('pangloss/vim-javascript')
-  call dein#add('leafgarland/typescript-vim')
-  call dein#add('mklabs/vim-backbone')
-  call dein#add('aaronj1335/underscore-templates.vim')
-  call dein#add('mxw/vim-jsx')
-  " css
-  call dein#add('ap/vim-css-color')
-  " jinja
-  call dein#add('lepture/vim-jinja')
-  " python
-  call dein#add('Yggdroot/indentLine')
-  " }}}
-  " Navigation {{{
-  call dein#local('~/', {}, ['.fzf'])
-  call dein#add('junegunn/fzf.vim', { 'depends': '.fzf' })
-  call dein#add('easymotion/vim-easymotion')
-  call dein#add('satiani/bufferlist.vim')
-  call dein#add('scrooloose/nerdtree')
-  call dein#add('majutsushi/tagbar')
-  call dein#add('sjl/gundo.vim')
-  " }}}
-  " Text manipulation {{{
-  call dein#add('junegunn/vim-easy-align')
-  call dein#add('mattn/emmet-vim')
-  if has('nvim')
-    call dein#add('bfredl/nvim-miniyank')
-  endif
-  call dein#add('tpope/vim-speeddating')
-  call dein#add('terryma/vim-multiple-cursors')
-  " }}}
-  " Code completion {{{
-  call dein#add('ternjs/tern_for_vim')
-  call dein#add('mhartington/nvim-typescript')
-  call dein#add('roxma/nvim-yarp')
-  if !has('nvim')
-    call dein#add('roxma/vim-hug-neovim-rpc')
-  endif
-  call dein#add('autozimu/LanguageClient-neovim', {'build': 'bash install.sh'})
-  call dein#add('ncm2/ncm2')
-  call dein#add('ncm2/ncm2-path')
-  call dein#add('ncm2/ncm2-tern')
-  call dein#add('ncm2/ncm2-ultisnips')
-  call dein#add('ncm2/ncm2-vim', { 'depends': 'Shougo/neco-vim' })
-  call dein#add('Shougo/neco-vim')
-  call dein#add('ncm2/ncm2-html-subscope')
-  " }}}
-  " Version control {{{
-  call dein#add('tpope/vim-fugitive')
-  " }}}
-"  " Styling {{{
-  call dein#add('itchyny/lightline.vim')
-  call dein#add('maximbaz/lightline-ale')
-  call dein#add('flazz/vim-colorschemes')
-  call dein#add('xolox/vim-misc')
-  call dein#add('xolox/vim-colorscheme-switcher', { 'depends': 'xolox/vim-misc' })
-  call dein#add('luochen1990/rainbow')
-  call dein#add('fenetikm/falcon', {
-  \ 'build': 'patch -p0 < ~/code/init/falcon.patch'
-  \})
-  " }}}
-  " External integrations {{{
-  call dein#add('w0rp/ale')
-  call dein#add('benmills/vimux')
-  call dein#add('pitluga/vimux-nose-test')
-  if !has('nvim')
-    call dein#add('Shougo/vimshell.vim')
-  endif
-  " }}}
-  " Enhanced Vim behavior {{{
-  if has('nvim')
-    call dein#add('lambdalisue/suda.vim')
-  else
-    call dein#add('tpope/vim-eunuch')
-  endif
-  call dein#add('tpope/vim-unimpaired')
-  call dein#add('tpope/vim-sleuth')
-  call dein#add('tpope/vim-repeat')
-  call dein#add('henrik/vim-indexed-search')
-  call dein#add('tmhedberg/matchit')
-  call dein#add('junegunn/vim-peekaboo')
-  " }}}
-  " Modes {{{
-  call dein#add('jceb/vim-orgmode')
-  " }}}
-  " Vim tools {{{
-  call dein#add('haya14busa/dein-command.vim')
-  " }}}
-  " dein save state {{{
-  " Required:
-  call dein#end()
-  call dein#save_state()
+" Plugins {{{
+call plug#begin('~/.local/share/nvim/plugged')
+" Snippets {{{
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
+" }}}
+" Syntax {{{
+" javascript
+Plug 'pangloss/vim-javascript'
+Plug 'leafgarland/typescript-vim'
+Plug 'mklabs/vim-backbone'
+Plug 'aaronj1335/underscore-templates.vim'
+Plug 'mxw/vim-jsx'
+" css
+Plug 'ap/vim-css-color'
+" jinja
+Plug 'lepture/vim-jinja'
+" python
+Plug 'Yggdroot/indentLine'
+" }}}
+" Navigation {{{
+Plug '~/.fzf'
+Plug 'junegunn/fzf.vim'
+Plug 'easymotion/vim-easymotion'
+Plug 'satiani/bufferlist.vim'
+Plug 'scrooloose/nerdtree'
+Plug 'majutsushi/tagbar'
+Plug 'sjl/gundo.vim'
+" }}}
+" Text manipulation {{{
+Plug 'junegunn/vim-easy-align'
+Plug 'mattn/emmet-vim'
+if has('nvim')
+  Plug 'bfredl/nvim-miniyank'
+endif
+Plug 'tpope/vim-speeddating'
+Plug 'terryma/vim-multiple-cursors'
+" }}}
+" Code completion {{{
+Plug 'ternjs/tern_for_vim'
+Plug 'mhartington/nvim-typescript'
+Plug 'roxma/nvim-yarp'
+if !has('nvim')
+  Plug 'roxma/vim-hug-neovim-rpc'
+endif
+Plug 'autozimu/LanguageClient-neovim', {
+\   'do': 'bash install.sh',
+\   'branch': 'next',
+\   'clone_opt': '--depth 1'
+\}
+Plug 'ncm2/ncm2'
+Plug 'ncm2/ncm2-path'
+Plug 'ncm2/ncm2-tern'
+Plug 'ncm2/ncm2-ultisnips'
+" dependency of ncm2-vim
+Plug 'Shougo/neco-vim'
+Plug 'ncm2/ncm2-vim'
+Plug 'ncm2/ncm2-html-subscope'
+" }}}
+" Version control {{{
+Plug 'tpope/vim-fugitive'
+" }}}
+" Styling {{{
+Plug 'itchyny/lightline.vim'
+Plug 'maximbaz/lightline-ale'
+Plug 'flazz/vim-colorschemes'
+Plug 'xolox/vim-misc'
+Plug 'xolox/vim-colorscheme-switcher'
+Plug 'luochen1990/rainbow'
+Plug 'fenetikm/falcon', {'do': 'patch -p0 < ~/code/init/falcon.patch'}
+" }}}
+" External integrations {{{
+Plug 'w0rp/ale'
+Plug 'benmills/vimux'
+Plug 'pitluga/vimux-nose-test'
+if !has('nvim')
+  Plug 'Shougo/vimshell.vim'
 endif
 " }}}
-" dein install on startup? {{{
-" if dein#check_install()
-"   call dein#install()
-" endif
+" Enhanced Vim behavior {{{
+if has('nvim')
+  Plug 'lambdalisue/suda.vim'
+else
+  Plug 'tpope/vim-eunuch'
+endif
+Plug 'tpope/vim-unimpaired'
+Plug 'tpope/vim-sleuth'
+Plug 'tpope/vim-repeat'
+Plug 'henrik/vim-indexed-search'
+Plug 'tmhedberg/matchit'
+Plug 'junegunn/vim-peekaboo'
 " }}}
-" User settings
+" Modes {{{
+Plug 'jceb/vim-orgmode'
+" }}}
+" Vim tools {{{
+" }}}
+call plug#end()
+" }}}
+
 " Vim options {{{
 " General options {{{
 set termguicolors
@@ -207,8 +189,8 @@ augroup general_autocmds
 augroup END
 " }}}
 " }}}
-" dein {{{
-map <F9> :source ~/.vimrc<CR>:call dein#install()<CR>
+" vimplug{{{
+map <F9> :source ~/.vimrc<CR>:PlugClean<CR>:PlugInstall<CR>
 " }}}
 " Bufferlist {{{
 map <silent> <F2> :call BufferList()<CR>
@@ -398,7 +380,7 @@ autocmd BufEnter  *  call ncm2#enable_for_buffer()
 inoremap <silent><expr> <TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
 inoremap <silent><expr> <c-d> pumvisible() ? "\<PageDown>" : "\<c-d>"
 inoremap <silent><expr> <c-u> pumvisible() ? "\<PageUp>" : "\<c-u>"
-inoremap <expr> <CR> (pumvisible() ? "\<c-y>" : "\<CR>")
+inoremap <expr> <CR> (pumvisible() ? "\<c-y>\<cr>" : "\<CR>")
 " add tern to runtimepath so it gets caught by ncm2_tern
 let &runtimepath.=','.escape(expand('~/.langservers/javascript/'), '\,')
 " }}}
@@ -408,6 +390,8 @@ let g:LanguageClient_serverCommands = {
     \ 'typescript': ['~/.langservers/typescript/tsserver/lib/language-server-stdio.js'],
     \ }
 let g:LanguageClient_diagnosticsEnable = 0
+let g:LanguageClient_loggingFile = '/tmp/lc.log'
+let g:LanguageClient_loggingLevel = 'DEBUG'
 augroup language_client
   au!
   au FileType python,typescript map <buffer> <Leader>d :call LanguageClient#textDocument_definition({'gotoCmd': 'split'})<CR>
@@ -437,5 +421,6 @@ augroup liwwa
   au BufEnter ~/code/web/app/static/**/*.html :set syntax=underscore_template
   au BufEnter *.html :silent RainbowToggleOff
 augroup END
-let g:python_host_prog  = '/usr/local/bin/python'
+let g:python_host_prog  = expand('~/.local/share/nvim/python2/venv/bin/python')
+let g:python3_host_prog  =  expand('~/.local/share/nvim/python3/venv/bin/python3.6')
 " }}}
