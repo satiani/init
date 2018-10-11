@@ -105,8 +105,6 @@ done
 if [ ! -f ~/.local/share/nvim/site/autoload/plug.vim ]; then
     curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
         https://raw.githubusercontent.com/satiani/vim-plug/master/plug.vim
-    mkdir -pv ~/.vim/autoload
-    ln -sv ~/.local/share/nvim/site/autoload/plug.vim ~/.vim/autoload
 fi
 # }}}
 # bin {{{
