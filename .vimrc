@@ -360,7 +360,6 @@ autocmd BufEnter  *  call ncm2#enable_for_buffer()
 inoremap <silent><expr> <TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
 inoremap <silent><expr> <c-d> pumvisible() ? "\<PageDown>" : "\<c-d>"
 inoremap <silent><expr> <c-u> pumvisible() ? "\<PageUp>" : "\<c-u>"
-inoremap <expr> <CR> (pumvisible() ? "\<c-y>\<cr>" : "\<CR>")
 " add tern to runtimepath so it gets caught by ncm2_tern
 let &runtimepath.=','.escape(expand('~/.langservers/javascript/'), '\,')
 " }}}
