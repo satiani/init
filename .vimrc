@@ -227,8 +227,15 @@ function! LightlineMode()
         \ lightline#mode()
 endfunction
 
+function! LightlineRelativePath()
+  return &filetype ==# 'fzf' ? '' :
+        \ &filetype ==# 'help' ? '' :
+        \ expand('%:f') !=# '' ? expand('%:f') : '[No Name]'
+endfunction
+
 function! LightlineFilename()
   return &filetype ==# 'fzf' ? '' :
+        \ &filetype ==# 'help' ? '' :
         \ expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
 endfunction
 
@@ -238,7 +245,12 @@ let g:lightline = {
       \     'right': [ [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok' ],
       \                [ 'lineinfo' ],
       \                [ 'percent' ],
-      \                [ 'tagbar', 'filetype', 'charvaluehex'] ]
+      \                [ 'tagbar', 'filetype', 'charvaluehex'] ],
+      \     'left': [ [ 'mode', 'paste' ],
+      \               [ 'readonly', 'relativepath', 'modified' ] ],
+      \ },
+      \ 'inactive': {
+      \     'left': [ [ 'filename' ] ],
       \ },
       \ 'component': {
       \     'charvaluehex': '0x%B',
@@ -258,7 +270,8 @@ let g:lightline = {
       \ },
       \ 'component_function': {
       \     'mode': 'LightlineMode',
-      \     'filename': 'LightlineFilename',
+      \     'relativepath': 'LightlineRelativePath',
+      \     'filename': 'LightlineFilename'
       \ },
       \ }
 " }}}
