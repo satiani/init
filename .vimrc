@@ -77,6 +77,7 @@ Plug 'fenetikm/falcon', {'do': 'patch -p0 < ~/code/init/falcon.patch'}
 " }}}
 " External integrations {{{
 Plug 'w0rp/ale'
+Plug 'thinca/vim-ref'
 Plug 'benmills/vimux'
 Plug 'pitluga/vimux-nose-test'
 if !has('nvim')
