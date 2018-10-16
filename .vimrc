@@ -40,24 +40,19 @@ Plug 'sjl/gundo.vim'
 Plug 'junegunn/vim-easy-align'
 Plug 'mattn/emmet-vim'
 Plug 'tpope/vim-speeddating'
+Plug 'triglav/vim-visual-increment'
 Plug 'terryma/vim-multiple-cursors'
 " }}}
 " Code completion {{{
-Plug 'ternjs/tern_for_vim'
-Plug 'mhartington/nvim-typescript'
 Plug 'roxma/nvim-yarp'
 if !has('nvim')
   Plug 'roxma/vim-hug-neovim-rpc'
 endif
-Plug 'autozimu/LanguageClient-neovim', {
-\   'do': 'bash install.sh',
-\   'branch': 'next',
-\   'clone_opt': '--depth 1'
-\}
 Plug 'ncm2/ncm2'
 Plug 'ncm2/ncm2-path'
 Plug 'ncm2/ncm2-tern'
 Plug 'ncm2/ncm2-ultisnips'
+Plug 'ncm2/ncm2-jedi'
 " dependency of ncm2-vim
 Plug 'Shougo/neco-vim'
 Plug 'ncm2/ncm2-vim'
@@ -77,7 +72,6 @@ Plug 'fenetikm/falcon', {'do': 'patch -p0 < ~/code/init/falcon.patch'}
 " }}}
 " External integrations {{{
 Plug 'w0rp/ale'
-Plug 'thinca/vim-ref'
 Plug 'janko-m/vim-test'
 Plug 'ecerulm/vim-nose'
 " }}}
@@ -89,6 +83,13 @@ Plug 'tpope/vim-repeat'
 Plug 'henrik/vim-indexed-search'
 Plug 'tmhedberg/matchit'
 Plug 'junegunn/vim-peekaboo'
+Plug 'vim-scripts/LargeFile'
+Plug 'bronson/vim-visual-star-search'
+" }}}
+" Language Intelligence {{{
+Plug 'davidhalter/jedi-vim'
+Plug 'ternjs/tern_for_vim'
+Plug 'mhartington/nvim-typescript'
 " }}}
 " Modes {{{
 Plug 'jceb/vim-orgmode'
@@ -219,16 +220,26 @@ function! LightlineMode()
         \ lightline#mode()
 endfunction
 
-function! LightlineRelativePath()
-  return &filetype ==# 'fzf' ? '' :
-        \ &filetype ==# 'help' ? '' :
-        \ expand('%:f') !=# '' ? expand('%:f') : '[No Name]'
+function! GetTerminalProcessAndPid()
+  let splitArray = split(expand('%'), ':')
+  let processName = splitArray[-1]
+  let pid = split(splitArray[-2], '//')[1]
+  return processName . ' (' . pid . ')'
 endfunction
 
-function! LightlineFilename()
+function! LightlineName(expansionArguments)
   return &filetype ==# 'fzf' ? '' :
         \ &filetype ==# 'help' ? '' :
-        \ expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
+        \ &buftype ==# 'terminal' ? GetTerminalProcessAndPid() :
+        \ expand('%:t') !=# '' ? expand(a:expansionArguments) : '[No Name]'
+endfunction
+
+function! LightlineTagbar()
+    let fileSize = getfsize(expand(@%))
+    if fileSize > 10485760 " 10 MiB
+        return ""
+    endif
+    return tagbar#currenttag("%s", "", "f")
 endfunction
 
 let g:lightline = {
@@ -246,7 +257,8 @@ let g:lightline = {
       \ },
       \ 'component': {
       \     'charvaluehex': '0x%B',
-      \     'tagbar': '%{tagbar#currenttag("%s", "", "f")}'
+      \     'relativepath': '%{LightlineName("%:f")}',
+      \     'filename': '%{LightlineName("%:t")}'
       \ },
       \ 'component_expand': {
       \     'linter_checking': 'lightline#ale#checking',
@@ -260,10 +272,12 @@ let g:lightline = {
       \     'linter_errors': 'error',
       \     'linter_ok': 'left',
       \ },
+      \ 'component_visible_condition': {
+      \     'modified': '&modified||(!&modifiable && &buftype !=# "terminal")'
+      \ },
       \ 'component_function': {
       \     'mode': 'LightlineMode',
-      \     'relativepath': 'LightlineRelativePath',
-      \     'filename': 'LightlineFilename'
+      \     'tagbar': 'LightlineTagbar'
       \ },
       \ }
 " }}}
@@ -341,6 +355,9 @@ au FileType javascript map <buffer> <Leader>D :TernDef<CR>
 au FileType javascript map <buffer> <Leader>d :TernDefPreview<CR>
 au FileType javascript map <buffer> <Leader>r :TernRename<CR>
 " }}}
+" jedi-vim {{{
+let g:jedi#completions_enabled = 0
+" }}}
 " ncm2 {{{
 autocmd BufEnter  *  call ncm2#enable_for_buffer()
 inoremap <silent><expr> <TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
@@ -348,25 +365,39 @@ inoremap <silent><expr> <c-d> pumvisible() ? "\<PageDown>" : "\<c-d>"
 inoremap <silent><expr> <c-u> pumvisible() ? "\<PageUp>" : "\<c-u>"
 " add tern to runtimepath so it gets caught by ncm2_tern
 let &runtimepath.=','.escape(expand('~/.langservers/javascript/'), '\,')
-" }}}
-" LanguageServer {{{
-let g:LanguageClient_serverCommands = {
-    \ 'python': ['~/.langservers/python/run.sh', '~/code/web/venv/'],
-    \ 'typescript': ['~/.langservers/typescript/tsserver/lib/language-server-stdio.js'],
-    \ }
-let g:LanguageClient_diagnosticsEnable = 0
-let g:LanguageClient_loggingFile = '/tmp/lc.log'
-let g:LanguageClient_loggingLevel = 'DEBUG'
-augroup language_client
-  au!
-  au FileType python,typescript map <buffer> <Leader>d :call LanguageClient#textDocument_definition({'gotoCmd': 'split'})<CR>
-  au FileType python,typescript map <buffer> <Leader>D :call LanguageClient_textDocument_definition()<CR>
-  au FileType python,typescript map <buffer> <Leader>r :call LanguageClient#textDocument_rename()<CR>
-  au FileType python,typescript map <buffer> <Leader>t :call LanguageClient_textDocument_documentSymbol()<CR>
-  au FileType python,typescript map <buffer> K :call LanguageClient_textDocument_hover()<CR>
-  au User LanguageClientStarted command References call LanguageClient#textDocument_references()
-  au User LanguageClientStopped delcommand References
-augroup END
+" UltiSnips+NCM function parameter expansion
+
+" We don't really want UltiSnips to map these two, but there's no option for
+" that so just make it map them to a <Plug> key.
+let g:UltiSnipsExpandTrigger       = "<Plug>(ultisnips_expand_or_jump)"
+let g:UltiSnipsJumpForwardTrigger  = "<Plug>(ultisnips_expand_or_jump)"
+" Let UltiSnips bind the jump backward trigger as there's nothing special
+" about it.
+let g:UltiSnipsJumpBackwardTrigger = "<S-Tab>"
+
+" Try expanding snippet or jumping with UltiSnips and return <Tab> if nothing
+" worked.
+function! UltiSnipsExpandOrJumpOrTab()
+  call UltiSnips#ExpandSnippetOrJump()
+  if g:ulti_expand_or_jump_res > 0
+    return ""
+  else
+    return "\<Tab>"
+  endif
+endfunction
+
+" First try expanding with ncm2_ultisnips. This does both LSP snippets and
+" normal snippets when there's a completion popup visible.
+inoremap <silent> <expr> <Tab> ncm2_ultisnips#expand_or("\<Plug>(ultisnips_try_expand)")
+
+" If that failed, try the UltiSnips expand or jump function. This handles
+" short snippets when the completion popup isn't visible yet as well as
+" jumping forward from the insert mode. Writes <Tab> if there is no special
+" action taken.
+inoremap <silent> <Plug>(ultisnips_try_expand) <C-R>=UltiSnipsExpandOrJumpOrTab()<CR>
+
+" Select mode mapping for jumping forward with <Tab>.
+snoremap <silent> <Tab> <Esc>:call UltiSnips#ExpandSnippetOrJump()<cr>
 " }}}
 " gundo {{{
 map <Leader>u :GundoToggle<CR>

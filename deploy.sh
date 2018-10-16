@@ -49,17 +49,9 @@ fi
 # language servers {{{
 [ -d ~/.langservers ] || mkdir ~/.langservers
 # }}}
-# python language server {{{
-if [ -x "$(command -v virtualenv)" ] && ! [ -d ~/.langservers/python ]; then
-    bash<<EOF
-    mkdir ~/.langservers/python
-    cd ~/.langservers/python
-    virtualenv venv
-    source venv/bin/activate
-    pip install python-language-server
-    pip install python-language-server[rope]
-    pip install python-language-server[mccabe]
-    cp $SCRIPT_DIR/pythonls.sh ./run.sh
+# jedi {{{
+if [ -x "$(command -v pip3)" ] && ! python3 -m 'jedi' > /dev/null 2>&1; then
+    pip3 install --user jedi
 EOF
 else
     echo "Skipping python language server installation."
@@ -75,21 +67,6 @@ if [ -x "$(command -v npm)" ] && ! [ -d ~/.langservers/javascript ]; then
 EOF
 else
     echo "Skipping javascript language server installation."
-fi
-# }}}
-# typescript language server {{{
-if [ -x "$(command -v npm)" ] && ! [ -d ~/.langservers/typescript ]; then
-    bash<<EOF
-    mkdir ~/.langservers/typescript
-    cd ~/.langservers/typescript
-    git clone https://github.com/sourcegraph/javascript-typescript-langserver tsserver
-    cd tsserver
-    npm install
-    npm run build
-    chmod +x lib/language-server*.js
-EOF
-else
-    echo "Skipping typescript language server installation."
 fi
 # }}}
 # dotfiles {{{
