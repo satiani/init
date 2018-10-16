@@ -383,6 +383,7 @@ nmap <silent> t<C-g> :TestVisit<CR>
 let test#python#runner = "nose"
 let test#strategy = "neovim"
 let g:test#preserve_screen = 1
+let test#neovim#term_position = "belowright 10split"
 " }}}
 " liwwa {{{
 augroup liwwa
