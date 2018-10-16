@@ -6,15 +6,8 @@ set -e
 SCRIPT_DIR=$(cd `dirname $0` && pwd)
 ON_A_MAC=`([ $( uname ) == "Darwin" ] && echo "true") || echo "false"`
 # }}}
-# functions {{{
-function link_bin () {
-    [ -z $1 ] && echo "No input" && return 1
-    [ -e ~/bin ] || mkdir -pv ~/bin
-
-    BASENAME=`basename $1`
-    [ -e ~/bin/$BASENAME ] && echo "Skipping linking $1 to ~/bin" && return
-    ln -sv $1 ~/bin/$BASENAME
-}
+# bin dir {{{
+[ -e ~/bin ] || mkdir -pv ~/bin
 # }}}
 # rust/cargo {{{
 export PATH=~/.cargo/bin/:$PATH
@@ -40,6 +33,17 @@ if ! [ -d ~/.fzf ]; then
     cp -r ~/.fzf/man/man1/* ~/.man/man1
 else
     echo "Skipping fzf installation"
+fi
+# }}}
+# fixjson {{{
+if [ -x "$(command -v npm)" ] && ! [ -f ~/bin/fixjson ]; then
+    bash<<EOF
+    cd ~/bin
+    npm install fixjson
+    ln -sv node_modules/.bin/fixjson .
+EOF
+else
+    echo "Skipping fixjson installation"
 fi
 # }}}
 # language servers {{{
@@ -106,10 +110,6 @@ if [ ! -f ~/.local/share/nvim/site/autoload/plug.vim ]; then
     curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
         https://raw.githubusercontent.com/satiani/vim-plug/master/plug.vim
 fi
-# }}}
-# bin {{{
-link_bin $SCRIPT_DIR/push.sh
-link_bin $SCRIPT_DIR/get.sh
 # }}}
 # vim/nvim {{{
 mkdir -pv $HOME/vimswap

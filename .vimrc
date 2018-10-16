@@ -78,18 +78,11 @@ Plug 'fenetikm/falcon', {'do': 'patch -p0 < ~/code/init/falcon.patch'}
 " External integrations {{{
 Plug 'w0rp/ale'
 Plug 'thinca/vim-ref'
-Plug 'benmills/vimux'
-Plug 'pitluga/vimux-nose-test'
-if !has('nvim')
-  Plug 'Shougo/vimshell.vim'
-endif
+Plug 'janko-m/vim-test'
+Plug 'ecerulm/vim-nose'
 " }}}
 " Enhanced Vim behavior {{{
-if has('nvim')
-  Plug 'lambdalisue/suda.vim'
-else
-  Plug 'tpope/vim-eunuch'
-endif
+Plug 'lambdalisue/suda.vim'
 Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-repeat'
@@ -141,19 +134,17 @@ set wildmenu
 set wildignore+=*/*.class,*/*.o,*/*.lo,*/*.pyc,*/*.pyo,uploads/*
 set noshowmode
 " }}}
-" Neovim Specific options {{{
-if has('nvim')
-  tnoremap <C-w> <C-\><C-N><C-w>
-  augroup terminal
-    au!
-    " Temporarily prevent recording inside terminals until I develop the muscle memory
-    " no to click q after selecting text (which is how I exit copy mode in tmux)
-    au TermOpen * map <buffer> q <Nop>
-    au BufEnter,FocusGained,BufEnter,BufWinEnter,WinEnter term://* map <buffer> q <Nop>
-    au TermOpen * startinsert
-    au TermClose term://* close
-  augroup END
-endif
+" terminal options {{{
+tnoremap <C-w> <C-\><C-N><C-w>
+tmap <C-o> <C-\><C-n>
+augroup terminal
+  au!
+  " Temporarily prevent recording inside terminals until I develop the muscle memory
+  " no to click q after selecting text (which is how I exit copy mode in tmux)
+  au TermOpen * map <buffer> q <Nop>
+  au BufEnter,FocusGained,BufEnter,BufWinEnter,WinEnter term://* map <buffer> q <Nop>
+  au TermOpen * startinsert
+augroup END
 " }}}
 " Key mappings {{{
 let mapleader=","
@@ -279,7 +270,8 @@ let g:lightline = {
 " ale {{{
 let g:ale_fixers={
 \    'python': ['isort', 'autopep8'],
-\    'javascript': ['standard']
+\    'javascript': ['standard'],
+\    'json': ['fixjson']
 \}
 let g:ale_linters={
 \    'javascript': ['standard'],
@@ -342,26 +334,6 @@ let g:tagbar_ctags_bin = '/usr/bin/ctags'
 " Disables behavior by vim-sleuth where it will turn on filetype indent
 let g:did_indent_on = 0
 " }}}
-" vimux/neovim terminal {{{
-if has('nvim')
-  map <Leader>vn :10split term://~/code/web/npm_dev.sh \| startinsert<CR>
-  map <Leader>vi :20split term://zsh \| sleep 100m \| startinsert<CR>cd ~/code/web && source venv/bin/activate && python manage.py shell<CR><C-\><C-n>
-  map <Leader>vl :10split term://zsh \| sleep 100m \| startinsert<CR>tail -f /var/liwwa/log/**/*.log~**/*apache_access.log<CR><C-\><C-n>
-else
-  function! VimuxIPython()
-      call VimuxSendText(@v)
-  endfunction
-  augroup vimux_python
-    au!
-    au BufEnter *.py vmap <buffer> <Leader>vr "vy :call VimuxIPython()<CR>
-  augroup END
-  map <Leader>vn :VimuxRunCommand("cd ~/code/web; ./npm_dev.sh")<CR>
-  map <Leader>vi :VimuxRunCommand("cd ~/code/web; source venv/bin/activate; python manage.py shell")<CR>
-  map <Leader>vl :VimuxRunCommand("tail -f /var/liwwa/log/**/*.log~**/*apache_access.log")<CR>
-  map <Leader>vp :VimuxPromptCommand<CR>
-  map <Leader>vc :VimuxCloseRunner<CR>
-endif
-" }}}
 " tern for vim {{{
 let g:tern#command = [expand("~/.langservers/javascript/run.sh")]
 let g:tern#arguments = ["--persistent"]
@@ -397,10 +369,20 @@ augroup language_client
 augroup END
 " }}}
 " gundo {{{
-map <Leader>u :GundoShow<CR>
+map <Leader>u :GundoToggle<CR>
 " }}}
 " indentLine {{{
 let g:indentLine_fileType = ['python']
+" }}}
+" vim-test {{{
+nmap <silent> t<C-n> :TestNearest<CR>
+nmap <silent> t<C-f> :TestFile<CR>
+nmap <silent> t<C-s> :TestSuite<CR>
+nmap <silent> t<C-l> :TestLast<CR>
+nmap <silent> t<C-g> :TestVisit<CR>
+let test#python#runner = "nose"
+let test#strategy = "neovim"
+let g:test#preserve_screen = 1
 " }}}
 " liwwa {{{
 augroup liwwa
@@ -409,4 +391,7 @@ augroup liwwa
   au BufEnter ~/code/web/app/static/**/*.html :set syntax=underscore_template
   au BufEnter *.html :silent RainbowToggleOff
 augroup END
+" }}}
+" python_host_prog {{{
+let g:python_host_prog='/usr/bin/python'
 " }}}
