@@ -15,11 +15,11 @@ Plug 'honza/vim-snippets'
 " }}}
 " Syntax {{{
 " javascript
-Plug 'pangloss/vim-javascript'
+Plug 'aaronj1335/underscore-templates.vim'
 Plug 'leafgarland/typescript-vim'
 Plug 'mklabs/vim-backbone'
-Plug 'aaronj1335/underscore-templates.vim'
 Plug 'mxw/vim-jsx'
+Plug 'pangloss/vim-javascript'
 " css
 Plug 'ap/vim-css-color'
 " jinja
@@ -28,20 +28,20 @@ Plug 'lepture/vim-jinja'
 Plug 'Yggdroot/indentLine'
 " }}}
 " Navigation {{{
-Plug '~/.fzf'
-Plug 'junegunn/fzf.vim'
 Plug 'easymotion/vim-easymotion'
+Plug 'junegunn/fzf.vim'
+Plug 'majutsushi/tagbar'
 Plug 'satiani/bufferlist.vim'
 Plug 'scrooloose/nerdtree'
-Plug 'majutsushi/tagbar'
 Plug 'sjl/gundo.vim'
+Plug '~/.fzf'
 " }}}
 " Text manipulation {{{
 Plug 'junegunn/vim-easy-align'
 Plug 'mattn/emmet-vim'
+Plug 'terryma/vim-multiple-cursors'
 Plug 'tpope/vim-speeddating'
 Plug 'triglav/vim-visual-increment'
-Plug 'terryma/vim-multiple-cursors'
 " }}}
 " Code completion {{{
 Plug 'roxma/nvim-yarp'
@@ -49,52 +49,51 @@ if !has('nvim')
   Plug 'roxma/vim-hug-neovim-rpc'
 endif
 Plug 'ncm2/ncm2'
+Plug 'ncm2/ncm2-jedi'
 Plug 'ncm2/ncm2-path'
 Plug 'ncm2/ncm2-tern'
 Plug 'ncm2/ncm2-ultisnips'
-Plug 'ncm2/ncm2-jedi'
-" dependency of ncm2-vim
-Plug 'Shougo/neco-vim'
 Plug 'ncm2/ncm2-vim'
-Plug 'ncm2/ncm2-html-subscope'
 " }}}
 " Version control {{{
 Plug 'tpope/vim-fugitive'
 " }}}
 " Styling {{{
-Plug 'itchyny/lightline.vim'
-Plug 'maximbaz/lightline-ale'
-Plug 'flazz/vim-colorschemes'
-Plug 'xolox/vim-misc'
-Plug 'xolox/vim-colorscheme-switcher'
-Plug 'luochen1990/rainbow'
 Plug 'fenetikm/falcon', {'do': 'patch -p0 < ~/code/init/falcon.patch'}
+Plug 'flazz/vim-colorschemes'
+Plug 'itchyny/lightline.vim'
+Plug 'luochen1990/rainbow'
+Plug 'maximbaz/lightline-ale'
+Plug 'xolox/vim-colorscheme-switcher'
+Plug 'xolox/vim-misc'
 " }}}
 " External integrations {{{
-Plug 'w0rp/ale'
-Plug 'janko-m/vim-test'
 Plug 'ecerulm/vim-nose'
+Plug 'janko-m/vim-test'
+Plug 'w0rp/ale'
 " }}}
 " Enhanced Vim behavior {{{
-Plug 'lambdalisue/suda.vim'
-Plug 'tpope/vim-unimpaired'
-Plug 'tpope/vim-sleuth'
-Plug 'tpope/vim-repeat'
-Plug 'henrik/vim-indexed-search'
-Plug 'tmhedberg/matchit'
-Plug 'junegunn/vim-peekaboo'
-Plug 'vim-scripts/LargeFile'
 Plug 'bronson/vim-visual-star-search'
+Plug 'henrik/vim-indexed-search'
+Plug 'junegunn/vim-peekaboo'
+Plug 'lambdalisue/suda.vim'
+Plug 'tmhedberg/matchit'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-sleuth'
+Plug 'tpope/vim-unimpaired'
+Plug 'vim-scripts/LargeFile'
 " }}}
 " Language Intelligence {{{
 Plug 'davidhalter/jedi-vim'
-Plug 'ternjs/tern_for_vim'
 Plug 'mhartington/nvim-typescript'
+Plug 'ternjs/tern_for_vim'
+Plug 'Shougo/neco-vim'
 " }}}
 " Modes {{{
 Plug 'jceb/vim-orgmode'
 " }}}
 " Vim tools {{{
+Plug 'mattn/calendar-vim'
 " }}}
 call plug#end()
 " }}}
