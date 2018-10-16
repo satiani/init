@@ -52,7 +52,6 @@ fi
 # jedi {{{
 if [ -x "$(command -v pip3)" ] && ! python3 -m 'jedi' > /dev/null 2>&1; then
     pip3 install --user jedi
-EOF
 else
     echo "Skipping python language server installation."
 fi
