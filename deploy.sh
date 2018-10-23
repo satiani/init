@@ -10,10 +10,7 @@ ON_A_MAC=`([ $( uname ) == "Darwin" ] && echo "true") || echo "false"`
 [ -e ~/bin ] || mkdir -pv ~/bin
 # }}}
 # rust/cargo {{{
-export PATH=~/.cargo/bin/:~/.local/bin:$PATH
-if ! [ -x "$(command -v cargo)" ]; then
-    curl https://sh.rustup.rs -sSf | sh
-fi
+export PATH=~/.local/bin:$PATH
 # }}}
 # tmux plugin manager {{{
 if ! [ -d ~/.tmux ]; then
@@ -22,6 +19,10 @@ fi
 # }}}
 # ripgrep {{{
 if ! [ -x "$(command -v rg)" ]; then
+    if ! [ -x "$(command -v cargo)" ]; then
+        curl https://sh.rustup.rs -sSf | sh
+        export PATH=~/.cargo/bin/:$PATH
+    fi
     cargo install ripgrep
 fi
 # }}}
