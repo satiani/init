@@ -423,5 +423,6 @@ augroup liwwa
 augroup END
 " }}}
 " python_host_prog {{{
-let g:python_host_prog='/usr/bin/python'
+let g:python_host_prog=expand('~/.local/python-envs/venv2/bin/python')
+let g:python3_host_prog=expand('~/.local/python-envs/venv3/bin/python3')
 " }}}

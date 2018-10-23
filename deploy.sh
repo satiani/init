@@ -107,6 +107,21 @@ else
     echo "Skipping nvim installation."
 fi
 
+if ! [ -d ~/.local/python-envs ]; then
+    bash<<EOF
+    mkdir -pv ~/.local/python-envs
+    cd ~/.local/python-envs
+    virtualenv --python /usr/local/bin/python3 venv3
+    source venv3/bin/activate
+    pip install neovim
+    virtualenv --python /usr/bin/python venv2
+    source venv2/bin/activate
+    pip install neovim
+EOF
+else
+    echo "Skipping nvim envs installation."
+fi
+
 if ! [ -x "$(command -v nvr)" ]; then
     pip3 install --user neovim-remote
 else
