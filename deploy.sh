@@ -49,13 +49,6 @@ fi
 # language servers {{{
 [ -d ~/.langservers ] || mkdir ~/.langservers
 # }}}
-# jedi {{{
-if [ -x "$(command -v pip3)" ] && ! python3 -m 'jedi' > /dev/null 2>&1; then
-    pip3 install --user jedi
-else
-    echo "Skipping python language server installation."
-fi
-# }}}
 # javascript language server {{{
 if [ -x "$(command -v npm)" ] && ! [ -d ~/.langservers/javascript ]; then
     bash<<EOF
@@ -120,6 +113,16 @@ if ! [ -d ~/.local/python-envs ]; then
 EOF
 else
     echo "Skipping nvim envs installation."
+fi
+
+if ! ~/.local/python-envs/venv3/bin/python3 -m 'jedi' > /dev/null 2>&1; then
+    bash<<EOF
+    cd ~/.local/python-envs/
+    source venv3/bin/activate
+    pip install jedi
+EOF
+else
+    echo "Skipping jedi installation"
 fi
 
 if ! [ -x "$(command -v nvr)" ]; then
