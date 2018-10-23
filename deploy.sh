@@ -10,7 +10,7 @@ ON_A_MAC=`([ $( uname ) == "Darwin" ] && echo "true") || echo "false"`
 [ -e ~/bin ] || mkdir -pv ~/bin
 # }}}
 # rust/cargo {{{
-export PATH=~/.cargo/bin/:$PATH
+export PATH=~/.cargo/bin/:~/.local/bin:$PATH
 if ! [ -x "$(command -v cargo)" ]; then
     curl https://sh.rustup.rs -sSf | sh
 fi
@@ -93,6 +93,18 @@ mkdir -pv $HOME/.config/nvim/
 
 if ! [ -e $HOME/.config/nvim/init.vim ]; then
     ln -sv $HOME/.vimrc $HOME/.config/nvim/init.vim
+fi
+
+if ! [ -x "$(command -v nvim)" ]; then
+    bash<<EOF
+    cd $(mktemp -d)
+    curl -LO https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage
+    chmod u+x nvim.appimage
+    ./nvim.appimage --appimage-extract
+    rsync -avz ./squashfs-root/usr/ ~/.local/
+EOF
+else
+    echo "Skipping nvim installation."
 fi
 
 if ! [ -x "$(command -v nvr)" ]; then
