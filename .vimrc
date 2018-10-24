@@ -97,6 +97,13 @@ Plug 'mattn/calendar-vim'
 " }}}
 call plug#end()
 " }}}
+" Circuit breaker {{{
+" Start VIMINIT='let g:first_time_install=1' vim to load plugins only without continuing the rest of
+" the script
+if get(g:, 'first_time_install', 0) == 1
+  finish
+endif
+" }}}
 
 " Vim options {{{
 " General options {{{

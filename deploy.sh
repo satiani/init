@@ -89,18 +89,6 @@ if ! [ -e $HOME/.config/nvim/init.vim ]; then
     ln -sv $HOME/.vimrc $HOME/.config/nvim/init.vim
 fi
 
-if ! [ -x "$(command -v nvim)" ]; then
-    bash<<EOF
-    cd $(mktemp -d)
-    curl -LO https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage
-    chmod u+x nvim.appimage
-    ./nvim.appimage --appimage-extract
-    rsync -avz ./squashfs-root/usr/ ~/.local/
-EOF
-else
-    echo "Skipping nvim installation."
-fi
-
 if ! [ -d ~/.local/python-envs ]; then
     bash<<EOF
     mkdir -pv ~/.local/python-envs
@@ -116,27 +104,28 @@ else
     echo "Skipping nvim envs installation."
 fi
 
-if ! ~/.local/python-envs/venv3/bin/python3 -m 'jedi' > /dev/null 2>&1; then
-    bash<<EOF
-    cd ~/.local/python-envs/
-    source venv3/bin/activate
-    pip install jedi
-EOF
-else
-    echo "Skipping jedi installation"
-fi
-
 if ! [ -x "$(command -v nvr)" ]; then
     pip3 install --user neovim-remote
 else
     echo "Skipping nvr installation."
 fi
-# }}}
-# configure git {{{
-git config --global user.name "Samer Atiani"
-git config --global user.email "satiani@gmail.com"
-git config --global color.ui auto
-git config --global alias.st status
-git config --global push.default simple
+
+if ! [ -x "$(command -v nvim)" ]; then
+    bash<<EOF
+    cd $(mktemp -d)
+    curl -LO https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage
+    chmod u+x nvim.appimage
+    ./nvim.appimage --appimage-extract
+    rsync -avz ./squashfs-root/usr/ ~/.local/
+EOF
+else
+    echo "Skipping nvim installation."
+fi
+
+if ! [ -d ~/.local/share/nvim/plugged ]; then
+    VIMINIT='let g:first_time_install=1 | source ~/.vimrc' nvim +PlugInstall +qall
+else
+    echo "Skipping PlugInstall"
+fi
 # }}}
 echo "Done."
