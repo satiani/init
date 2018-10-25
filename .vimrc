@@ -85,7 +85,6 @@ Plug 'vim-scripts/LargeFile'
 " }}}
 " Language Intelligence {{{
 Plug 'davidhalter/jedi-vim'
-Plug 'mhartington/nvim-typescript'
 Plug 'ternjs/tern_for_vim'
 Plug 'Shougo/neco-vim'
 " }}}
