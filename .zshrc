@@ -62,6 +62,7 @@ alias speedtest='wget -O /dev/null http://speedtest.wdc01.softlayer.com/download
 [[ "$ON_A_MAC" == "false" ]] && alias ls='ls --color=auto' || alias ls='ls -G'
 alias grep='grep --color=auto'
 alias site='cd ~/code/web && source venv/bin/activate'
+alias sudo='sudo '
 # }}}
 # Compinstall {{{
 # The following lines were added by compinstall
@@ -87,3 +88,9 @@ export FZF_COMPLETION_TRIGGER='/'
 export FZF_DEFAULT_COMMAND='rg --no-ignore --files --follow -uu 2>/dev/null'
 export FZF_DEFAULT_OPTS='--bind ctrl-d:page-down,ctrl-u:page-up'
 # }}}
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/satiani/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/satiani/Downloads/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/satiani/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/satiani/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
