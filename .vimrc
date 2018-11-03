@@ -346,7 +346,6 @@ let g:easy_align_ignore_groups = []
 map <silent><F5>  :TagbarToggle<CR>
 let g:tagbar_left = 1
 let g:tagbar_autoclose = 1
-let g:tagbar_ctags_bin = '/usr/bin/ctags'
 " }}}
 " vim-sleuth {{{
 " Disables behavior by vim-sleuth where it will turn on filetype indent

@@ -42,7 +42,7 @@ bindkey '' run-help
 # }}}
 # Exports {{{
 export ON_A_MAC=`([ $( uname ) == "Darwin" ] && echo "true") || echo "false"`
-export PATH="$HOME/.local/bin:$HOME/.cargo/bin:/usr/local/bin:/usr/local/opt/gnu-sed/libexec/gnubin:/usr/bin/:/bin:/usr/local/sbin:/usr/sbin:/sbin"
+export PATH="$HOME/bin:$HOME/.local/bin:$HOME/.cargo/bin:/usr/local/bin:/usr/local/opt/gnu-sed/libexec/gnubin:/usr/bin/:/bin:/usr/local/sbin:/usr/sbin:/sbin"
 [ "$ON_A_MAC" == "true" ] && export PATH="$PATH:$HOME/Library/Python/3.7/bin"
 export VIM_BIN="vim"
 [ "$(command -v nvim)" ] && export VIM_BIN="nvim"
@@ -88,9 +88,3 @@ export FZF_COMPLETION_TRIGGER='/'
 export FZF_DEFAULT_COMMAND='rg --no-ignore --files --follow -uu 2>/dev/null'
 export FZF_DEFAULT_OPTS='--bind ctrl-d:page-down,ctrl-u:page-up'
 # }}}
-
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/satiani/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/satiani/Downloads/google-cloud-sdk/path.zsh.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/Users/satiani/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/satiani/Downloads/google-cloud-sdk/completion.zsh.inc'; fi

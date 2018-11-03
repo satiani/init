@@ -36,15 +36,16 @@ else
     echo "Skipping fzf installation"
 fi
 # }}}
-# fixjson {{{
-if [ -x "$(command -v npm)" ] && ! [ -f ~/bin/fixjson ]; then
+# utils from npm {{{
+if [ -x "$(command -v npm)" ] && (! [ -f ~/bin/fixjson ] || ! [ -f ~/bin/jsctags ]); then
     bash<<EOF
     cd ~/bin
-    npm install fixjson
-    ln -sv node_modules/.bin/fixjson .
+    npm install fixjson git+https://github.com/ramitos/jsctags.git
+    [ -f ~/bin/fixjson ] || ln -sv node_modules/.bin/fixjson .
+    [ -f ~/bin/jsctags ] || ln -sv node_modules/.bin/jsctags .
 EOF
 else
-    echo "Skipping fixjson installation"
+    echo "Skipping utils from npm installation"
 fi
 # }}}
 # language servers {{{
@@ -128,7 +129,7 @@ else
     echo "Skipping PlugInstall"
 fi
 # }}}
-# install termcolors {{
+# install termcolors {{{
 if [ -x $(command -v tic) ] && ! [ -e ~/.terminfo/*/tmux-256color ]; then
     echo "Compiling & installing termcolors"
     tic -x  $SCRIPT_DIR/tmux-256color.terminfo
