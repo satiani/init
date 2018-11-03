@@ -106,6 +106,8 @@ endif
 
 " Vim options {{{
 " General options {{{
+" The "^[" is a single character. You enter it by pressing Ctrl+v and then ESC.
+" True color support
 set termguicolors
 colorscheme falcon
 filetype plugin on
@@ -355,8 +357,7 @@ let g:did_indent_on = 0
 " tern for vim {{{
 let g:tern#command = [expand("~/.langservers/javascript/run.sh")]
 let g:tern#arguments = ["--persistent"]
-au FileType javascript map <buffer> <Leader>D :TernDef<CR>
-au FileType javascript map <buffer> <Leader>d :TernDefPreview<CR>
+au FileType javascript map <buffer> <Leader>d :TernDef<CR>
 au FileType javascript map <buffer> <Leader>r :TernRename<CR>
 " }}}
 " jedi-vim {{{
