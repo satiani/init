@@ -106,8 +106,6 @@ endif
 
 " Vim options {{{
 " General options {{{
-" The "^[" is a single character. You enter it by pressing Ctrl+v and then ESC.
-" True color support
 set termguicolors
 colorscheme falcon
 filetype plugin on
