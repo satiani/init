@@ -129,13 +129,4 @@ else
     echo "Skipping PlugInstall"
 fi
 # }}}
-# install termcolors {{{
-if [ -x $(command -v tic) ] && ! [ -e ~/.terminfo/*/tmux-256color ]; then
-    echo "Compiling & installing termcolors"
-    tic -x  $SCRIPT_DIR/tmux-256color.terminfo
-    tic -x  $SCRIPT_DIR/xterm-256color-italic.terminfo
-else
-    echo "Skipping termcolors"
-fi
-# }}}
 echo "Done."
