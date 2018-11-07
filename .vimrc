@@ -224,17 +224,9 @@ function! LightlineMode()
         \ lightline#mode()
 endfunction
 
-function! GetTerminalProcessAndPid()
-  let splitArray = split(expand('%'), ':')
-  let processName = splitArray[-1]
-  let pid = split(splitArray[-2], '//')[1]
-  return processName . ' (' . pid . ')'
-endfunction
-
 function! LightlineName(expansionArguments)
   return &filetype ==# 'fzf' ? '' :
         \ &filetype ==# 'help' ? '' :
-        \ &buftype ==# 'terminal' ? GetTerminalProcessAndPid() :
         \ expand('%:t') !=# '' ? expand(a:expansionArguments) : '[No Name]'
 endfunction
 
