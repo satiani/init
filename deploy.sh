@@ -10,20 +10,36 @@ ON_A_MAC=`([ $( uname ) == "Darwin" ] && echo "true") || echo "false"`
 [ -e ~/bin ] || mkdir -pv ~/bin
 # }}}
 # rust/cargo {{{
-export PATH=~/.local/bin:$PATH
+export PATH=~/.local/bin:~/.cargo/bin:$PATH
 # }}}
 # tmux plugin manager {{{
 if ! [ -d ~/.tmux ]; then
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 fi
 # }}}
+# rust/cargo {{{
+if ! [ -x "$(command -v cargo)" ]; then
+    curl https://sh.rustup.rs -sSf | sh
+    export PATH=~/.cargo/bin/:$PATH
+else
+    echo "Skipping rust/cargo"
+fi
+# }}}
 # ripgrep {{{
 if ! [ -x "$(command -v rg)" ]; then
-    if ! [ -x "$(command -v cargo)" ]; then
-        curl https://sh.rustup.rs -sSf | sh
-        export PATH=~/.cargo/bin/:$PATH
-    fi
-    cargo install ripgrep
+    bash <<EOF
+    cargo_install() {
+        cargo install ripgrep
+    }
+    cd $(mktemp -d)
+    wget https://github.com/BurntSushi/ripgrep/releases/download/0.10.0/ripgrep_0.10.0_amd64.deb
+    trap "cargo_install" SIGINT
+    echo "Please enter sudo password or press Ctrl-C to install from cargo"
+    sudo dpkg -i ripgrep_0.10.0_amd64.deb
+    trap - SIGINT
+EOF
+else
+    echo "Skipping ripgrep"
 fi
 # }}}
 # fzf {{{
