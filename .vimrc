@@ -249,7 +249,7 @@ let g:lightline = {
       \               [ 'readonly', 'relativepath', 'modified' ] ],
       \ },
       \ 'inactive': {
-      \     'left': [ [ 'filename' ] ],
+      \     'left': [ [ 'filename', 'modified'] ],
       \ },
       \ 'component': {
       \     'charvaluehex': '0x%B',
