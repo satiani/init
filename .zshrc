@@ -62,7 +62,7 @@ alias speedtest='wget -O /dev/null http://speedtest.wdc01.softlayer.com/download
 [[ "$ON_A_MAC" == "false" ]] && alias ls='ls --color=auto' || alias ls='ls -G'
 alias grep='grep --color=auto'
 alias site='cd ~/code/web && source venv/bin/activate'
-alias sudo='sudo '
+alias sudo='sudo PATH=$PATH'
 # }}}
 # Compinstall {{{
 # The following lines were added by compinstall
