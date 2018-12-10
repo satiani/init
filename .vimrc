@@ -138,6 +138,7 @@ set tags=tags;/
 set wildmenu
 set wildignore+=*/*.class,*/*.o,*/*.lo,*/*.pyc,*/*.pyo,uploads/*
 set noshowmode
+set formatoptions-=tc
 " }}}
 " terminal options {{{
 tnoremap <C-w> <C-\><C-N><C-w>
@@ -285,6 +286,7 @@ let g:ale_fixers={
 \}
 let g:ale_linters={
 \    'javascript': ['standard'],
+\    'python': ['flake8'],
 \}
 nmap <Leader>F <Plug>(ale_fix)
 nmap <Leader>D <Plug>(ale_toggle_buffer)<CR>
