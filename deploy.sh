@@ -10,7 +10,7 @@ ON_A_MAC=`([ $( uname ) == "Darwin" ] && echo "true") || echo "false"`
 [ -e ~/bin ] || mkdir -pv ~/bin
 # }}}
 # rust/cargo {{{
-export PATH=~/.local/bin:~/.cargo/bin:$PATH
+export PATH=~/.local/bin:~/.cargo/bin:$PATH:~/bin
 # }}}
 # tmux plugin manager {{{
 if ! [ -d ~/.tmux ]; then
@@ -50,6 +50,14 @@ if ! [ -d ~/.fzf ]; then
     cp -r ~/.fzf/man/man1/* ~/.man/man1
 else
     echo "Skipping fzf installation"
+fi
+# }}}
+# fpp {{{
+if [ ! -d ~/bin/PathPicker ]; then
+    git clone https://github.com/facebook/PathPicker.git ~/bin/PathPicker
+    ln -sv ~/bin/PathPicker/fpp ~/bin/fpp
+else
+    echo "Skipping fpp installation"
 fi
 # }}}
 # utils from npm {{{
