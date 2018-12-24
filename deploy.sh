@@ -89,7 +89,7 @@ for i in .*; do
         rm -f ${home_path}.old
         mv $home_path ${home_path}.old
     fi;
-    ln -s $PWD/$i $HOME
+    ln -s $SCRIPT_DIR/$i $HOME
 done
 # }}}
 # install vim plug {{{
@@ -97,6 +97,15 @@ if [ ! -f ~/.local/share/nvim/site/autoload/plug.vim ]; then
     curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
         https://raw.githubusercontent.com/satiani/vim-plug/master/plug.vim
 fi
+# }}}
+# htop config {{{
+HTOP_PATH=$HOME/.config/htop/
+mkdir -pv $HTOP_PATH
+if [ -f $HTOP_PATH/htoprc -o -L $HTOP_PATH/htoprc ]; then
+    rm -f ${HTOP_PATH}/htoprc.old
+    mv $HTOP_PATH/htoprc $HTOP_PATH/htoprc.old
+fi;
+ln -s $SCRIPT_DIR/htoprc $HTOP_PATH
 # }}}
 # vim/nvim {{{
 mkdir -pv $HOME/vimswap
