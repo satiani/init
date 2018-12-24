@@ -46,7 +46,7 @@ export PATH="$HOME/bin:$HOME/.local/bin:$HOME/.cargo/bin:/usr/local/bin:/usr/loc
 [ "$ON_A_MAC" == "true" ] && export PATH="$PATH:$HOME/Library/Python/3.7/bin"
 export VIM_BIN="vim"
 [ "$(command -v nvim)" ] && export VIM_BIN="nvim"
-! [ -z "$NVIM_LISTEN_ADDRESS" ] && [ "$(command -v nvr)" ] && export VIM_BIN="nvr -s"
+! [ -z "$NVIM_LISTEN_ADDRESS" ] && [ "$(command -v nvr)" ] && export VIM_BIN="nvr -s --remote-tab"
 export LSCOLORS="Gxfxcxdxbxegedabagacad"
 export LC_ALL=en_US.UTF-8
 export EDITOR="$VIM_BIN"

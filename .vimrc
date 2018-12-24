@@ -160,8 +160,9 @@ map <Leader>q :botright cwindow<CR>
 map <Leader>Q :botright lwindow<CR>
 map <Leader>n :cnewer<CR>
 map <Leader>p :colder<CR>
-map <Leader>f :exec("Rg " . expand("<cword>"))<CR>
+map <Leader>f :exec("gr " . expand("<cword>"))<CR>
 map <Leader>o :belowright 10split +term<CR><C-\><C-n>:set wfh<CR>:set wfw<CR>i
+map <Leader>t :tabnew +term<CR>
 " Replace word under cursor
 map <Leader>s :%s/\<<C-r><C-w>\>/
 map tk :tabfirst<CR>
