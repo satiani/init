@@ -5,6 +5,7 @@
 if &compatible
   set nocompatible               " Be iMproved
 endif
+let &runtimepath.=','. getcwd()
 " }}}
 
 " Plugins {{{
