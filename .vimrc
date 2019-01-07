@@ -72,6 +72,7 @@ Plug 'xolox/vim-misc'
 Plug 'ecerulm/vim-nose'
 Plug 'janko-m/vim-test'
 Plug 'w0rp/ale'
+Plug 'sakhnik/nvim-gdb', { 'branch': 'legacy' }
 " }}}
 " Enhanced Vim behavior {{{
 Plug 'bronson/vim-visual-star-search'
@@ -166,6 +167,8 @@ map <Leader>o :belowright 10split +term<CR><C-\><C-n>:set wfh<CR>:set wfw<CR>i
 map <Leader>t :tabnew +term<CR>
 " Replace word under cursor
 map <Leader>s :%s/\<<C-r><C-w>\>/
+" Copy file path and line number to register " (default yank register)
+map <Leader>ln :let @"=join([expand('%'),  line(".")], ':')<CR>
 map tk :tabfirst<CR>
 map tl :tabnext<CR>
 map th :tabprev<CR>
