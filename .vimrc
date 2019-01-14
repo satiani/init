@@ -55,6 +55,10 @@ Plug 'ncm2/ncm2-path'
 Plug 'ncm2/ncm2-tern'
 Plug 'ncm2/ncm2-ultisnips'
 Plug 'ncm2/ncm2-vim'
+Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': 'bash install.sh',
+    \ }
 " }}}
 " Version control {{{
 Plug 'tpope/vim-fugitive'
@@ -73,6 +77,7 @@ Plug 'ecerulm/vim-nose'
 Plug 'janko-m/vim-test'
 Plug 'w0rp/ale'
 Plug 'sakhnik/nvim-gdb', { 'branch': 'legacy' }
+Plug 'mpyatishev/vim-sqlformat'
 " }}}
 " Enhanced Vim behavior {{{
 Plug 'bronson/vim-visual-star-search'
@@ -287,12 +292,16 @@ let g:lightline = {
 let g:ale_fixers={
 \    'python': ['isort', 'autopep8'],
 \    'javascript': ['standard'],
-\    'json': ['fixjson']
+\    'json': ['fixjson'],
+\    'rust': ['rustfmt'],
+\    'cs': ['uncrustify'],
 \}
 let g:ale_linters={
 \    'javascript': ['standard'],
 \    'python': ['flake8'],
+\    'rust': ['rls'],
 \}
+let g:ale_rust_rls_toolchain = 'stable'
 nmap <Leader>F <Plug>(ale_fix)
 nmap <Leader>D <Plug>(ale_toggle_buffer)<CR>
 highlight ALEError ctermbg=140
@@ -399,6 +408,12 @@ inoremap <silent> <Plug>(ultisnips_try_expand) <C-R>=UltiSnipsExpandOrJumpOrTab(
 
 " Select mode mapping for jumping forward with <Tab>.
 snoremap <silent> <Tab> <Esc>:call UltiSnips#ExpandSnippetOrJump()<cr>
+" }}}
+" LanguageClient {{{
+let g:LanguageClient_serverCommands = {
+    \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
+    \}
+nnoremap <silent> <Leader>d :call LanguageClient#textDocument_definition()<CR>
 " }}}
 " gundo {{{
 map <Leader>u :GundoToggle<CR>

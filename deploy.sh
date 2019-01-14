@@ -129,7 +129,7 @@ if ! [ -d ~/.local/python-envs ]; then
     cd ~/.local/python-envs
     virtualenv --python /usr/local/bin/python3 venv3
     source venv3/bin/activate
-    pip install neovim jedi
+    pip install neovim jedi sqlparse
     virtualenv --python /usr/bin/python venv2
     source venv2/bin/activate
     pip install neovim
