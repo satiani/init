@@ -132,7 +132,7 @@ fi
 if ! [ -d ~/.local/python-envs ]; then
     PYTHON3=$(which python3)
     PYTHON2=$(which python2)
-    bash<<"EOF"
+    bash<<EOF
     mkdir -pv ~/.local/python-envs
     cd ~/.local/python-envs
     virtualenv --python $PYTHON3 venv3
@@ -141,7 +141,7 @@ if ! [ -d ~/.local/python-envs ]; then
     virtualenv --python $PYTHON2 venv2
     source venv2/bin/activate
     pip install neovim
-"EOF"
+EOF
 else
     echo "Skipping nvim envs installation."
 fi
@@ -155,7 +155,7 @@ fi
 if ! [ -x "$(command -v nvim)" ]; then
     bash<<EOF
     cd $(mktemp -d)
-    curl -LO https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage
+    curl -LO https://github.com/neovim/neovim/releases/download/v0.3.4/nvim.appimage
     chmod u+x nvim.appimage
     ./nvim.appimage --appimage-extract
     rsync -avz ./squashfs-root/usr/ ~/.local/
