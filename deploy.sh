@@ -130,16 +130,18 @@ if ! [ -e $HOME/.config/nvim/init.vim ]; then
 fi
 
 if ! [ -d ~/.local/python-envs ]; then
-    bash<<EOF
+    PYTHON3=$(which python3)
+    PYTHON2=$(which python2)
+    bash<<"EOF"
     mkdir -pv ~/.local/python-envs
     cd ~/.local/python-envs
-    virtualenv --python /usr/local/bin/python3 venv3
+    virtualenv --python $PYTHON3 venv3
     source venv3/bin/activate
     pip install neovim jedi sqlparse
-    virtualenv --python /usr/bin/python venv2
+    virtualenv --python $PYTHON2 venv2
     source venv2/bin/activate
     pip install neovim
-EOF
+"EOF"
 else
     echo "Skipping nvim envs installation."
 fi
