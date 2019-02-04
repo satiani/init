@@ -7,7 +7,7 @@ SCRIPT_DIR=$(cd `dirname $0` && pwd)
 ON_A_MAC=`([ $( uname ) == "Darwin" ] && echo "true") || echo "false"`
 # }}}
 # Requirements test {{{
-REQUIRED_COMMANDS=(zsh curl tmux git npm virtualenv pip pip3)
+REQUIRED_COMMANDS=(zsh curl tmux git npm virtualenv pip pip3 python3 python)
 for i in "${REQUIRED_COMMANDS[@]}"; do
     if ! [ -x "$(command -v $i)" ]; then
         echo "Please install $i before running this script"
@@ -17,9 +17,7 @@ done
 # }}}
 # bin dir {{{
 [ -e ~/bin ] || mkdir -pv ~/bin
-# }}}
-# rust/cargo {{{
-export PATH=~/.local/bin:~/.cargo/bin:$PATH:~/bin
+export PATH=~/.local/bin:~/.cargo/bin:/usr/local/bin:/usr/bin:$PATH:~/bin
 # }}}
 # tmux plugin manager {{{
 if ! [ -d ~/.tmux ]; then
@@ -29,7 +27,6 @@ fi
 # rust/cargo {{{
 if ! [ -x "$(command -v cargo)" ]; then
     curl https://sh.rustup.rs -sSf | sh
-    export PATH=~/.cargo/bin/:$PATH
 else
     echo "Skipping rust/cargo"
 fi
