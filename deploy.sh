@@ -7,7 +7,7 @@ SCRIPT_DIR=$(cd `dirname $0` && pwd)
 ON_A_MAC=`([ $( uname ) == "Darwin" ] && echo "true") || echo "false"`
 # }}}
 # Requirements test {{{
-REQUIRED_COMMANDS=(zsh curl tmux git npm)
+REQUIRED_COMMANDS=(zsh curl tmux git npm virtualenv pip pip3)
 for i in "${REQUIRED_COMMANDS[@]}"; do
     if ! [ -x "$(command -v $i)" ]; then
         echo "Please install $i before running this script"
