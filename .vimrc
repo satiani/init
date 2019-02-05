@@ -299,7 +299,6 @@ let g:ale_fixers={
 let g:ale_linters={
 \    'javascript': ['standard'],
 \    'python': ['flake8'],
-\    'rust': ['rls'],
 \}
 let g:ale_rust_rls_toolchain = 'stable'
 nmap <Leader>F <Plug>(ale_fix)
@@ -411,8 +410,39 @@ snoremap <silent> <Tab> <Esc>:call UltiSnips#ExpandSnippetOrJump()<cr>
 " }}}
 " LanguageClient {{{
 let g:LanguageClient_serverCommands = {
-    \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
+    \ 'rust': ['~/.cargo/bin/rustup', 'run', 'nightly', 'rls'],
     \}
+let g:LanguageClient_useVirtualText = 0
+let g:LanguageClient_diagnosticsDisplay = {
+\    1: {
+\        "name": "Error",
+\        "texthl": "ALEError",
+\        "signText": "●",
+\        "signTexthl": "ALEErrorSign",
+\        "virtualTexthl": "Error",
+\    },
+\    2: {
+\        "name": "Warning",
+\        "texthl": "ALEWarning",
+\        "signText": ".",
+\        "signTexthl": "ALEWarningSign",
+\        "virtualTexthl": "Todo",
+\    },
+\    3: {
+\        "name": "Information",
+\        "texthl": "ALEInfo",
+\        "signText": "ℹ",
+\        "signTexthl": "ALEInfoSign",
+\        "virtualTexthl": "Todo",
+\    },
+\    4: {
+\        "name": "Hint",
+\        "texthl": "ALEInfo",
+\        "signText": "➤",
+\        "signTexthl": "ALEInfoSign",
+\        "virtualTexthl": "Todo",
+\    },
+\}
 nnoremap <silent> <Leader>d :call LanguageClient#textDocument_definition()<CR>
 " }}}
 " gundo {{{
