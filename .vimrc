@@ -181,6 +181,8 @@ map th :tabprev<CR>
 map tj :tablast<CR>
 map tn :tabnew<CR>
 map î <A-n>
+" Disable escape key because touchbars suck
+inoremap <Esc> <NOP>
 " Click F10 to get the highlight group under cursor
 " (http://vim.wikia.com/wiki/Identify_the_syntax_highlighting_group_used_at_the_cursor)
 map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
