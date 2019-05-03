@@ -94,6 +94,7 @@ Plug 'vim-scripts/LargeFile'
 Plug 'davidhalter/jedi-vim'
 Plug 'ternjs/tern_for_vim'
 Plug 'Shougo/neco-vim'
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 " }}}
 " Modes {{{
 Plug 'jceb/vim-orgmode'
@@ -140,6 +141,7 @@ set showmatch		" Show matching brackets.
 set smartcase
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 set sts=4
+set ts=4
 set sw=4
 set tags=tags;/
 set wildmenu
@@ -156,7 +158,6 @@ augroup terminal
   " no to click q after selecting text (which is how I exit copy mode in tmux)
   au TermOpen * map <buffer> q <Nop>
   au BufEnter,FocusGained,BufEnter,BufWinEnter,WinEnter term://* map <buffer> q <Nop>
-  au TermOpen * startinsert
 augroup END
 " }}}
 " Key mappings {{{
@@ -295,14 +296,18 @@ let g:ale_fixers={
 \    'json': ['fixjson'],
 \    'rust': ['rustfmt'],
 \    'cs': ['uncrustify'],
+\    'xml': ['xmllint'],
+\    'go': [],
 \}
 let g:ale_linters={
 \    'javascript': ['standard'],
 \    'python': ['flake8'],
+\    'go': [],
 \}
 let g:ale_rust_rls_toolchain = 'stable'
-nmap <Leader>F <Plug>(ale_fix)
-nmap <Leader>D <Plug>(ale_toggle_buffer)<CR>
+let ale_blacklist = ['go']
+au BufEnter * if index(ale_blacklist, &ft) < 0 | nmap <buffer> <Leader>F <Plug>(ale_fix)
+au BufEnter * if index(ale_blacklist, &ft) < 0 | nmap <Leader>D <Plug>(ale_toggle_buffer)<CR>
 highlight ALEError ctermbg=140
 let g:ale_sign_error = '●' " Less aggressive than the default '>>'
 let g:ale_sign_warning = '.'
@@ -407,10 +412,24 @@ inoremap <silent> <Plug>(ultisnips_try_expand) <C-R>=UltiSnipsExpandOrJumpOrTab(
 
 " Select mode mapping for jumping forward with <Tab>.
 snoremap <silent> <Tab> <Esc>:call UltiSnips#ExpandSnippetOrJump()<cr>
+
+" let g:go_source = {
+"   \ 'name': 'go_source',
+"   \ 'scope': ['go'],
+"   \ 'complete_pattern': [
+"   \       '^import "',
+"   \       '\.',
+"   \       '\(\s?',
+"   \       ',\s?'],
+"   \ 'on_complete': ['ncm2#on_complete#omni', 'go#complete#Complete'],
+"   \}
+" call ncm2#register_source(g:go_source)
 " }}}
 " LanguageClient {{{
 let g:LanguageClient_serverCommands = {
     \ 'rust': ['~/.cargo/bin/rustup', 'run', 'nightly', 'rls'],
+    \ 'java': ['~/bin/eclipse_jdt.sh', '-data', getcwd()],
+    \ 'go': ['gopls', 'serve'],
     \}
 let g:LanguageClient_useVirtualText = 0
 let g:LanguageClient_diagnosticsDisplay = {
@@ -461,6 +480,11 @@ let test#python#runner = "nose"
 let test#strategy = "neovim"
 let g:test#preserve_screen = 1
 let test#neovim#term_position = "belowright 10split"
+" }}}
+" vim-go {{{
+au FileType go nmap <buffer> <Leader>F :silent! GoFmt<CR>:silent! GoImports<CR>
+" For some reason this is necessary here as well
+au FileType go call ncm2#enable_for_buffer()
 " }}}
 " liwwa {{{
 augroup liwwa

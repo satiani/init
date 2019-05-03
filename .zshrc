@@ -42,7 +42,7 @@ bindkey '' run-help
 # }}}
 # Exports {{{
 export ON_A_MAC=`([ $( uname ) == "Darwin" ] && echo "true") || echo "false"`
-export PATH="$HOME/bin:$HOME/.local/bin:$HOME/.cargo/bin:/usr/local/bin:/usr/local/opt/gnu-sed/libexec/gnubin:/usr/bin/:/bin:/usr/local/sbin:/usr/sbin:/sbin"
+export PATH="$HOME/bin:$HOME/.local/bin:$HOME/.cargo/bin:/usr/local/bin:/usr/local/opt/gnu-sed/libexec/gnubin:/usr/bin/:/bin:/usr/local/sbin:/usr/sbin:/sbin:/usr/local/go/bin:$HOME/go/bin"
 [ "$ON_A_MAC" == "true" ] && export PATH="$PATH:$HOME/Library/Python/3.7/bin"
 export VIM_BIN="vim"
 [ "$(command -v nvim)" ] && export VIM_BIN="nvim"
@@ -89,4 +89,3 @@ export FZF_DEFAULT_COMMAND='rg --no-ignore --files --follow -uu 2>/dev/null'
 export FZF_DEFAULT_OPTS='--bind ctrl-d:page-down,ctrl-u:page-up'
 # }}}
 
-export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
