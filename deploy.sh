@@ -2,6 +2,7 @@
 # vim:foldmethod=marker
 # Preamble {{{
 set -e
+set -x
 
 SCRIPT_DIR=$(cd `dirname $0` && pwd)
 ON_A_MAC=`([ $( uname ) == "Darwin" ] && echo "true") || echo "false"`
@@ -37,12 +38,7 @@ if ! [ -x "$(command -v rg)" ]; then
     cargo_install() {
         cargo install ripgrep
     }
-    cd $(mktemp -d)
-    wget https://github.com/BurntSushi/ripgrep/releases/download/0.10.0/ripgrep_0.10.0_amd64.deb
-    trap "cargo_install" SIGINT
-    echo "Please enter sudo password or press Ctrl-C to install from cargo"
-    sudo dpkg -i ripgrep_0.10.0_amd64.deb
-    trap - SIGINT
+    cargo_install
 EOF
 else
     echo "Skipping ripgrep"
@@ -131,8 +127,8 @@ fi
 
 if ! [ -d ~/.local/python-envs ]; then
     PYTHON3=$(which python3)
-    PYTHON2=$(which python2)
-    bash<<EOF
+    PYTHON2=$(which python)
+    bash <<EOF
     mkdir -pv ~/.local/python-envs
     cd ~/.local/python-envs
     virtualenv --python $PYTHON3 venv3
