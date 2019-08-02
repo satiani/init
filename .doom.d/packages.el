@@ -5,4 +5,6 @@
 ;; (package! some-package)
 ;; (package! another-package :recipe (:fetcher github :repo "username/repo"))
 ;; (package! builtin-package :disable t)
-(package! ecb)
+
+(package! graphviz-dot-mode)
+(package! multi-term)

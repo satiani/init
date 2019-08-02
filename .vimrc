@@ -98,6 +98,7 @@ Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 " }}}
 " Modes {{{
 Plug 'jceb/vim-orgmode'
+Plug 'vim-scripts/utl.vim'
 " }}}
 " Vim tools {{{
 Plug 'mattn/calendar-vim'
@@ -117,7 +118,7 @@ endif
 set termguicolors
 colorscheme falcon
 filetype plugin on
-filetype indent off
+filetype indent on
 syntax enable
 set directory=$HOME/vimswap/
 set undofile
@@ -432,6 +433,7 @@ let g:LanguageClient_serverCommands = {
     \ 'go': ['gopls', 'serve'],
     \}
 let g:LanguageClient_useVirtualText = 0
+let g:LanguageClient_diagnosticsList = "Location"
 let g:LanguageClient_diagnosticsDisplay = {
 \    1: {
 \        "name": "Error",
@@ -485,14 +487,16 @@ let test#neovim#term_position = "belowright 10split"
 au FileType go nmap <buffer> <Leader>F :silent! GoFmt<CR>:silent! GoImports<CR>
 " For some reason this is necessary here as well
 au FileType go call ncm2#enable_for_buffer()
+let g:go_list_type = "locationlist"
+let g:go_def_mode='godef'
+let g:go_list_autoclose = 0
 " }}}
-" liwwa {{{
-augroup liwwa
-  au!
-  au BufWritePost *.py :silent !~/code/web/bin/compile_all.sh
-  au BufEnter ~/code/web/app/static/**/*.html :set syntax=underscore_template
-  au BufEnter *.html :silent RainbowToggleOff
-augroup END
+" utl {{{
+let g:utl_cfg_hdl_scm_http_system = "silent !open -a '/Applications/Google Chrome.app' '%u'"
+" }}}
+" orgmode {{{
+let g:org_agenda_files = ['~/Dropbox/orgmode/*.org']
+let g:org_todo_keywords=['TODO', 'FEEDBACK', 'VERIFY', '|', 'DONE']
 " }}}
 " python_host_prog {{{
 let g:python_host_prog=expand('~/.local/python-envs/venv2/bin/python')
