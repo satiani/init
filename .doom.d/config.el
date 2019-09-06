@@ -52,6 +52,7 @@
         "m" #'org-time-stamp-inactive)
   (org-babel-do-load-languages 'org-babel-load-languages '((emacs-lisp . nil) (dot . t)))
   (add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images)
+  (add-hook 'org-mode-hook #'turn-off-smartparens-mode)
   )
 
 (defun multi-term-dedicated ()
@@ -69,6 +70,10 @@
 (after! multi-term
   (setq multi-term-program "/bin/zsh")
   )
+
+(after! org-download
+  (org-download-enable)
+  (setq org-download-screenshot-method "screencapture -i %s"))
 
 (add-to-list 'custom-theme-load-path "~/.doom.d/themes")
 (add-to-list 'default-frame-alist '(fullscreen . maximized))

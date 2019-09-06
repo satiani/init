@@ -8,3 +8,4 @@
 
 (package! graphviz-dot-mode)
 (package! multi-term)
+(package! org-download)

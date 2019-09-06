@@ -125,6 +125,11 @@ if ! [ -e $HOME/.config/nvim/init.vim ]; then
     ln -sv $HOME/.vimrc $HOME/.config/nvim/init.vim
 fi
 
+if ! [ -L $HOME/.config/nvim/coc-settings.json ]; then
+    rm -f $HOME/.config/nvim/coc-settings.json
+    ln -sv $SCRIPT_DIR/coc-settings.json $HOME/.config/nvim
+fi
+
 if ! [ -d ~/.local/python-envs ]; then
     PYTHON3=$(which python3)
     PYTHON2=$(which python)

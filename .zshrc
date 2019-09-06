@@ -92,3 +92,8 @@ export FZF_COMPLETION_TRIGGER='/'
 export FZF_DEFAULT_COMMAND='rg --no-ignore --files --follow -uu 2>/dev/null'
 export FZF_DEFAULT_OPTS='--bind ctrl-d:page-down,ctrl-u:page-up'
 # }}}
+# SSH agent {{{
+if test "$SSH_AUTH_SOCK" ; then
+  ln -sf $SSH_AUTH_SOCK ~/.ssh/ssh_auth_sock
+fi
+# }}}

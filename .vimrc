@@ -44,22 +44,6 @@ Plug 'terryma/vim-multiple-cursors'
 Plug 'tpope/vim-speeddating'
 Plug 'triglav/vim-visual-increment'
 " }}}
-" Code completion {{{
-Plug 'roxma/nvim-yarp'
-if !has('nvim')
-  Plug 'roxma/vim-hug-neovim-rpc'
-endif
-Plug 'ncm2/ncm2'
-Plug 'ncm2/ncm2-jedi'
-Plug 'ncm2/ncm2-path'
-Plug 'ncm2/ncm2-tern'
-Plug 'ncm2/ncm2-ultisnips'
-Plug 'ncm2/ncm2-vim'
-Plug 'autozimu/LanguageClient-neovim', {
-    \ 'branch': 'next',
-    \ 'do': 'bash install.sh',
-    \ }
-" }}}
 " Version control {{{
 Plug 'tpope/vim-fugitive'
 " }}}
@@ -95,6 +79,7 @@ Plug 'davidhalter/jedi-vim'
 Plug 'ternjs/tern_for_vim'
 Plug 'Shougo/neco-vim'
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " }}}
 " Modes {{{
 Plug 'jceb/vim-orgmode'
@@ -257,7 +242,7 @@ let g:lightline = {
       \     'right': [ [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok' ],
       \                [ 'lineinfo' ],
       \                [ 'percent' ],
-      \                [ 'tagbar', 'filetype', 'charvaluehex'] ],
+      \                [ 'tagbar', 'filetype', 'cocstatus', 'charvaluehex'] ],
       \     'left': [ [ 'mode', 'paste' ],
       \               [ 'readonly', 'relativepath', 'modified' ] ],
       \ },
@@ -286,7 +271,8 @@ let g:lightline = {
       \ },
       \ 'component_function': {
       \     'mode': 'LightlineMode',
-      \     'tagbar': 'LightlineTagbar'
+      \     'tagbar': 'LightlineTagbar',
+      \     'cocstatus': 'coc#status',
       \ },
       \ }
 " }}}
@@ -373,99 +359,6 @@ au FileType javascript map <buffer> <Leader>r :TernRename<CR>
 " jedi-vim {{{
 let g:jedi#completions_enabled = 0
 " }}}
-" ncm2 {{{
-autocmd BufEnter  *  call ncm2#enable_for_buffer()
-inoremap <silent><expr> <TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
-inoremap <silent><expr> <c-d> pumvisible() ? "\<PageDown>" : "\<c-d>"
-inoremap <silent><expr> <c-u> pumvisible() ? "\<PageUp>" : "\<c-u>"
-" add tern to runtimepath so it gets caught by ncm2_tern
-let &runtimepath.=','.escape(expand('~/.langservers/javascript/'), '\,')
-" UltiSnips+NCM function parameter expansion
-
-" We don't really want UltiSnips to map these two, but there's no option for
-" that so just make it map them to a <Plug> key.
-let g:UltiSnipsExpandTrigger       = "<Plug>(ultisnips_expand_or_jump)"
-let g:UltiSnipsJumpForwardTrigger  = "<Plug>(ultisnips_expand_or_jump)"
-" Let UltiSnips bind the jump backward trigger as there's nothing special
-" about it.
-let g:UltiSnipsJumpBackwardTrigger = "<S-Tab>"
-
-" Try expanding snippet or jumping with UltiSnips and return <Tab> if nothing
-" worked.
-function! UltiSnipsExpandOrJumpOrTab()
-  call UltiSnips#ExpandSnippetOrJump()
-  if g:ulti_expand_or_jump_res > 0
-    return ""
-  else
-    return "\<Tab>"
-  endif
-endfunction
-
-" First try expanding with ncm2_ultisnips. This does both LSP snippets and
-" normal snippets when there's a completion popup visible.
-inoremap <silent> <expr> <Tab> ncm2_ultisnips#expand_or("\<Plug>(ultisnips_try_expand)")
-
-" If that failed, try the UltiSnips expand or jump function. This handles
-" short snippets when the completion popup isn't visible yet as well as
-" jumping forward from the insert mode. Writes <Tab> if there is no special
-" action taken.
-inoremap <silent> <Plug>(ultisnips_try_expand) <C-R>=UltiSnipsExpandOrJumpOrTab()<CR>
-
-" Select mode mapping for jumping forward with <Tab>.
-snoremap <silent> <Tab> <Esc>:call UltiSnips#ExpandSnippetOrJump()<cr>
-
-" let g:go_source = {
-"   \ 'name': 'go_source',
-"   \ 'scope': ['go'],
-"   \ 'complete_pattern': [
-"   \       '^import "',
-"   \       '\.',
-"   \       '\(\s?',
-"   \       ',\s?'],
-"   \ 'on_complete': ['ncm2#on_complete#omni', 'go#complete#Complete'],
-"   \}
-" call ncm2#register_source(g:go_source)
-" }}}
-" LanguageClient {{{
-let g:LanguageClient_serverCommands = {
-    \ 'rust': ['~/.cargo/bin/rustup', 'run', 'nightly', 'rls'],
-    \ 'java': ['~/bin/eclipse_jdt.sh', '-data', getcwd()],
-    \ 'go': ['gopls', 'serve'],
-    \}
-let g:LanguageClient_useVirtualText = 0
-let g:LanguageClient_diagnosticsList = "Location"
-let g:LanguageClient_diagnosticsDisplay = {
-\    1: {
-\        "name": "Error",
-\        "texthl": "ALEError",
-\        "signText": "●",
-\        "signTexthl": "ALEErrorSign",
-\        "virtualTexthl": "Error",
-\    },
-\    2: {
-\        "name": "Warning",
-\        "texthl": "ALEWarning",
-\        "signText": ".",
-\        "signTexthl": "ALEWarningSign",
-\        "virtualTexthl": "Todo",
-\    },
-\    3: {
-\        "name": "Information",
-\        "texthl": "ALEInfo",
-\        "signText": "ℹ",
-\        "signTexthl": "ALEInfoSign",
-\        "virtualTexthl": "Todo",
-\    },
-\    4: {
-\        "name": "Hint",
-\        "texthl": "ALEInfo",
-\        "signText": "➤",
-\        "signTexthl": "ALEInfoSign",
-\        "virtualTexthl": "Todo",
-\    },
-\}
-nnoremap <silent> <Leader>d :call LanguageClient#textDocument_definition()<CR>
-" }}}
 " gundo {{{
 map <Leader>u :GundoToggle<CR>
 " }}}
@@ -484,12 +377,64 @@ let g:test#preserve_screen = 1
 let test#neovim#term_position = "belowright 10split"
 " }}}
 " vim-go {{{
-au FileType go nmap <buffer> <Leader>F :silent! GoFmt<CR>:silent! GoImports<CR>
-" For some reason this is necessary here as well
-au FileType go call ncm2#enable_for_buffer()
 let g:go_list_type = "locationlist"
 let g:go_def_mode='godef'
 let g:go_list_autoclose = 0
+let g:go_def_mapping_enabled = 0
+" }}}
+" coc.nvim {{{
+call coc#add_extension(
+    \ 'coc-json',
+    \ 'coc-tsserver',
+    \ 'coc-rls',
+    \ 'coc-snippets',
+    \ )
+" Use TAB to trigger completion, snippet expand and jump
+inoremap <silent><expr> <TAB>
+  \ pumvisible() ? coc#_select_confirm() :
+  \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+  \ <SID>check_back_space() ? "\<TAB>" :
+  \ coc#refresh()
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+let g:coc_snippet_next = '<tab>'
+set updatetime=300
+set shortmess+=c
+nmap <silent> [c <Plug>(coc-diagnostic-prev)
+nmap <silent> ]c <Plug>(coc-diagnostic-next)
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+nmap <leader>rn <Plug>(coc-rename)
+xmap <leader>f  <Plug>(coc-format-selected)
+nmap <leader>f  <Plug>(coc-format-selected)
+xmap <leader>a  <Plug>(coc-codeaction-selected)
+nmap <leader>a  <Plug>(coc-codeaction-selected)
+nmap <leader>ac  <Plug>(coc-codeaction)
+nmap <leader>qf  <Plug>(coc-fix-current)
+
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
+autocmd CursorHold * silent call CocActionAsync('highlight')
+augroup mygroup
+  autocmd!
+  " Setup formatexpr specified filetype(s).
+  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+  " Update signature help on jump placeholder
+  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+augroup end
 " }}}
 " utl {{{
 let g:utl_cfg_hdl_scm_http_system = "silent !open -a '/Applications/Google Chrome.app' '%u'"
