@@ -2,7 +2,6 @@
 # vim:foldmethod=marker
 # Preamble {{{
 set -e
-set -x
 
 SCRIPT_DIR=$(cd `dirname $0` && pwd)
 ON_A_MAC=`([ $( uname ) == "Darwin" ] && echo "true") || echo "false"`
