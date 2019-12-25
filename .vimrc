@@ -292,7 +292,7 @@ let g:ale_linters={
 \    'go': [],
 \}
 let g:ale_rust_rls_toolchain = 'stable'
-let ale_blacklist = ['go']
+let ale_blacklist = ['go', 'ruby']
 au BufEnter * if index(ale_blacklist, &ft) < 0 | nmap <buffer> <Leader>F <Plug>(ale_fix)
 au BufEnter * if index(ale_blacklist, &ft) < 0 | nmap <Leader>D <Plug>(ale_toggle_buffer)<CR>
 highlight ALEError ctermbg=140
@@ -388,6 +388,9 @@ call coc#add_extension(
     \ 'coc-tsserver',
     \ 'coc-rls',
     \ 'coc-snippets',
+    \ 'coc-python',
+    \ 'coc-java',
+    \ 'coc-solargraph',
     \ )
 " Use TAB to trigger completion, snippet expand and jump
 inoremap <silent><expr> <TAB>
