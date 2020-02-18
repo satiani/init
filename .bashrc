@@ -96,3 +96,5 @@ add_jars_to_classpath(){
 
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+source /Users/samer.atiani/Library/Preferences/org.dystroy.broot/launcher/bash/br
