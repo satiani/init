@@ -378,9 +378,11 @@ let test#neovim#term_position = "belowright 10split"
 " }}}
 " vim-go {{{
 let g:go_list_type = "locationlist"
-let g:go_def_mode='godef'
+let g:go_def_mode='gopls'
+let g:go_info_mode='gopls'
 let g:go_list_autoclose = 0
-let g:go_def_mapping_enabled = 0
+let g:go_metalinter_command='golangci-lint'
+au FileType go nmap <c-t> <Plug>(go-def-pop)
 " }}}
 " coc.nvim {{{
 call coc#add_extension(
