@@ -153,13 +153,22 @@ else
 fi
 
 if ! [ -x "$(command -v nvim)" ]; then
-    bash<<EOF
-    cd $(mktemp -d)
-    curl -LO https://github.com/neovim/neovim/releases/download/v0.4.3/nvim.appimage
-    chmod u+x nvim.appimage
-    ./nvim.appimage --appimage-extract
-    rsync -avz ./squashfs-root/usr/ ~/.local/
-EOF
+    if [ $ON_A_MAC == "true" ]; then
+        bash<<-EOF
+        cd $(mktemp -d)
+        curl -LO https://github.com/neovim/neovim/releases/download/nightly/nvim-macos.tar.gz
+        tar xf nvim-macos.tar.gz
+        rsync -avz ./nvim-osx64/ ~/.local/
+		EOF
+    else
+        bash<<-EOF
+        cd $(mktemp -d)
+        curl -LO https://github.com/neovim/neovim/releases/download/v0.3.4/nvim.appimage
+        chmod u+x nvim.appimage
+        ./nvim.appimage --appimage-extract
+        rsync -avz ./squashfs-root/usr/ ~/.local/
+		EOF
+    fi
 else
     echo "Skipping nvim installation."
 fi
