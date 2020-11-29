@@ -163,7 +163,7 @@ if ! [ -x "$(command -v nvim)" ]; then
     else
         bash<<-EOF
         cd $(mktemp -d)
-        curl -LO https://github.com/neovim/neovim/releases/download/v0.3.4/nvim.appimage
+        curl -LO https://github.com/neovim/neovim/releases/download/v0.4.4/nvim.appimage
         chmod u+x nvim.appimage
         ./nvim.appimage --appimage-extract
         rsync -avz ./squashfs-root/usr/ ~/.local/

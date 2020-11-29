@@ -97,5 +97,3 @@ if test "$SSH_AUTH_SOCK" ; then
   ln -sf $SSH_AUTH_SOCK ~/.ssh/ssh_auth_sock
 fi
 # }}}
-
-source /Users/samer.atiani/Library/Preferences/org.dystroy.broot/launcher/bash/br
