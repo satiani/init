@@ -291,8 +291,7 @@ let g:ale_linters={
 \    'python': ['flake8'],
 \    'go': [],
 \}
-let g:ale_rust_rls_toolchain = 'stable'
-let ale_blacklist = ['go', 'ruby']
+let ale_blacklist = ['go', 'ruby', 'rust']
 au BufEnter * if index(ale_blacklist, &ft) < 0 | nmap <buffer> <Leader>F <Plug>(ale_fix)
 au BufEnter * if index(ale_blacklist, &ft) < 0 | nmap <Leader>D <Plug>(ale_toggle_buffer)<CR>
 highlight ALEError ctermbg=140
@@ -388,7 +387,7 @@ au FileType go nmap <c-t> <Plug>(go-def-pop)
 call coc#add_extension(
     \ 'coc-json',
     \ 'coc-tsserver',
-    \ 'coc-rls',
+    \ 'coc-rust-analyzer',
     \ 'coc-snippets',
     \ 'coc-python',
     \ 'coc-java',
