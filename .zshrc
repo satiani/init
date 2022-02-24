@@ -56,7 +56,7 @@ export MANPATH=~/.man/:$MANPATH
 alias vi="$VIM_BIN"
 alias vim="$VIM_BIN"
 alias speedtest='wget -O /dev/null http://speedtest.wdc01.softlayer.com/downloads/test100.zip'
-[[ "$ON_A_MAC" == "true" ]] && alias ls='ls --color=auto' || alias ls='ls -G'
+[[ "$ON_A_MAC" == "false" ]] && alias ls='ls --color=auto' || alias ls='ls -G'
 alias grep='grep --color=auto'
 alias sudo='sudo '
 alias watch='watch '
