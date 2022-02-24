@@ -7,7 +7,7 @@ SCRIPT_DIR=$(cd `dirname $0` && pwd)
 ON_A_MAC=`([ $( uname ) == "Darwin" ] && echo "true") || echo "false"`
 # }}}
 # Requirements test {{{
-REQUIRED_COMMANDS=(zsh curl tmux git npm virtualenv pip pip3 python3 python)
+REQUIRED_COMMANDS=(zsh curl tmux git npm virtualenv pip pip3 python3)
 for i in "${REQUIRED_COMMANDS[@]}"; do
     if ! [ -x "$(command -v $i)" ]; then
         echo "Please install $i before running this script"
@@ -131,16 +131,12 @@ fi
 
 if ! [ -d ~/.local/python-envs ]; then
     PYTHON3=$(which python3)
-    PYTHON2=$(which python)
     bash <<EOF
     mkdir -pv ~/.local/python-envs
     cd ~/.local/python-envs
     virtualenv --python $PYTHON3 venv3
     source venv3/bin/activate
-    pip install neovim jedi sqlparse
-    virtualenv --python $PYTHON2 venv2
-    source venv2/bin/activate
-    pip install neovim
+    pip install neovim sqlparse pynvim
 EOF
 else
     echo "Skipping nvim envs installation."
@@ -163,7 +159,7 @@ if ! [ -x "$(command -v nvim)" ]; then
     else
         bash<<-EOF
         cd $(mktemp -d)
-        curl -LO https://github.com/neovim/neovim/releases/download/v0.4.4/nvim.appimage
+        curl -LO https://github.com/neovim/neovim/releases/download/v0.6.1/nvim.appimage
         chmod u+x nvim.appimage
         ./nvim.appimage --appimage-extract
         rsync -avz ./squashfs-root/usr/ ~/.local/

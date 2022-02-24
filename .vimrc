@@ -75,7 +75,6 @@ Plug 'tpope/vim-unimpaired'
 Plug 'vim-scripts/LargeFile'
 " }}}
 " Language Intelligence {{{
-Plug 'davidhalter/jedi-vim'
 Plug 'ternjs/tern_for_vim'
 Plug 'Shougo/neco-vim'
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
@@ -355,9 +354,6 @@ let g:tern#arguments = ["--persistent"]
 au FileType javascript map <buffer> <Leader>d :TernDef<CR>
 au FileType javascript map <buffer> <Leader>r :TernRename<CR>
 " }}}
-" jedi-vim {{{
-let g:jedi#completions_enabled = 0
-" }}}
 " gundo {{{
 map <Leader>u :GundoToggle<CR>
 " }}}
@@ -389,7 +385,6 @@ call coc#add_extension(
     \ 'coc-tsserver',
     \ 'coc-rust-analyzer',
     \ 'coc-snippets',
-    \ 'coc-python',
     \ 'coc-java',
     \ 'coc-solargraph',
     \ )
@@ -446,6 +441,5 @@ let g:org_agenda_files = ['~/Dropbox/orgmode/*.org']
 let g:org_todo_keywords=['TODO', 'FEEDBACK', 'VERIFY', '|', 'DONE']
 " }}}
 " python_host_prog {{{
-let g:python_host_prog=expand('~/.local/python-envs/venv2/bin/python')
 let g:python3_host_prog=expand('~/.local/python-envs/venv3/bin/python3')
 " }}}
