@@ -8,3 +8,6 @@ disabled = false
 
 [lua]
 detect_files = [ ".lua-version", "!init.lua" ]
+
+[gcloud]
+disabled = true
