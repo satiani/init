@@ -34,6 +34,12 @@ if ! [ -x "$(command -v rg)" ]; then
 else
     echo "Skipping ripgrep."
 fi
+if ! [ -e ~/.config/starship.toml ]; then
+    mkdir -p ~/.config/
+    ln -sv $SCRIPT_DIR/starship.toml ~/.config
+else
+    echo "Skipping starship config."
+fi
 # }}}
 # starship {{{
 if ! [ -x "$(command -v starship)" ]; then
