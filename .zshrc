@@ -12,8 +12,8 @@ alias vi='nvim'
 alias vim='nvim'
 ON_A_MAC=`([[ $( uname ) == "Darwin" ]] && echo "true") || echo "false"`
 export PATH=~/.local/bin:~/.cargo/bin:$PATH
-if [ $ON_A_MAC == "true" ]; then
-	if ! [ -d /opt/homebrew/opt/coreutils/libexec/gnubin ]; then
+if [[ $ON_A_MAC == "true" ]]; then
+	if ! [[ -d /opt/homebrew/opt/coreutils/libexec/gnubin ]]; then
 		echo "Consider brew install coreutils to use GNU utils"
 	else
 		export PATH=/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH
