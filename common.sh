@@ -6,7 +6,7 @@ function _check_script_dir() {
 }
 
 function test_required_commands() {
-    for i in "${argv[@]}"; do
+    for i in $@; do
         if ! [ -x "$(command -v $i)" ]; then
             echo "Please install $i before running this script"
             exit 255
@@ -16,8 +16,6 @@ function test_required_commands() {
 
 function ensure_link() {
     _check_script_dir
-	echo $i;
-	return;
     for i in $@; do
         local home_path=$HOME/`basename $i`
         if [ -f $home_path -o -L $home_path ]; then
