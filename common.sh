@@ -16,11 +16,13 @@ function test_required_commands() {
 
 function ensure_link() {
     _check_script_dir
-    for i in ${argv[@]}; do
+	echo $i;
+	return;
+    for i in $@; do
         local home_path=$HOME/`basename $i`
         if [ -f $home_path -o -L $home_path ]; then
             continue
         fi;
-        ln -sv $SCRIPT_DIR/$i $HOME
+        ln -sv $i $HOME
     done
 }

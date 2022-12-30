@@ -29,8 +29,10 @@ else
 fi
 # }}}
 # dotfiles {{{
-GLOBIGNORE=".git*"
 for i in $SCRIPT_DIR/.*; do
+    if [[ $i =~ \.git ]]; then
+        continue
+    fi;
     ensure_link $i
 done
 # }}}
