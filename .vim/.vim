@@ -1,1 +1,0 @@
-/home/satiani/code/init/.vim
