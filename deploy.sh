@@ -16,7 +16,7 @@ export PATH=~/.local/bin:~/.cargo/bin:/usr/local/bin:/usr/bin:$PATH:~/bin
 # oh my zsh {{{
 if ! [ -d ~/.oh-my-zsh ]; then
     git clone https://github.com/ohmyzsh/ohmyzsh.git ~/.oh-my-zsh
-    ln -sv $SCRIPT_DIR/lscolors.sh ~/.oh-my-zsh/custom/
+    ln -sv $SCRIPT_DIR/lscolors.sh ~/.oh-my-zsh/custom
 else
     echo "Skipping oh-my-zsh."
 fi
@@ -85,6 +85,12 @@ if ! [ -x "$(command -v nvim)" ]; then
     fi
 else
     echo "Skipping nvim installation."
+fi
+if ! [ -e ~/.config/nvim/init.lua ]; then
+    mkdir -p ~/.config/nvim
+    ln -sv $SCRIPT_DIR/init.lua ~/.config/nvim
+else
+    echo "Skipping nvim config."
 fi
 # }}}
 echo "Done."
