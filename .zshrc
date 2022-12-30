@@ -10,7 +10,7 @@ set -o vi
 bindkey '^R' history-incremental-search-backward
 alias vi='nvim'
 alias vim='nvim'
-ON_A_MAC=`([ $( uname ) == "Darwin" ] && echo "true") || echo "false"`
+ON_A_MAC=`([[ $( uname ) == "Darwin" ]] && echo "true") || echo "false"`
 export PATH=~/.local/bin:~/.cargo/bin:$PATH
 if [ $ON_A_MAC == "true" ]; then
 	if ! [ -d /opt/homebrew/opt/coreutils/libexec/gnubin ]; then
