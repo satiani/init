@@ -14,6 +14,13 @@ test_required_commands zsh curl git tmux rsync
 [ -e ~/bin ] || mkdir -pv ~/bin
 export PATH=~/.local/bin:~/.cargo/bin:/usr/local/bin:/usr/bin:$PATH:~/bin
 # }}}
+# oh my zsh {{{
+if ! [ -d ~/.oh-my-zsh ]; then
+    git clone https://github.com/ohmyzsh/ohmyzsh.git ~/.oh-my-zsh
+else
+    echo "Skipping oh-my-zsh."
+fi
+# }}}
 # rust/cargo {{{
 if ! [ -x "$(command -v cargo)" ]; then
     curl https://sh.rustup.rs -sSf | sh
@@ -29,7 +36,7 @@ else
 fi
 # }}}
 # starship {{{
-if ! [ -x "$(command -v rg)" ]; then
+if ! [ -x "$(command -v starship)" ]; then
     cargo install starship
 else
     echo "Skipping starship."
