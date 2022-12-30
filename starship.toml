@@ -1,5 +1,10 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
 [kubernetes]
 disabled = false
 
 [os]
 disabled = false
+
+[lua]
+detect_files = [ ".lua-version", "!init.lua" ]
