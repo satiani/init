@@ -18,19 +18,26 @@ export PATH=~/.local/bin:~/.cargo/bin:/usr/local/bin:/usr/bin:$PATH:~/bin
 if ! [ -x "$(command -v cargo)" ]; then
     curl https://sh.rustup.rs -sSf | sh
 else
-    echo "Skipping rust/cargo"
+    echo "Skipping rust/cargo."
 fi
 # }}}
 # ripgrep {{{
 if ! [ -x "$(command -v rg)" ]; then
     cargo install ripgrep
 else
-    echo "Skipping ripgrep"
+    echo "Skipping ripgrep."
+fi
+# }}}
+# starship {{{
+if ! [ -x "$(command -v rg)" ]; then
+    cargo install starship
+else
+    echo "Skipping starship."
 fi
 # }}}
 # dotfiles {{{
 for i in $SCRIPT_DIR/.*; do
-    if [[ $i =~ \.git ]]; then
+    if [[ $i =~ \.git ]] || [ $i == "." ] || [ $i == ".." ]; then
         continue
     fi;
     ensure_link $i
