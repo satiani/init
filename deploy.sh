@@ -8,7 +8,7 @@ ON_A_MAC=`([ $( uname ) == "Darwin" ] && echo "true") || echo "false"`
 source $SCRIPT_DIR/common.sh
 # }}}
 # Requirements test {{{
-test_required_commands zsh curl git tmux rsync
+test_required_commands zsh curl git tmux rsync cmake
 # }}}
 # bin dir {{{
 [ -e ~/bin ] || mkdir -pv ~/bin
