@@ -72,7 +72,7 @@ if ! [ -x "$(command -v nvim)" ]; then
         cd $(mktemp -d)
         curl -LO https://github.com/neovim/neovim/releases/download/nightly/nvim-macos.tar.gz
         tar xf nvim-macos.tar.gz
-        rsync -avz ./nvim-osx64/ ~/.local/
+        rsync -avz ./nvim-macos/ ~/.local/
 		EOF
     else
         bash<<-EOF
