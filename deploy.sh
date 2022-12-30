@@ -37,7 +37,7 @@ fi
 # }}}
 # dotfiles {{{
 for i in $SCRIPT_DIR/.*; do
-    if [[ $i =~ \.git ]] || [ $i == "." ] || [ $i == ".." ]; then
+    if [[ $i =~ \.git ]] || [[ $i == "$SCRIPT_DIR/." ]] || [[ $i == "$SCRIPT_DIR/.." ]]; then
         continue
     fi;
     ensure_link $i
