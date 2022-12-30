@@ -19,4 +19,4 @@ if [ $ON_A_MAC == "true" ]; then
 		export PATH=/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH
 		alias ls='ls --color=auto'
 	fi;
-end
+fi;
