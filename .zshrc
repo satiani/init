@@ -17,5 +17,6 @@ if [ $ON_A_MAC == "true" ]; then
 		echo "Consider brew install coreutils to use GNU utils"
 	else
 		export PATH=/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH
+		alias ls='ls --color=auto'
 	fi;
 end
