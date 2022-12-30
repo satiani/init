@@ -11,7 +11,6 @@ source $SCRIPT_DIR/common.sh
 test_required_commands zsh curl git tmux rsync cmake
 # }}}
 # bin dir {{{
-[ -e ~/bin ] || mkdir -pv ~/bin
 export PATH=~/.local/bin:~/.cargo/bin:/usr/local/bin:/usr/bin:$PATH:~/bin
 # }}}
 # oh my zsh {{{

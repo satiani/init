@@ -10,3 +10,4 @@ set -o vi
 bindkey '^R' history-incremental-search-backward
 alias vi='nvim'
 alias vim='nvim'
+export PATH=~/.local/bin:~/.cargo/bin:$PATH
