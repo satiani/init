@@ -27,3 +27,8 @@ if [[ $( uname ) == "Darwin" ]]; then
         compinit
     fi
 fi;
+
+if command -v pyenv > /dev/null; then
+    export PYENV_ROOT="$HOME/.pyenv"
+    eval "$(pyenv init -)"
+fi;
