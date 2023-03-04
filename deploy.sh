@@ -16,7 +16,7 @@ export PATH=~/.local/bin:~/.cargo/bin:/usr/local/bin:/usr/bin:$PATH:~/bin
 # oh my zsh {{{
 if ! [ -d ~/.oh-my-zsh ]; then
     git clone https://github.com/ohmyzsh/ohmyzsh.git ~/.oh-my-zsh
-    ln -sv $SCRIPT_DIR/lscolors.sh ~/.oh-my-zsh/custom
+    ln -sv $SCRIPT_DIR/lscolors.zsh ~/.oh-my-zsh/custom
 else
     echo "Skipping oh-my-zsh."
 fi
