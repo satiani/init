@@ -74,8 +74,7 @@ require('packer').startup(function(use)
     'nvim-tree/nvim-tree.lua',
     requires = {
       'nvim-tree/nvim-web-devicons', -- optional, for file icons
-    },
-    tag = 'nightly' -- optional, updated every week. (see issue #1193)
+    }
   }
 
   -- show registers when pasting
@@ -192,13 +191,6 @@ require('lualine').setup {
 -- Enable Comment.nvim
 require('Comment').setup()
 
--- Enable `lukas-reineke/indent-blankline.nvim`
--- See `:help indent_blankline.txt`
-require('indent_blankline').setup {
-  char = '┊',
-  show_trailing_blankline_indent = false,
-}
-
 -- Gitsigns
 -- See `:help gitsigns.txt`
 require('gitsigns').setup {
@@ -249,7 +241,7 @@ vim.keymap.set('n', '<leader>sch', require('telescope.builtin').command_history,
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'typescript', 'help' },
+  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'typescript' },
 
   highlight = { enable = true },
   indent = { enable = true, disable = { 'python' } },
@@ -394,13 +386,6 @@ local servers = {
   -- rust_analyzer = {},
   -- tsserver = {},
 
-  sumneko_lua = {
-    Lua = {
-      workspace = { checkThirdParty = false },
-      telemetry = { enable = false },
-    },
-  },
-
   pylsp = {
     pylsp = {
       plugins = {
@@ -430,24 +415,6 @@ local mason_lspconfig = require 'mason-lspconfig'
 mason_lspconfig.setup {
   ensure_installed = vim.tbl_keys(servers),
 }
-
-mason_lspconfig.setup_handlers {
-  function(server_name)
-    require('lspconfig')[server_name].setup {
-      capabilities = capabilities,
-      on_attach = on_attach,
-      settings = servers[server_name],
-    }
-  end,
-}
-
--- Turn on lsp status information
-require('fidget').setup({
-  timer = {
-    task_decay = 0,
-    fidget_decay = 100,
-  }
-})
 
 -- nvim-cmp setup
 local cmp = require 'cmp'
