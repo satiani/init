@@ -74,7 +74,7 @@ require('packer').startup(function(use)
     'nvim-tree/nvim-tree.lua',
     requires = {
       'nvim-tree/nvim-web-devicons', -- optional, for file icons
-    }
+    },
   }
 
   -- show registers when pasting
@@ -191,6 +191,13 @@ require('lualine').setup {
 -- Enable Comment.nvim
 require('Comment').setup()
 
+-- Enable `lukas-reineke/indent-blankline.nvim`
+require('ibl').setup {
+  indent = {
+    char = '┊'
+  }
+}
+
 -- Gitsigns
 -- See `:help gitsigns.txt`
 require('gitsigns').setup {
@@ -302,6 +309,9 @@ require('nvim-treesitter.configs').setup {
 
 -- Nvim tree
 require('nvim-tree').setup({
+  view = {
+    adaptive_size = true,
+  },
   actions = {
     open_file = {
       quit_on_open = true,
@@ -415,6 +425,19 @@ local mason_lspconfig = require 'mason-lspconfig'
 mason_lspconfig.setup {
   ensure_installed = vim.tbl_keys(servers),
 }
+
+mason_lspconfig.setup_handlers {
+  function(server_name)
+    require('lspconfig')[server_name].setup {
+      capabilities = capabilities,
+      on_attach = on_attach,
+      settings = servers[server_name],
+    }
+  end,
+}
+
+-- Turn on lsp status information
+require('fidget').setup({})
 
 -- nvim-cmp setup
 local cmp = require 'cmp'
