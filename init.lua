@@ -1,6 +1,7 @@
 -- Disable netrw in favor of nvim-tree (Must be at top)
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
+vim.g.python3_host_prog = '/Users/samer.atiani/.pyenv/versions/3.10.13/bin/python3'
 
 -- Install packer
 local install_path = vim.fn.stdpath 'data' .. '/site/pack/packer/start/packer.nvim'
@@ -29,6 +30,9 @@ require('packer').startup(function(use)
       'folke/neodev.nvim',
     },
   }
+
+  -- Show current code context (function, class, etc) in statusline
+  use 'SmiteshP/nvim-navic'
 
   use { -- Autocompletion
     'hrsh7th/nvim-cmp',
@@ -186,40 +190,51 @@ require('lualine').setup {
     component_separators = '|',
     section_separators = '',
   },
+  sections = {
+    lualine_a = {'mode'},
+    lualine_b = {'branch'},
+    lualine_c = {{'filename', path = 1}},
+    lualine_x = {
+      {
+        function()
+          local ok, navic = pcall(require, 'nvim-navic')
+          if ok and navic.is_available() then return navic.get_location() end
+          return ''
+        end,
+      },
+      'filetype',
+    },
+    lualine_y = {'progress'},
+    lualine_z = {'location'},
+  },
 }
 
 -- Enable Comment.nvim
 require('Comment').setup()
 
 -- Enable `lukas-reineke/indent-blankline.nvim`
-require('ibl').setup {
-  indent = {
-    char = '┊'
-  }
-}
+require('ibl').setup()
 
 -- Gitsigns
 -- See `:help gitsigns.txt`
-require('gitsigns').setup {
-  signs = {
-    add = { text = '+' },
-    change = { text = '~' },
-    delete = { text = '_' },
-    topdelete = { text = '‾' },
-    changedelete = { text = '~' },
-  },
-}
+require('gitsigns').setup()
 
 -- [[ Configure Telescope ]]
 -- See `:help telescope` and `:help telescope.setup()`
 require('telescope').setup {
   defaults = {
+    path_display = { "smart" },
     mappings = {
       i = {
         ['<C-j>'] = 'move_selection_next',
         ['<C-k>'] = 'move_selection_previous',
       },
     },
+  },
+  pickers = {
+    lsp_references = { show_line = false },
+    lsp_definitions = { show_line = false },
+    lsp_implementations = { show_line = false },
   },
 }
 
@@ -338,9 +353,22 @@ vim.keymap.set('n', '<leader>de', vim.diagnostic.open_float)
 vim.keymap.set('n', '<leader>dq', vim.diagnostic.setloclist)
 vim.keymap.set('n', '<leader>dh', vim.diagnostic.hide, { desc = "[D]iagnostics [H]ide" })
 
+-- Setup nvim-navic for showing current code context
+local navic_ok, navic = pcall(require, 'nvim-navic')
+if navic_ok then
+  navic.setup({
+    lsp = { auto_attach = true },
+    icons = { enabled = false },
+  })
+end
+
 -- LSP settings.
 --  This function gets run when an LSP connects to a particular buffer.
-local on_attach = function(_, bufnr)
+local on_attach = function(client, bufnr)
+  -- Attach navic for code context in statusline
+  if navic_ok and client.server_capabilities.documentSymbolProvider then
+    navic.attach(client, bufnr)
+  end
   -- NOTE: Remember that lua is a real programming language, and as such it is possible
   -- to define small helper and utility functions so you don't have to repeat yourself
   -- many times.
@@ -360,7 +388,7 @@ local on_attach = function(_, bufnr)
 
   nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
   nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
-  nmap('gI', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
+  nmap('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
   nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
   vim.keymap.set({'v', 'n'}, '<leader>F', vim.lsp.buf.format, { desc = 'LSP: [F]ormat Selection' })
   nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
@@ -391,7 +419,22 @@ end
 --  the `settings` field of the server config. You must look up that documentation yourself.
 local servers = {
   -- clangd = {},
-  -- gopls = {},
+  gopls = {
+    cmd = { 'gopls', '-remote=auto', '-remote.listen.timeout=24h' },
+    settings = {
+      gopls = {
+        directoryFilters = {
+          "-**/bazel-bin",
+          "-**/bazel-out",
+          "-**/bazel-testlogs",
+          "-**/bazel-dd-source",
+          "-**/bazel-dd-go",
+          "-**/bazel-logs-backend",
+          "-**/bazel-dogweb",
+        },
+      },
+    },
+  },
   -- pyright = {},
   -- rust_analyzer = {},
   -- tsserver = {},
@@ -426,15 +469,18 @@ mason_lspconfig.setup {
   ensure_installed = vim.tbl_keys(servers),
 }
 
-mason_lspconfig.setup_handlers {
-  function(server_name)
-    require('lspconfig')[server_name].setup {
-      capabilities = capabilities,
-      on_attach = on_attach,
-      settings = servers[server_name],
-    }
-  end,
-}
+-- Use the new vim.lsp.config API (Neovim 0.11+)
+-- Set default config for all LSP servers
+vim.lsp.config('*', {
+  capabilities = capabilities,
+  on_attach = on_attach,
+})
+
+-- Setup each server from the servers table
+for server_name, server_settings in pairs(servers) do
+  vim.lsp.config(server_name, server_settings)
+  vim.lsp.enable(server_name)
+end
 
 -- Turn on lsp status information
 require('fidget').setup({})

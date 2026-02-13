@@ -1,7 +1,10 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
 [kubernetes]
-disabled = false
+disabled = true
+
+[python]
+disabled = true
 
 [os]
 disabled = false

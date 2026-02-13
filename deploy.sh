@@ -71,26 +71,30 @@ else
 fi;
 # }}}
 # vim/nvim {{{
-if ! [ -x "$(command -v nvim)" ]; then
+NVIM_VERSION="${NVIM_VERSION:-stable}"  # set NVIM_VERSION=nightly for dev builds
+install_nvim() {
     mkdir -pv $HOME/.config/nvim/
     if [ $ON_A_MAC == "true" ]; then
         bash<<-EOF
         cd $(mktemp -d)
-        curl -LO https://github.com/neovim/neovim/releases/download/nightly/nvim-macos.tar.gz
-        tar xf nvim-macos.tar.gz
-        rsync -avz ./nvim-macos/ ~/.local/
+        curl -LO https://github.com/neovim/neovim/releases/download/${NVIM_VERSION}/nvim-macos-arm64.tar.gz
+        tar xf nvim-macos-arm64.tar.gz
+        rsync -avz ./nvim-macos-arm64/ ~/.local/
 		EOF
     else
         bash<<-EOF
         cd $(mktemp -d)
-        curl -LO https://github.com/neovim/neovim/releases/download/v0.11.2/nvim-linux-x86_64.appimage
+        curl -LO https://github.com/neovim/neovim/releases/download/${NVIM_VERSION}/nvim-linux-x86_64.appimage
         chmod u+x nvim-linux-x86_64.appimage
         ./nvim-linux-x86_64.appimage --appimage-extract
         rsync -avz ./squashfs-root/usr/ ~/.local/
 		EOF
     fi
+}
+if ! [ -x "$(command -v nvim)" ] || [ "$UPDATE_NVIM" == "true" ]; then
+    install_nvim
 else
-    echo "Skipping nvim installation."
+    echo "Skipping nvim installation. Set UPDATE_NVIM=true to force update."
 fi
 if ! [ -e ~/.config/nvim/init.lua ]; then
     mkdir -p ~/.config/nvim
