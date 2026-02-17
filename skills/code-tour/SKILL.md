@@ -7,7 +7,7 @@ description: >
   architecture or code structure. Do NOT use the Explore agent or read files yourself — invoke
   this skill first. Interactive educational tour using tmux side pane with nvim.
 disable-model-invocation: false
-allowed-tools: Bash(echo *), Bash(tmux *), Bash(nvim *), Bash(for *), Read, Grep, Glob, Task, mcp__atlassian__search, mcp__atlassian__getConfluencePage
+allowed-tools: Bash(echo *), Bash(tmux *), Bash(nvim *), Bash(for *), Bash(wc *), Read, Grep, Glob, Task, mcp__atlassian__search, mcp__atlassian__getConfluencePage
 ---
 
 # Interactive Code Tour
@@ -37,20 +37,44 @@ Give an interactive educational tour explaining code by displaying it in a tmux 
    - Fetch relevant Confluence pages for architecture context
    - Code locations: `~/dd/` (various repos) or `~/go/src/github.com/DataDog/dd-source` (monorepo)
 
-4. **Generate a unique socket path for this tour session**:
+4. **Formulate a tour plan**: Based on the exploration results and any documentation, design an ordered list of tour stops. Each stop must specify:
+   - **file**: absolute path to the file
+   - **line**: the line number to navigate to
+   - **scroll**: `zt` (show line at top — for function/struct/class starts) or `zz` (center — when context above and below matters)
+   - **topic**: a short label for what this stop covers
 
-   Each tour needs its own nvim server socket so multiple tours can run concurrently. Run this to generate the path:
-   ```bash
-   echo "/tmp/nvim-tour-$(date +%s)-$$.sock"
+   The plan should follow a logical narrative arc (e.g., entry point → config → core logic → helpers → integration points). Aim for 5-12 stops.
+
+   Example plan (internal, not shown to user yet):
    ```
-   Store the output as `nvim_sock` in your own context (e.g., `nvim_sock = "/tmp/nvim-tour-1234567890-42.sock"`). You will substitute this literal string into ALL subsequent nvim commands. Do NOT rely on shell variables across Bash tool calls — shell state does not persist between calls.
-
-5. **Create side pane with nvim using the server socket**:
-   ```bash
-   tmux split-window -h -t {window_id} -c <working_directory> "nvim --listen {nvim_sock} <initial_file>"
+   Stop 1: main.go:20 (zt) — entry point, CLI flags
+   Stop 2: main.go:102 (zt) — parallel orchestration
+   Stop 3: config.go:15 (zt) — Question struct and config loading
+   Stop 4: session.go:30 (zt) — launching Claude Code sessions
+   Stop 5: driver.go:11 (zt) — driver agent decision logic
+   Stop 6: judge.go:12 (zt) — judge scoring
    ```
 
-6. **Identify nvim pane and wait for startup**:
+5. **Pre-read all tour files**: Read ALL unique files that appear in the tour plan using the Read tool. Issue multiple Read calls in parallel where possible (one per file). For large files, read the full file — you need complete contents in context so you already know exact line numbers and can explain any part without delay.
+
+   **CRITICAL**: After this step, every file in your tour plan is in context. During the interactive tour you must NEVER re-read these files. This is the key to low-latency responses once the tour begins.
+
+6. **Generate a unique socket path for this tour session**:
+
+   Each tour needs its own nvim server socket so multiple tours can run concurrently. Construct a unique path yourself using the current Unix timestamp and a random suffix, then echo it as a **literal string** (no subshells):
+   ```bash
+   echo /tmp/nvim-tour-1739700000-42.sock
+   ```
+   Do NOT use `$(date)` or `$$` — these create subshells that trigger permission prompts. Just embed a literal unique value you generate.
+
+   Store the output as `nvim_sock` in your own context. You will substitute this literal string into ALL subsequent nvim commands. Do NOT rely on shell variables across Bash tool calls — shell state does not persist between calls.
+
+7. **Create side pane with nvim using the server socket** (open the first stop's file):
+   ```bash
+   tmux split-window -h -t {window_id} -c <working_directory> "nvim --listen {nvim_sock} <first_stop_file>"
+   ```
+
+8. **Identify nvim pane and wait for startup**:
    ```bash
    tmux list-panes -t {window_id} -F '#{pane_index} #{pane_current_command}'
    ```
@@ -58,11 +82,11 @@ Give an interactive educational tour explaining code by displaying it in a tmux 
 
    After creating the pane, wait for nvim to be ready by polling for the server socket (with a 5-second timeout to avoid infinite loops):
    ```bash
-   for i in $(seq 1 25); do [ -S "{nvim_sock}" ] && break; sleep 0.2; done && [ -S "{nvim_sock}" ] && echo "nvim ready" || echo "ERROR: nvim failed to start"
+   for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25; do [ -S "{nvim_sock}" ] && break; sleep 0.2; done && [ -S "{nvim_sock}" ] && echo "nvim ready" || echo "ERROR: nvim failed to start"
    ```
    This polls every 200ms for up to 5 seconds. If nvim doesn't start, report the error to the user.
 
-7. **Enable line numbers in nvim**:
+9. **Enable line numbers in nvim**:
    ```bash
    nvim --server {nvim_sock} --remote-send '<Esc>:set number<CR>'
    ```
@@ -99,7 +123,7 @@ nvim --server {nvim_sock} --remote-send ':{line_number}<CR>zt' && nvim --server 
 
 Replace `zt` with `zz` in the examples above only when the code both above and below the target line is useful context.
 
-**Reading file contents**: Use the **Read tool** to read files for your own understanding and to prepare explanations. Do NOT scroll nvim and capture the pane to read code — that wastes tokens and disrupts what the user sees. The nvim pane is purely a display for the user. **However**, if you have already Read a file earlier in the conversation, do NOT read it again — you already have the contents in context. Only use Read for files you haven't seen yet.
+**Reading file contents during the tour**: All tour plan files were pre-read in Phase 3, so you already have their contents in context. Do NOT re-read them — just navigate nvim and explain from memory. Only use the Read tool during the tour if the user asks about a file that was NOT part of the original tour plan (i.e., a file you have not yet read in this conversation).
 
 **IMPORTANT**: In `--remote-send`, use `<CR>` for Enter and `<Esc>` for Escape (nvim key notation), NOT literal Enter keys. These are single direct Bash tool calls — no sub-agents needed.
 
@@ -139,8 +163,8 @@ This uses `--remote-expr` to read the active visual selection range. `line("v")`
 
 **When user asks about a selection**:
 1. Read the selection using the command above
-2. Use a sub-agent (Task with subagent_type=Explore) to research what the selected code does
-3. Provide a concise explanation
+2. Answer from your existing context — all tour files were pre-read, so you likely already have the code
+3. Only use Read (for files not yet in context) or a sub-agent (Task with subagent_type=Explore) if the question requires information entirely outside the pre-read files
 
 ## Tour Structure
 
@@ -155,30 +179,36 @@ This uses `--remote-expr` to read the active visual selection range. `line("v")`
 
 ```
 [You] "Let me give you a tour of {service}. First, let me find the documentation..."
-[Query Atlassian, setup tmux pane]
+[Query Atlassian, explore codebase with sub-agent]
 
-[You] "This service does X. Looking at the entry point now..."
-[Navigate with direct Bash call to main()]
+[Formulate tour plan: 7 stops across 5 files]
+[Pre-read all 5 files in parallel using Read tool]
+[Setup tmux pane with nvim]
+
+[You] "This service does X. Here's the tour plan: ... Looking at the entry point now."
+[Navigate nvim to Stop 1 — no Read needed, file already in context]
 
 [You] "Here's main() - it creates the API server with these options: ...
        Ready to see how dependencies are wired up?"
 
 [Wait for user: "yes"]
 
-[Navigate with direct Bash call to next location]
-[Explain, then ask for confirmation again]
+[Navigate nvim to Stop 2 — no Read needed]
+[Explain from context, then ask for confirmation again]
 
 [User highlights something, asks "what does this do?"]
-[Read selection, research with Explore sub-agent, explain]
+[Read selection with --remote-expr, answer from context]
+
+[User asks about a file NOT in the tour plan]
+[Read that new file with Read tool, then answer]
 ```
 
 ## Cleanup
 
 When tour is complete, optionally close nvim and the pane:
 ```bash
-nvim --server {nvim_sock} --remote-send "$(printf '<Esc>:q\041<CR>')"
+nvim --server {nvim_sock} --remote-send '<Esc>:q<CR>'
 ```
-IMPORTANT: The exclamation mark must be passed as octal `\041` inside printf because the Bash tool mangles a literal exclamation mark by prepending a backslash, which causes nvim error E488.
 
 The tmux pane will close automatically when nvim exits.
 Or leave it open for the user to continue exploring.
