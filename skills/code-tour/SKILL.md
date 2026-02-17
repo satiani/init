@@ -7,7 +7,7 @@ description: >
   architecture or code structure. Do NOT use the Explore agent or read files yourself — invoke
   this skill first. Interactive educational tour using tmux side pane with nvim.
 disable-model-invocation: false
-allowed-tools: Bash, Read, Grep, Glob, Task, mcp__atlassian__search, mcp__atlassian__getConfluencePage
+allowed-tools: Bash(echo *), Bash(tmux *), Bash(nvim *), Bash(for *), Read, Grep, Glob, Task, mcp__atlassian__search, mcp__atlassian__getConfluencePage
 ---
 
 # Interactive Code Tour
@@ -37,46 +37,75 @@ Give an interactive educational tour explaining code by displaying it in a tmux 
    - Fetch relevant Confluence pages for architecture context
    - Code locations: `~/dd/` (various repos) or `~/go/src/github.com/DataDog/dd-source` (monorepo)
 
-4. **Create side pane with nvim**:
+4. **Generate a unique socket path for this tour session**:
+
+   Each tour needs its own nvim server socket so multiple tours can run concurrently. Run this to generate the path:
    ```bash
-   tmux split-window -h -t {window_id} -c <working_directory> "nvim <initial_file>"
+   echo "/tmp/nvim-tour-$(date +%s)-$$.sock"
+   ```
+   Store the output as `nvim_sock` in your own context (e.g., `nvim_sock = "/tmp/nvim-tour-1234567890-42.sock"`). You will substitute this literal string into ALL subsequent nvim commands. Do NOT rely on shell variables across Bash tool calls — shell state does not persist between calls.
+
+5. **Create side pane with nvim using the server socket**:
+   ```bash
+   tmux split-window -h -t {window_id} -c <working_directory> "nvim --listen {nvim_sock} <initial_file>"
    ```
 
-5. **Identify nvim pane and wait for startup**:
+6. **Identify nvim pane and wait for startup**:
    ```bash
    tmux list-panes -t {window_id} -F '#{pane_index} #{pane_current_command}'
    ```
-   Store the pane index (typically 2). The full target for commands will be `{window_id}.{pane_index}` (e.g., `@0.2`).
+   Store the pane index (typically 2). The full target for tmux commands will be `{window_id}.{pane_index}` (e.g., `@0.2`).
 
-   After creating the pane, wait for nvim to be ready before sending any keys. Poll with `tmux list-panes` checking for `nvim` in the current command, or use a single `sleep 2` after split-window. This is the ONE place where a sleep is justified — nvim needs time to launch and render. After nvim is running, no further sleeps are needed for any tmux interactions.
+   After creating the pane, wait for nvim to be ready by polling for the server socket (with a 5-second timeout to avoid infinite loops):
+   ```bash
+   for i in $(seq 1 25); do [ -S "{nvim_sock}" ] && break; sleep 0.2; done && [ -S "{nvim_sock}" ] && echo "nvim ready" || echo "ERROR: nvim failed to start"
+   ```
+   This polls every 200ms for up to 5 seconds. If nvim doesn't start, report the error to the user.
+
+7. **Enable line numbers in nvim**:
+   ```bash
+   nvim --server {nvim_sock} --remote-send '<Esc>:set number<CR>'
+   ```
 
 ## Navigation Pattern
 
-**CRITICAL**: Use sub-agents (Task tool with subagent_type=Bash) for ALL nvim interactions to avoid polluting conversation context.
+The nvim pane is for the **user** to look at. You should NOT read code through nvim. Instead:
+- Use the **Read tool** to read file contents for your own understanding
+- Use **nvim `--remote-send`** only to control what the user sees in the pane
+- Use **nvim `--remote-expr`** to verify navigation landed correctly (not `tmux capture-pane`)
 
-**CRITICAL**: Always use the full target `{window_id}.{pane_index}` (e.g., `@0.2`) for ALL tmux commands. This ensures commands go to the correct pane even if the user has switched to a different tmux window.
+**Scroll positioning — `zt` vs `zz`**:
+- Use `zt` (line at **top** of screen) when jumping to the start of a function, struct, class, type definition, or other top-level declaration. This shows the definition and its body below it.
+- Use `zz` (line at **center** of screen) only when the code both above and below the target line is useful context — e.g., a line in the middle of a function where you want the reader to see what comes before and after.
 
-**CRITICAL - Line Numbers**: When explaining code to the user, always reference the **actual file line numbers** (shown in nvim's left gutter), NOT the position within the tmux capture output. The user sees nvim with line numbers - your references must match what they see. To get the current line number in nvim:
+**Navigate within the current file** (jump to a line):
 ```bash
-tmux send-keys -t {window_id}.{pane_index} ':echo line(".")' Enter
+nvim --server {nvim_sock} --remote-send ':{line_number}<CR>zt'
 ```
-Or look at nvim's status line which shows the current line number (e.g., "321:1" means line 321, column 1).
 
-**NO SLEEPS**: Do NOT use `sleep` commands between tmux send-keys and capture-pane. tmux commands are synchronous — send-keys completes before the next command runs, and nvim processes keystrokes immediately. Sleeps add unnecessary latency. Only add a sleep if a command demonstrably fails without one (e.g., waiting for nvim's initial startup after `split-window`).
+**Open a different file** (and optionally jump to a line):
 
-Example sub-agent prompt:
+IMPORTANT: Split file-open and line-jump into two separate `--remote-send` calls chained with `&&`. Combining `:e {file}<CR>:{line}<CR>zt` in one send is unreliable — the line jump can execute before the file loads. Always chain the verify step into the same Bash call using `&&` so that open + jump + verify is a single tool invocation.
+
+```bash
+nvim --server {nvim_sock} --remote-send '<Esc>:e {filepath}<CR>' && nvim --server {nvim_sock} --remote-send ':{line_number}<CR>zt' && nvim --server {nvim_sock} --remote-expr 'expand("%:t") .. ":" .. line(".")'
 ```
-Navigate nvim in tmux target {window_id}.{pane_index} to show {description} at line {line_number}.
+This returns e.g. `config.go:45` — confirming the current file and line without dumping screen contents.
 
-Steps:
-1. Send keys: tmux send-keys -t {window_id}.{pane_index} ':{line_number}' Enter 'zz'
-2. Verify: tmux capture-pane -t {window_id}.{pane_index} -p | head -40
-3. Note the actual file line numbers from nvim's status line or gutter
-
-Do NOT use sleep between steps — tmux commands are synchronous.
-
-Return brief confirmation of what's now visible, referencing ACTUAL file line numbers.
+**Verify navigation within current file** (when not opening a new file):
+```bash
+nvim --server {nvim_sock} --remote-send ':{line_number}<CR>zt' && nvim --server {nvim_sock} --remote-expr 'expand("%:t") .. ":" .. line(".")'
 ```
+
+Replace `zt` with `zz` in the examples above only when the code both above and below the target line is useful context.
+
+**Reading file contents**: Use the **Read tool** to read files for your own understanding and to prepare explanations. Do NOT scroll nvim and capture the pane to read code — that wastes tokens and disrupts what the user sees. The nvim pane is purely a display for the user. **However**, if you have already Read a file earlier in the conversation, do NOT read it again — you already have the contents in context. Only use Read for files you haven't seen yet.
+
+**IMPORTANT**: In `--remote-send`, use `<CR>` for Enter and `<Esc>` for Escape (nvim key notation), NOT literal Enter keys. These are single direct Bash tool calls — no sub-agents needed.
+
+**Sub-agents are still appropriate for heavy research only**:
+- Initial codebase exploration during setup (Task with subagent_type=Explore)
+- Researching user-highlighted code selections (Task with subagent_type=Explore)
 
 ## Pacing Rules
 
@@ -99,14 +128,14 @@ Return brief confirmation of what's now visible, referencing ACTUAL file line nu
 
 Users can highlight code in nvim and ask questions about it.
 
-**User workflow**: Select text in visual mode → Press `Escape` → Ask question
+**User workflow**: Select text in visual mode → Ask question (while selection is still active)
 
 **To read the selection** (run directly, not in sub-agent):
 ```bash
-tmux send-keys -t {window_id}.{pane_index} ':lua local s,e=vim.fn.getpos("'"'"'<"),vim.fn.getpos("'"'"'>"); local l=vim.fn.getline(s[2]); vim.fn.writefile({l:sub(s[3],e[3])}, "/tmp/nvim_sel.txt")' Enter && cat /tmp/nvim_sel.txt
+nvim --server {nvim_sock} --remote-expr 'join(getline(line("v"), line(".")), "\n")'
 ```
 
-This reads from `'<` and `'>` marks (set when exiting visual mode) without modifying registers or clipboard.
+This uses `--remote-expr` to read the active visual selection range. `line("v")` is where visual mode started and `line(".")` is the current cursor position. Works in all visual modes (`v`, `V`, `<C-v>`).
 
 **When user asks about a selection**:
 1. Read the selection using the command above
@@ -129,24 +158,27 @@ This reads from `'<` and `'>` marks (set when exiting visual mode) without modif
 [Query Atlassian, setup tmux pane]
 
 [You] "This service does X. Looking at the entry point now..."
-[Sub-agent navigates to main()]
+[Navigate with direct Bash call to main()]
 
 [You] "Here's main() - it creates the API server with these options: ...
        Ready to see how dependencies are wired up?"
 
 [Wait for user: "yes"]
 
-[Sub-agent navigates to next location]
+[Navigate with direct Bash call to next location]
 [Explain, then ask for confirmation again]
 
 [User highlights something, asks "what does this do?"]
-[Read selection, research with sub-agent, explain]
+[Read selection, research with Explore sub-agent, explain]
 ```
 
 ## Cleanup
 
-When tour is complete, optionally close the pane:
+When tour is complete, optionally close nvim and the pane:
 ```bash
-tmux send-keys -t {window_id}.{pane_index} ':q!' Enter
+nvim --server {nvim_sock} --remote-send "$(printf '<Esc>:q\041<CR>')"
 ```
+IMPORTANT: The exclamation mark must be passed as octal `\041` inside printf because the Bash tool mangles a literal exclamation mark by prepending a backslash, which causes nvim error E488.
+
+The tmux pane will close automatically when nvim exits.
 Or leave it open for the user to continue exploring.
