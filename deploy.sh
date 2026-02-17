@@ -11,7 +11,7 @@ source $SCRIPT_DIR/common.sh
 test_required_commands zsh curl git tmux rsync cmake
 # }}}
 # bin dir {{{
-export PATH=~/.local/bin:~/.cargo/bin:/usr/local/bin:/usr/bin:$PATH:~/bin
+export PATH=~/.local/bin:~/.cargo/bin:~/.fzf/bin:/usr/local/bin:/usr/bin:$PATH:~/bin
 # }}}
 # oh my zsh {{{
 if ! [ -d ~/.oh-my-zsh ]; then
@@ -48,13 +48,43 @@ else
     echo "Skipping starship."
 fi
 # }}}
+# fzf {{{
+if ! [ -x "$(command -v fzf)" ]; then
+    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+    ~/.fzf/install --key-bindings --completion --no-update-rc
+else
+    echo "Skipping fzf."
+fi
+# }}}
+# zoxide {{{
+if ! [ -x "$(command -v zoxide)" ]; then
+    cargo install zoxide --locked
+else
+    echo "Skipping zoxide."
+fi
+# }}}
 # dotfiles {{{
-for i in $SCRIPT_DIR/.*; do
-    if [[ $i =~ \.git ]] || [[ $i == "$SCRIPT_DIR/." ]] || [[ $i == "$SCRIPT_DIR/.." ]]; then
-        continue
-    fi;
-    ensure_link $i
+for i in .ctags .inputrc .myclirc .tmux.conf .tmux.theme .doom.d .zshrc; do
+    ensure_link "$SCRIPT_DIR/$i"
 done
+# }}}
+# zshrc {{{
+ZSHRC_SOURCE="$SCRIPT_DIR/.zshrc"
+if [ -f "$HOME/.zshrc" ]; then
+    # Existing .zshrc found (e.g. managed by ansible) - link as .zshrc.local
+    if ! [ -L "$HOME/.zshrc.local" ]; then
+        ln -sv "$ZSHRC_SOURCE" "$HOME/.zshrc.local"
+    fi
+    if ! grep -q 'source.*\.zshrc\.local' "$HOME/.zshrc"; then
+        tmpfile=$(mktemp)
+        printf '# Source personal config\nif [ -f ~/.zshrc.local ]; then\n    source ~/.zshrc.local\nfi\n\n' > "$tmpfile"
+        cat "$HOME/.zshrc" >> "$tmpfile"
+        mv "$tmpfile" "$HOME/.zshrc"
+        echo "Injected source of .zshrc.local into .zshrc"
+    fi
+else
+    ensure_link "$ZSHRC_SOURCE"
+fi
 # }}}
 # tmux {{{
 if ! [ -d ~/.tmux ]; then
@@ -102,5 +132,18 @@ if ! [ -e ~/.config/nvim/init.lua ]; then
 else
     echo "Skipping nvim config."
 fi
+# }}}
+# ai agent skills {{{
+for skill_dir in $SCRIPT_DIR/skills/*/; do
+    skill_name=$(basename "$skill_dir")
+    for target in ~/.claude/skills ~/.agents/skills; do
+        if [ -e "$target/$skill_name" ]; then
+            echo "Skipping $target/$skill_name."
+        else
+            mkdir -p "$target"
+            ln -sv "$skill_dir" "$target/$skill_name"
+        fi
+    done
+done
 # }}}
 echo "Done."
