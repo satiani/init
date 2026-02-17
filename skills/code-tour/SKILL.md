@@ -7,7 +7,7 @@ description: >
   architecture or code structure. Do NOT use the Explore agent or read files yourself — invoke
   this skill first. Interactive educational tour using tmux side pane with nvim.
 disable-model-invocation: false
-allowed-tools: Bash(echo *), Bash(tmux *), Bash(nvim *), Bash(for *), Bash(wc *), Read, Grep, Glob, Task, mcp__atlassian__search, mcp__atlassian__getConfluencePage
+allowed-tools: Bash(echo *), Bash(tmux *), Bash(nvim *), Bash(sleep *), Bash(wc *), Read, Grep, Glob, Task, mcp__atlassian__search, mcp__atlassian__getConfluencePage
 ---
 
 # Interactive Code Tour
@@ -28,9 +28,9 @@ Give an interactive educational tour explaining code by displaying it in a tmux 
 
 2. **Capture the current window ID** (CRITICAL for targeting commands correctly):
    ```bash
-   tmux display-message -p '#{window_id}'
+   tmux display-message -p -t "$TMUX_PANE" '#{window_id}'
    ```
-   Store this window ID (e.g., `@0`, `@1`, etc.) - you will use it for ALL subsequent tmux commands to ensure they target the correct window even if the user switches windows.
+   Using `-t "$TMUX_PANE"` ensures you capture the window ID of the pane Claude is actually running in — not whatever window the user has active at that moment. Store this window ID (e.g., `@0`, `@1`, etc.) and use it for ALL subsequent tmux commands. This guarantees split-window and all other tmux operations target the correct window even if the user navigates away.
 
 3. **Find code context** (for Datadog services):
    - Query Atlassian with `mcp__atlassian__search` for documentation about $ARGUMENTS
@@ -82,9 +82,9 @@ Give an interactive educational tour explaining code by displaying it in a tmux 
 
    After creating the pane, wait for nvim to be ready by polling for the server socket (with a 5-second timeout to avoid infinite loops):
    ```bash
-   for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25; do [ -S "{nvim_sock}" ] && break; sleep 0.2; done && [ -S "{nvim_sock}" ] && echo "nvim ready" || echo "ERROR: nvim failed to start"
+   sleep 0.2 && [ -S "{nvim_sock}" ] && echo "nvim ready" || echo "ERROR: nvim failed to start"
    ```
-   This polls every 200ms for up to 5 seconds. If nvim doesn't start, report the error to the user.
+   If nvim doesn't start in time, report the error to the user.
 
 9. **Enable line numbers in nvim**:
    ```bash
