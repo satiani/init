@@ -3,6 +3,8 @@
 export PATH=~/.local/bin:~/.cargo/bin:$PATH
 export PROMPT='%~ $ '
 export LANG=en_US.UTF-8
+export EDITOR=nvim
+export VISUAL=nvim
 
 set -o vi
 bindkey '^R' history-incremental-search-backward

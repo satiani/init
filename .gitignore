@@ -6,3 +6,7 @@
 *.o
 .cgdb/readline_history.txt
 *.pyc
+
+.pi/agent/auth.json
+.pi/agent/bin/
+.pi/agent/sessions/

@@ -133,6 +133,30 @@ else
     echo "Skipping nvim config."
 fi
 # }}}
+# terminal.app key mappings {{{
+if [ $ON_A_MAC == "true" ]; then
+    BUDDY=/usr/libexec/PlistBuddy
+    TERM_PLIST="$HOME/Library/Preferences/com.apple.Terminal.plist"
+    PROFILE="Clear Dark"
+    if ! $BUDDY -c "Print 'Window Settings:$PROFILE:keyMapBoundKeys'" "$TERM_PLIST" &>/dev/null; then
+        $BUDDY -c "Add 'Window Settings:$PROFILE:keyMapBoundKeys' dict" "$TERM_PLIST"
+        while IFS=$'\t' read -r key val; do
+            $BUDDY -c "Add 'Window Settings:$PROFILE:keyMapBoundKeys:${key}' string $(printf '%b' "$val")" "$TERM_PLIST"
+        done < "$SCRIPT_DIR/terminal-keybindings.tsv"
+    else
+        echo "Skipping Terminal.app key mappings."
+    fi
+fi
+# }}}
+# pi config {{{
+if [ -L "$HOME/.pi" ]; then
+    echo "Skipping .pi config."
+elif [ -d "$HOME/.pi" ]; then
+    echo "WARNING: ~/.pi is a real directory. Back it up, remove it, then re-run deploy.sh"
+else
+    ln -sv "$SCRIPT_DIR/.pi" "$HOME/.pi"
+fi
+# }}}
 # ai agent skills {{{
 for skill_dir in $SCRIPT_DIR/skills/*/; do
     skill_name=$(basename "$skill_dir")

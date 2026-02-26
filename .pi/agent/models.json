@@ -1,0 +1,12 @@
+{
+  "providers": {
+    "lmstudio": {
+      "baseUrl": "http://127.0.0.1:1234/v1",
+      "api": "openai-completions",
+      "apiKey": "lmstudio",
+      "models": [
+        { "id": "mlx-community/qwen3.5-35b-a3b" }
+      ]
+    }
+  }
+}

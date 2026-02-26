@@ -1,0 +1,12 @@
+{
+  "lastChangelogVersion": "0.55.1",
+  "defaultProvider": "anthropic",
+  "defaultModel": "claude-opus-4-6",
+  "defaultThinkingLevel": "high",
+  "hideThinkingBlock": false,
+  "enabledModels": [
+    "anthropic/claude-opus-4-6",
+    "anthropic/claude-sonnet-4-6",
+    "lmstudio/mlx-community/qwen3.5-35b-a3b"
+  ]
+}
