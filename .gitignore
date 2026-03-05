@@ -10,3 +10,11 @@
 .pi/agent/auth.json
 .pi/agent/bin/
 .pi/agent/sessions/
+.pi/agent/pi-crash.log
+.pi/agent/mcp-cache.json
+.pi/agent/mcp-npx-cache.json
+.pi/agent/mcp-credentials.json
+
+# MCP data/cache artifacts
+.mcp_data/
+.pi/agent/extensions/.mcp_data/

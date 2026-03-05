@@ -1,0 +1,45 @@
+{
+  "mcpServers": {
+    "chrome-devtools": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "chrome-devtools-mcp@latest",
+        "--autoConnect"
+      ],
+      "lifecycle": "lazy",
+      "idleTimeout": 30
+    },
+    "contextplus": {
+      "type": "stdio",
+      "command": "bunx",
+      "args": [
+        "contextplus"
+      ],
+      "env": {
+        "OLLAMA_HOST": "http://127.0.0.1:11434",
+        "OLLAMA_EMBED_MODEL": "nomic-embed-text",
+        "OLLAMA_CHAT_MODEL": "qwen2.5-coder:7b",
+        "CONTEXTPLUS_EMBED_BATCH_SIZE": "8",
+        "CONTEXTPLUS_EMBED_TRACKER": "true"
+      },
+      "lifecycle": "lazy",
+      "idleTimeout": 30
+    },
+    "datadog": {
+      "type": "http",
+      "url": "https://mcp.datadoghq.com/api/unstable/mcp-server/mcp",
+      "auth": {
+        "type": "oauth",
+        "credentialId": "mcp_oauth_1772752491019_9voxv7flk"
+      },
+      "oauth": {
+        "authorizationUrl": "https://mcp.datadoghq.com/api/unstable/mcp-server/authorize",
+        "tokenUrl": "https://mcp.datadoghq.com/api/unstable/mcp-server/token",
+        "registrationUrl": "https://mcp.datadoghq.com/api/unstable/mcp-server/register",
+        "clientId": "mcp_0767ad8413142a20552eadacf5ed1b82"
+      }
+    }
+  }
+}

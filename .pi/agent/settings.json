@@ -1,12 +1,15 @@
 {
-  "lastChangelogVersion": "0.55.1",
-  "defaultProvider": "anthropic",
-  "defaultModel": "claude-sonnet-4-6",
+  "lastChangelogVersion": "0.56.1",
+  "defaultProvider": "openai",
+  "defaultModel": "gpt-5.3-codex",
   "defaultThinkingLevel": "high",
   "hideThinkingBlock": false,
+  "quietStartup": true,
   "enabledModels": [
     "anthropic/claude-opus-4-6",
     "anthropic/claude-sonnet-4-6",
-    "lmstudio/mlx-community/qwen3.5-35b-a3b"
-  ]
+    "lmstudio/mlx-community/qwen3.5-35b-a3b",
+    "openai/gpt-5.3-codex"
+  ],
+  "packages": []
 }

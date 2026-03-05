@@ -364,8 +364,9 @@ const bashDestructivePatterns: Array<{ pattern: RegExp; label: string }> = [
 
 	// Process killing
 	{ pattern: /\bkillall\b/i, label: "killall" },
-	{ pattern: /\bpkill\s+-9\b/i, label: "pkill -9" },
-	{ pattern: /\bkill\s+-9\b/i, label: "kill -9" },
+	{ pattern: /\bpkill\b/i, label: "pkill (kill processes by pattern)" },
+	{ pattern: /\bkill\s+/i, label: "kill (signal process)" },
+	{ pattern: /\bxkill\b/i, label: "xkill (kill window)" },
 
 	// Network/firewall
 	{ pattern: /\biptables\s+-F\b/i, label: "iptables flush" },

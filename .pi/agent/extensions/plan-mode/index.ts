@@ -6,6 +6,8 @@
  *
  * Features:
  * - /plan command or Ctrl+Alt+P to toggle
+ * - /autoplan command to control automatic plan-mode entry
+ * - Optional auto-plan suggestion for non-trivial implementation prompts
  * - Bash restricted to allowlisted read-only commands
  * - Extracts numbered plan steps from "Plan:" sections
  * - [DONE:n] markers to complete steps during execution
@@ -16,11 +18,19 @@ import type { AgentMessage } from "@mariozechner/pi-agent-core";
 import type { AssistantMessage, TextContent } from "@mariozechner/pi-ai";
 import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
 import { Key } from "@mariozechner/pi-tui";
+import { Type } from "@sinclair/typebox";
 import { extractTodoItems, isSafeCommand, markCompletedSteps, type TodoItem } from "./utils.js";
 
 // Tools
 const PLAN_MODE_TOOLS = ["read", "bash", "grep", "find", "ls", "questionnaire"];
-const NORMAL_MODE_TOOLS = ["read", "bash", "edit", "write"];
+
+const AUTO_PLAN_SCORE_THRESHOLD = 3;
+
+type AutoPlanAssessment = {
+	score: number;
+	reasons: string[];
+	shouldPlan: boolean;
+};
 
 // Type guard for assistant messages
 function isAssistantMessage(m: AgentMessage): m is AssistantMessage {
@@ -35,15 +45,167 @@ function getTextContent(message: AssistantMessage): string {
 		.join("\n");
 }
 
+function normalizePromptSignature(prompt: string): string {
+	return prompt.toLowerCase().replace(/\s+/g, " ").trim().slice(0, 300);
+}
+
+function isLikelyResearchOnlyRequest(normalizedPrompt: string): boolean {
+	if (/\b(no plan|skip plan mode|don't plan|do not plan)\b/.test(normalizedPrompt)) {
+		return true;
+	}
+
+	const hasImplementationIntent =
+		/\b(add|implement|build|create|refactor|rewrite|migrate|optimi[sz]e|fix|update|change|remove|replace|integrate|wire up)\b/.test(
+			normalizedPrompt,
+		) || /\bbug|feature\b/.test(normalizedPrompt);
+
+	const hasResearchIntent =
+		/\b(explain|walk me through|show me|teach me|understand|what files|where is|find|search|list|inspect|read only)\b/.test(
+			normalizedPrompt,
+		) ||
+		/^\s*(what|where|why|how)\b/.test(normalizedPrompt);
+
+	return hasResearchIntent && !hasImplementationIntent;
+}
+
+function assessAutoPlanNeed(prompt: string): AutoPlanAssessment {
+	const normalizedPrompt = prompt.toLowerCase().replace(/\s+/g, " ").trim();
+	if (!normalizedPrompt) {
+		return { score: 0, reasons: [], shouldPlan: false };
+	}
+	if (isLikelyResearchOnlyRequest(normalizedPrompt)) {
+		return { score: 0, reasons: [], shouldPlan: false };
+	}
+
+	let score = 0;
+	const reasons: string[] = [];
+	const addSignal = (condition: boolean, points: number, reason: string) => {
+		if (!condition) return;
+		score += points;
+		reasons.push(reason);
+	};
+
+	addSignal(
+		/\b(add|implement|build|create|refactor|rewrite|migrate|optimi[sz]e|integrate|wire up)\b/.test(normalizedPrompt),
+		2,
+		"implementation/refactor request",
+	);
+
+	addSignal(
+		/\b(approach|architecture|design|trade-?off|pattern|strategy|best way)\b/.test(normalizedPrompt),
+		2,
+		"architectural or tradeoff decision",
+	);
+
+	addSignal(
+		/\b(across|throughout|end-to-end|system-wide|all occurrences|whole project)\b/.test(normalizedPrompt),
+		2,
+		"likely multi-file impact",
+	);
+
+	addSignal(
+		/\b(auth|security|permission|database|schema|migration|caching|state management|api contract)\b/.test(
+			normalizedPrompt,
+		),
+		2,
+		"risk-sensitive domain",
+	);
+
+	const checklistItems = (prompt.match(/^\s*(?:[-*]|\d+\.)\s+/gm) ?? []).length;
+	addSignal(checklistItems >= 3, 2, "multi-step checklist provided");
+	addSignal(normalizedPrompt.length >= 240, 1, "long request with broad scope");
+
+	const multiTaskMarkers = (normalizedPrompt.match(/\b(and|also|then|plus)\b/g) ?? []).length;
+	addSignal(multiTaskMarkers >= 3, 1, "multiple coupled tasks in one request");
+
+	addSignal(/\b(plan first|make a plan|plan mode)\b/.test(normalizedPrompt), 3, "user explicitly asked to plan");
+
+	if (/\b(typo|misspell|spelling|single line|one line|tiny|trivial|quick fix)\b/.test(normalizedPrompt)) {
+		score -= 3;
+		reasons.push("request appears to be a small localized fix");
+	}
+
+	return {
+		score,
+		reasons,
+		shouldPlan: score >= AUTO_PLAN_SCORE_THRESHOLD,
+	};
+}
+
 export default function planModeExtension(pi: ExtensionAPI): void {
 	let planModeEnabled = false;
 	let executionMode = false;
 	let todoItems: TodoItem[] = [];
+	let autoPlanEnabled = true;
+	let declinedAutoPlanSignature: string | null = null;
+
+	/** Restore all registered tools (built-in + extension). */
+	function restoreAllTools(): void {
+		const allNames = pi.getAllTools().map((t) => t.name);
+		pi.setActiveTools(allNames);
+	}
+
+	pi.registerTool({
+		name: "complete_step",
+		label: "Complete Plan Step",
+		description:
+			"Mark a plan step as completed during plan execution. " +
+			"Call this tool after finishing each numbered step. " +
+			"Only available when executing a plan with tracked steps.",
+		parameters: Type.Object({
+			step: Type.Number({ description: "The step number to mark as completed (1-based)" }),
+		}),
+		async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
+			if (!executionMode || todoItems.length === 0) {
+				return {
+					content: [{ type: "text", text: "No active plan execution. Nothing to mark." }],
+				};
+			}
+
+			const item = todoItems.find((t) => t.step === params.step);
+			if (!item) {
+				return {
+					content: [
+						{
+							type: "text",
+							text: `Step ${params.step} not found. Valid steps: ${todoItems.map((t) => t.step).join(", ")}`,
+						},
+					],
+				};
+			}
+
+			if (item.completed) {
+				return {
+					content: [{ type: "text", text: `Step ${params.step} already completed.` }],
+				};
+			}
+
+			item.completed = true;
+			updateStatus(ctx);
+			persistState();
+
+			const remaining = todoItems.filter((t) => !t.completed);
+			const statusText =
+				remaining.length === 0
+					? "All steps completed!"
+					: `${remaining.length} step(s) remaining: ${remaining.map((t) => `${t.step}. ${t.text}`).join(", ")}`;
+
+			return {
+				content: [{ type: "text", text: `Step ${params.step} marked complete. ${statusText}` }],
+			};
+		},
+	});
 
 	pi.registerFlag("plan", {
 		description: "Start in plan mode (read-only exploration)",
 		type: "boolean",
 		default: false,
+	});
+
+	pi.registerFlag("auto-plan", {
+		description: "Suggest entering plan mode automatically for non-trivial implementation prompts",
+		type: "boolean",
+		default: true,
 	});
 
 	function updateStatus(ctx: ExtensionContext): void {
@@ -53,6 +215,8 @@ export default function planModeExtension(pi: ExtensionAPI): void {
 			ctx.ui.setStatus("plan-mode", ctx.ui.theme.fg("accent", `📋 ${completed}/${todoItems.length}`));
 		} else if (planModeEnabled) {
 			ctx.ui.setStatus("plan-mode", ctx.ui.theme.fg("warning", "⏸ plan"));
+		} else if (autoPlanEnabled) {
+			ctx.ui.setStatus("plan-mode", ctx.ui.theme.fg("muted", "⚡ auto-plan"));
 		} else {
 			ctx.ui.setStatus("plan-mode", undefined);
 		}
@@ -73,32 +237,77 @@ export default function planModeExtension(pi: ExtensionAPI): void {
 		}
 	}
 
-	function togglePlanMode(ctx: ExtensionContext): void {
-		planModeEnabled = !planModeEnabled;
-		executionMode = false;
-		todoItems = [];
-
-		if (planModeEnabled) {
-			pi.setActiveTools(PLAN_MODE_TOOLS);
-			ctx.ui.notify(`Plan mode enabled. Tools: ${PLAN_MODE_TOOLS.join(", ")}`);
-		} else {
-			pi.setActiveTools(NORMAL_MODE_TOOLS);
-			ctx.ui.notify("Plan mode disabled. Full access restored.");
-		}
-		updateStatus(ctx);
-	}
-
 	function persistState(): void {
 		pi.appendEntry("plan-mode", {
 			enabled: planModeEnabled,
 			todos: todoItems,
 			executing: executionMode,
+			autoPlanEnabled,
+			declinedAutoPlanSignature,
 		});
+	}
+
+	function setPlanMode(
+		enabled: boolean,
+		ctx: ExtensionContext,
+		options: { notify?: boolean; resetExecutionState?: boolean } = {},
+	): void {
+		const { notify = true, resetExecutionState = true } = options;
+		planModeEnabled = enabled;
+
+		if (enabled) {
+			if (resetExecutionState) {
+				executionMode = false;
+				todoItems = [];
+			}
+			pi.setActiveTools(PLAN_MODE_TOOLS);
+			if (notify) {
+				ctx.ui.notify(`Plan mode enabled. Tools: ${PLAN_MODE_TOOLS.join(", ")}`);
+			}
+		} else {
+			if (resetExecutionState) {
+				executionMode = false;
+				todoItems = [];
+			}
+			restoreAllTools();
+			if (notify) {
+				ctx.ui.notify("Plan mode disabled. Full access restored.");
+			}
+		}
+
+		updateStatus(ctx);
+		persistState();
+	}
+
+	function togglePlanMode(ctx: ExtensionContext): void {
+		declinedAutoPlanSignature = null;
+		setPlanMode(!planModeEnabled, ctx, { notify: true, resetExecutionState: true });
 	}
 
 	pi.registerCommand("plan", {
 		description: "Toggle plan mode (read-only exploration)",
 		handler: async (_args, ctx) => togglePlanMode(ctx),
+	});
+
+	pi.registerCommand("autoplan", {
+		description: "Toggle automatic plan-mode suggestion (usage: /autoplan [on|off|status])",
+		handler: async (args, ctx) => {
+			const normalized = args.trim().toLowerCase();
+			if (normalized === "status") {
+				ctx.ui.notify(`Auto-plan is ${autoPlanEnabled ? "enabled" : "disabled"}.`, "info");
+				return;
+			}
+			if (["on", "enable", "enabled", "true"].includes(normalized)) {
+				autoPlanEnabled = true;
+			} else if (["off", "disable", "disabled", "false"].includes(normalized)) {
+				autoPlanEnabled = false;
+			} else {
+				autoPlanEnabled = !autoPlanEnabled;
+			}
+			ctx.ui.notify(`Auto-plan ${autoPlanEnabled ? "enabled" : "disabled"}.`, "info");
+			updateStatus(ctx);
+			persistState();
+		},
 	});
 
 	pi.registerCommand("todos", {
@@ -116,6 +325,41 @@ export default function planModeExtension(pi: ExtensionAPI): void {
 	pi.registerShortcut(Key.ctrlAlt("p"), {
 		description: "Toggle plan mode",
 		handler: async (ctx) => togglePlanMode(ctx),
+	});
+
+	pi.on("input", async (event, ctx) => {
+		if (event.source === "extension") return { action: "continue" as const };
+		if (!autoPlanEnabled || planModeEnabled || executionMode) return { action: "continue" as const };
+
+		const trimmedInput = event.text.trim();
+		if (!trimmedInput || trimmedInput.startsWith("/")) return { action: "continue" as const };
+
+		const assessment = assessAutoPlanNeed(event.text);
+		if (!assessment.shouldPlan) return { action: "continue" as const };
+
+		const signature = normalizePromptSignature(event.text);
+		if (declinedAutoPlanSignature === signature) return { action: "continue" as const };
+
+		if (!ctx.hasUI) {
+			setPlanMode(true, ctx, { notify: false, resetExecutionState: true });
+			return { action: "continue" as const };
+		}
+
+		const reasonText = assessment.reasons.slice(0, 4).map((r) => `- ${r}`).join("\n");
+		const confirmed = await ctx.ui.confirm(
+			"Enter plan mode first?",
+			`This request appears non-trivial (score ${assessment.score}).\n\n${reasonText}\n\nPlan mode keeps work read-only while you design an approved implementation path.`,
+		);
+
+		if (confirmed) {
+			declinedAutoPlanSignature = null;
+			setPlanMode(true, ctx, { notify: false, resetExecutionState: true });
+			ctx.ui.notify("Auto-plan enabled for this request (read-only planning first).", "info");
+		} else {
+			declinedAutoPlanSignature = signature;
+		}
+
+		return { action: "continue" as const };
 	});
 
 	// Block destructive bash commands in plan mode
@@ -197,7 +441,7 @@ Remaining steps:
 ${todoList}
 
 Execute each step in order.
-After completing a step, include a [DONE:n] tag in your response.`,
+After completing each step, call the complete_step tool with the step number to mark it done.`,
 					display: false,
 				},
 			};
@@ -228,7 +472,7 @@ After completing a step, include a [DONE:n] tag in your response.`,
 				);
 				executionMode = false;
 				todoItems = [];
-				pi.setActiveTools(NORMAL_MODE_TOOLS);
+				restoreAllTools();
 				updateStatus(ctx);
 				persistState(); // Save cleared state so resume doesn't restore old execution mode
 			}
@@ -266,9 +510,8 @@ After completing a step, include a [DONE:n] tag in your response.`,
 		]);
 
 		if (choice?.startsWith("Execute")) {
-			planModeEnabled = false;
+			setPlanMode(false, ctx, { notify: false, resetExecutionState: false });
 			executionMode = todoItems.length > 0;
-			pi.setActiveTools(NORMAL_MODE_TOOLS);
 			updateStatus(ctx);
 
 			const execMessage =
@@ -279,6 +522,7 @@ After completing a step, include a [DONE:n] tag in your response.`,
 				{ customType: "plan-mode-execute", content: execMessage, display: true },
 				{ triggerTurn: true },
 			);
+			persistState();
 		} else if (choice === "Refine the plan") {
 			const refinement = await ctx.ui.editor("Refine the plan:", "");
 			if (refinement?.trim()) {
@@ -292,18 +536,31 @@ After completing a step, include a [DONE:n] tag in your response.`,
 		if (pi.getFlag("plan") === true) {
 			planModeEnabled = true;
 		}
+		autoPlanEnabled = pi.getFlag("auto-plan") !== false;
 
 		const entries = ctx.sessionManager.getEntries();
 
 		// Restore persisted state
 		const planModeEntry = entries
 			.filter((e: { type: string; customType?: string }) => e.type === "custom" && e.customType === "plan-mode")
-			.pop() as { data?: { enabled: boolean; todos?: TodoItem[]; executing?: boolean } } | undefined;
+			.pop() as
+			| {
+					data?: {
+						enabled: boolean;
+						todos?: TodoItem[];
+						executing?: boolean;
+						autoPlanEnabled?: boolean;
+						declinedAutoPlanSignature?: string | null;
+					};
+			  }
+			| undefined;
 
 		if (planModeEntry?.data) {
 			planModeEnabled = planModeEntry.data.enabled ?? planModeEnabled;
 			todoItems = planModeEntry.data.todos ?? todoItems;
 			executionMode = planModeEntry.data.executing ?? executionMode;
+			autoPlanEnabled = planModeEntry.data.autoPlanEnabled ?? autoPlanEnabled;
+			declinedAutoPlanSignature = planModeEntry.data.declinedAutoPlanSignature ?? declinedAutoPlanSignature;
 		}
 
 		// On resume: re-scan messages to rebuild completion state

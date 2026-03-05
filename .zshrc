@@ -11,7 +11,7 @@ bindkey '^R' history-incremental-search-backward
 alias vi='nvim'
 alias vim='nvim'
 
-if [[ $( uname ) == "Darwin" ]]; then
+if [[ "$OSTYPE" == darwin* ]]; then
     if ! [[ -d /opt/homebrew/opt/coreutils/libexec/gnubin ]]; then
         echo "Consider brew install coreutils to use GNU utils"
     else
@@ -21,9 +21,9 @@ if [[ $( uname ) == "Darwin" ]]; then
     fi;
     if type brew &>/dev/null
     then
-        FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+        FPATH="/opt/homebrew/share/zsh/site-functions:${FPATH}"
         autoload -Uz compinit
-        compinit
+        compinit -C
     fi
 fi;
 
@@ -32,4 +32,4 @@ if command -v zoxide > /dev/null; then
     eval "$(zoxide init zsh)"
 fi
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# Skip fzf shell integration on startup (load manually with `source ~/.fzf.zsh` when needed).

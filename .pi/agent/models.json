@@ -5,7 +5,9 @@
       "api": "openai-completions",
       "apiKey": "lmstudio",
       "models": [
-        { "id": "mlx-community/qwen3.5-35b-a3b" }
+        {
+          "id": "mlx-community/qwen3.5-35b-a3b"
+        }
       ]
     }
   }

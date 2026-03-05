@@ -174,6 +174,9 @@ function getFinalOutput(messages: Message[]): string {
 
 type DisplayItem = { type: "text"; text: string } | { type: "toolCall"; name: string; args: Record<string, any> };
 
+const MAX_SUBAGENT_OUTPUT_CHARS_PER_RESULT = 3_000;
+const MAX_SUBAGENT_REPORT_TOTAL_CHARS = 18_000;
+
 function getDisplayItems(messages: Message[]): DisplayItem[] {
 	const items: DisplayItem[] = [];
 	for (const msg of messages) {
@@ -185,6 +188,47 @@ function getDisplayItems(messages: Message[]): DisplayItem[] {
 		}
 	}
 	return items;
+}
+
+function getResultStatus(result: SingleResult): "running" | "succeeded" | "failed" {
+	if (result.exitCode === -1) return "running";
+	if (result.exitCode !== 0 || result.stopReason === "error" || result.stopReason === "aborted") return "failed";
+	return "succeeded";
+}
+
+function truncateForReport(text: string, maxChars: number): string {
+	if (text.length <= maxChars) return text;
+	const trimmed = text.slice(0, maxChars);
+	return `${trimmed}\n...[truncated ${text.length - maxChars} chars]`;
+}
+
+function buildSubagentReport(mode: "single" | "parallel" | "chain", results: SingleResult[]): string {
+	const lines: string[] = [];
+	lines.push(`# Subagent ${mode} report`);
+	lines.push("");
+
+	results.forEach((result, index) => {
+		const status = getResultStatus(result);
+		const output = getFinalOutput(result.messages) || "(no output)";
+		const truncatedOutput = truncateForReport(output, MAX_SUBAGENT_OUTPUT_CHARS_PER_RESULT);
+		const taskPreview = truncateForReport(result.task, 220).replace(/\n+/g, " ");
+		const stepLabel = result.step ? `Step ${result.step}` : `Task ${index + 1}`;
+
+		lines.push(`## ${stepLabel}: ${result.agent}`);
+		lines.push(`- status: ${status}`);
+		lines.push(`- source: ${result.agentSource}`);
+		lines.push(`- task: ${taskPreview}`);
+		if (result.stopReason) lines.push(`- stop_reason: ${result.stopReason}`);
+		if (result.errorMessage) lines.push(`- error: ${result.errorMessage}`);
+		if (result.stderr?.trim()) lines.push(`- stderr: ${truncateForReport(result.stderr.trim(), 400)}`);
+		lines.push("");
+		lines.push("Output:");
+		lines.push(truncatedOutput);
+		lines.push("");
+	});
+
+	const combined = lines.join("\n").trim();
+	return truncateForReport(combined, MAX_SUBAGENT_REPORT_TOTAL_CHARS);
 }
 
 async function mapWithConcurrencyLimit<TIn, TOut>(
@@ -412,6 +456,7 @@ export default function (pi: ExtensionAPI) {
 		description: [
 			"Delegate tasks to specialized subagents with isolated context.",
 			"Modes: single (agent + task), parallel (tasks array), chain (sequential with {previous} placeholder).",
+			"Returns a structured report including each subagent's status, task, and conclusions.",
 			'Default agent scope is "user" (from ~/.pi/agent/agents).',
 			'To enable project-local agents in .pi/agents, set agentScope: "both" (or "project").',
 		].join(" "),
@@ -516,8 +561,14 @@ export default function (pi: ExtensionAPI) {
 					if (isError) {
 						const errorMsg =
 							result.errorMessage || result.stderr || getFinalOutput(result.messages) || "(no output)";
+						const report = buildSubagentReport("chain", results);
 						return {
-							content: [{ type: "text", text: `Chain stopped at step ${i + 1} (${step.agent}): ${errorMsg}` }],
+							content: [
+								{
+									type: "text",
+									text: `Chain stopped at step ${i + 1} (${step.agent}): ${errorMsg}\n\n${report}`,
+								},
+							],
 							details: makeDetails("chain")(results),
 							isError: true,
 						};
@@ -525,7 +576,7 @@ export default function (pi: ExtensionAPI) {
 					previousOutput = getFinalOutput(result.messages);
 				}
 				return {
-					content: [{ type: "text", text: getFinalOutput(results[results.length - 1].messages) || "(no output)" }],
+					content: [{ type: "text", text: buildSubagentReport("chain", results) }],
 					details: makeDetails("chain")(results),
 				};
 			}
@@ -595,18 +646,10 @@ export default function (pi: ExtensionAPI) {
 				});
 
 				const successCount = results.filter((r) => r.exitCode === 0).length;
-				const summaries = results.map((r) => {
-					const output = getFinalOutput(r.messages);
-					const preview = output.slice(0, 100) + (output.length > 100 ? "..." : "");
-					return `[${r.agent}] ${r.exitCode === 0 ? "completed" : "failed"}: ${preview || "(no output)"}`;
-				});
+				const reportHeader = `Parallel: ${successCount}/${results.length} succeeded`;
+				const reportBody = buildSubagentReport("parallel", results);
 				return {
-					content: [
-						{
-							type: "text",
-							text: `Parallel: ${successCount}/${results.length} succeeded\n\n${summaries.join("\n\n")}`,
-						},
-					],
+					content: [{ type: "text", text: `${reportHeader}\n\n${reportBody}` }],
 					details: makeDetails("parallel")(results),
 				};
 			}
@@ -627,14 +670,15 @@ export default function (pi: ExtensionAPI) {
 				if (isError) {
 					const errorMsg =
 						result.errorMessage || result.stderr || getFinalOutput(result.messages) || "(no output)";
+					const report = buildSubagentReport("single", [result]);
 					return {
-						content: [{ type: "text", text: `Agent ${result.stopReason || "failed"}: ${errorMsg}` }],
+						content: [{ type: "text", text: `Agent ${result.stopReason || "failed"}: ${errorMsg}\n\n${report}` }],
 						details: makeDetails("single")([result]),
 						isError: true,
 					};
 				}
 				return {
-					content: [{ type: "text", text: getFinalOutput(result.messages) || "(no output)" }],
+					content: [{ type: "text", text: buildSubagentReport("single", [result]) }],
 					details: makeDetails("single")([result]),
 				};
 			}

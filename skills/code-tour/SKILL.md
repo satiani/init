@@ -26,11 +26,7 @@ Give an interactive educational tour explaining code by displaying it in a tmux 
    ```
    If not in tmux, inform the user they need to run from a tmux session.
 
-2. **Capture the current window ID** (CRITICAL for targeting commands correctly):
-   ```bash
-   tmux display-message -p -t "$TMUX_PANE" '#{window_id}'
-   ```
-   Using `-t "$TMUX_PANE"` ensures you capture the window ID of the pane Claude is actually running in — not whatever window the user has active at that moment. Store this window ID (e.g., `@0`, `@1`, etc.) and use it for ALL subsequent tmux commands. This guarantees split-window and all other tmux operations target the correct window even if the user navigates away.
+2. **Confirm you are inside tmux** by checking `$TMUX_PANE` is set (from step 1). No need to capture the window ID — `split-pane.sh` resolves the correct window from `$TMUX_PANE` automatically, so navigating away before the split runs cannot misdirect it.
 
 3. **Find code context** (for Datadog services):
    - Query Atlassian with `mcp__atlassian__search` for documentation about $ARGUMENTS
@@ -69,22 +65,21 @@ Give an interactive educational tour explaining code by displaying it in a tmux 
 
    Store the output as `nvim_sock` in your own context. You will substitute this literal string into ALL subsequent nvim commands. Do NOT rely on shell variables across Bash tool calls — shell state does not persist between calls.
 
-7. **Create side pane with nvim using the server socket** (open the first stop's file):
-   ```bash
-   tmux split-window -h -t {window_id} -c <working_directory> "nvim --listen {nvim_sock} <first_stop_file>"
-   ```
+7. **Create side pane with nvim using the server socket** (open the first stop's file).
 
-8. **Identify nvim pane and wait for startup**:
-   ```bash
-   tmux list-panes -t {window_id} -F '#{pane_index} #{pane_current_command}'
+   Use the **tmux skill** to open a new pane running:
    ```
-   Store the pane index (typically 2). The full target for tmux commands will be `{window_id}.{pane_index}` (e.g., `@0.2`).
+   bash -c "cd {working_directory} && exec nvim --listen {nvim_sock} {first_stop_file}"
+   ```
+   The tmux skill handles window targeting, layout, and returns focus to the agent's pane automatically. It will print the new pane ID — store that as `$NVIM_PANE`.
 
-   After creating the pane, wait for nvim to be ready by polling for the server socket (with a 5-second timeout to avoid infinite loops):
+8. **Wait for nvim to be ready**:
    ```bash
    sleep 0.2 && [ -S "{nvim_sock}" ] && echo "nvim ready" || echo "ERROR: nvim failed to start"
    ```
    If nvim doesn't start in time, report the error to the user.
+
+   Use `$NVIM_PANE` as the target for all subsequent pane-directed tmux commands (e.g., `tmux capture-pane -t "$NVIM_PANE"`). No need to list panes or track a pane index.
 
 9. **Enable line numbers in nvim**:
    ```bash
@@ -123,7 +118,7 @@ nvim --server {nvim_sock} --remote-send ':{line_number}<CR>zt' && nvim --server 
 
 Replace `zt` with `zz` in the examples above only when the code both above and below the target line is useful context.
 
-**Reading file contents during the tour**: All tour plan files were pre-read in Phase 3, so you already have their contents in context. Do NOT re-read them — just navigate nvim and explain from memory. Only use the Read tool during the tour if the user asks about a file that was NOT part of the original tour plan (i.e., a file you have not yet read in this conversation).
+**Reading file contents during the tour**: All tour plan files were pre-read in Phase 3, so you already have their contents in context. Default behavior is to avoid re-reading for low latency. However, if the user explicitly asks you to re-read files before each step (e.g., due to compaction/memory concerns), honor that preference and re-read the current stop file before explaining it. Still use Read for files outside the plan as needed.
 
 **IMPORTANT**: In `--remote-send`, use `<CR>` for Enter and `<Esc>` for Escape (nvim key notation), NOT literal Enter keys. These are single direct Bash tool calls — no sub-agents needed.
 
@@ -156,13 +151,18 @@ Users can highlight code in nvim and ask questions about it.
 
 **To read the selection** (run directly, not in sub-agent):
 ```bash
-nvim --server {nvim_sock} --remote-expr 'join(getline(line("v"), line(".")), "\n")'
+nvim --server {nvim_sock} --remote-expr 'join(getline(min([line("v"), line(".")]), max([line("v"), line(".")])), "\n")'
 ```
 
-This uses `--remote-expr` to read the active visual selection range. `line("v")` is where visual mode started and `line(".")` is the current cursor position. Works in all visual modes (`v`, `V`, `<C-v>`).
+This uses `--remote-expr` to read the active visual selection range. `line("v")` is where visual mode started and `line(".")` is the current cursor position. Using `min/max` handles both forward and reverse selections. Works in all visual modes (`v`, `V`, `<C-v>`).
+
+**Deictic language preference (`this` / `that`)**:
+- During a tour, if the user says phrases like "this", "that", "this block", or "what does this do?", assume they mean the currently highlighted visual selection.
+- Read the visual selection first using the command above, then answer.
+- If no visual selection is active (or the selection is empty), explicitly ask a clarifying question instead of guessing.
 
 **When user asks about a selection**:
-1. Read the selection using the command above
+1. Read the selection using the command above (including when they refer to "this"/"that")
 2. Answer from your existing context — all tour files were pre-read, so you likely already have the code
 3. Only use Read (for files not yet in context) or a sub-agent (Task with subagent_type=Explore) if the question requires information entirely outside the pre-read files
 

@@ -4,7 +4,8 @@ Read-only exploration mode for safe code analysis.
 
 ## Features
 
-- **Read-only tools**: Restricts available tools to read, bash, grep, find, ls, question
+- **Read-only tools**: Restricts available tools to read, bash, grep, find, ls, questionnaire
+- **Automatic plan suggestion**: Detects non-trivial implementation prompts and suggests entering plan mode first
 - **Bash allowlist**: Only read-only bash commands are allowed
 - **Plan extraction**: Extracts numbered steps from `Plan:` sections
 - **Progress tracking**: Widget shows completion status during execution
@@ -14,6 +15,7 @@ Read-only exploration mode for safe code analysis.
 ## Commands
 
 - `/plan` - Toggle plan mode
+- `/autoplan [on|off|status]` - Control automatic plan-mode suggestion
 - `/todos` - Show current plan progress
 - `Ctrl+Alt+P` - Toggle plan mode (shortcut)
 
