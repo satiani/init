@@ -23,7 +23,7 @@ fi
 # }}}
 # rust/cargo {{{
 if ! [ -x "$(command -v cargo)" ]; then
-    curl https://sh.rustup.rs -sSf | sh
+    curl https://sh.rustup.rs -sSf | sh -s -- -y
 else
     echo "Skipping rust/cargo."
 fi
@@ -112,13 +112,23 @@ install_nvim() {
         rsync -avz ./nvim-macos-arm64/ ~/.local/
 		EOF
     else
-        bash<<-EOF
-        cd $(mktemp -d)
-        curl -LO https://github.com/neovim/neovim/releases/download/${NVIM_VERSION}/nvim-linux-x86_64.appimage
-        chmod u+x nvim-linux-x86_64.appimage
-        ./nvim-linux-x86_64.appimage --appimage-extract
-        rsync -avz ./squashfs-root/usr/ ~/.local/
+        LINUX_ARCH=$(uname -m)
+        if [ "$LINUX_ARCH" = "aarch64" ] || [ "$LINUX_ARCH" = "arm64" ]; then
+            bash<<-EOF
+            cd $(mktemp -d)
+            curl -LO https://github.com/neovim/neovim/releases/download/${NVIM_VERSION}/nvim-linux-arm64.tar.gz
+            tar xf nvim-linux-arm64.tar.gz
+            rsync -avz ./nvim-linux-arm64/ ~/.local/
 		EOF
+        else
+            bash<<-EOF
+            cd $(mktemp -d)
+            curl -LO https://github.com/neovim/neovim/releases/download/${NVIM_VERSION}/nvim-linux-x86_64.appimage
+            chmod u+x nvim-linux-x86_64.appimage
+            ./nvim-linux-x86_64.appimage --appimage-extract
+            rsync -avz ./squashfs-root/usr/ ~/.local/
+		EOF
+        fi
     fi
 }
 if ! [ -x "$(command -v nvim)" ] || [ "$UPDATE_NVIM" == "true" ]; then
@@ -160,7 +170,7 @@ fi
 # ai agent skills {{{
 for skill_dir in $SCRIPT_DIR/skills/*/; do
     skill_name=$(basename "$skill_dir")
-    for target in ~/.claude/skills ~/.agents/skills; do
+    for target in ~/.claude/skills ~/.agents/skills ~/.pi/agent/skills; do
         if [ -e "$target/$skill_name" ]; then
             echo "Skipping $target/$skill_name."
         else
