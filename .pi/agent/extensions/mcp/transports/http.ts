@@ -126,7 +126,8 @@ export class HttpTransport implements MCPTransport {
 				signal,
 			});
 			if (!response.ok || !response.body) {
-				this.onError?.(new Error(`MCP SSE listener failed: HTTP ${response.status}`));
+				// SSE GET is optional in Streamable HTTP — silently give up
+				// without tearing down the working request/response connection
 				return;
 			}
 			const serverSessionId = response.headers.get("Mcp-Session-Id");
@@ -145,7 +146,8 @@ export class HttpTransport implements MCPTransport {
 			if (signal.aborted) {
 				return;
 			}
-			this.onError?.(error instanceof Error ? error : new Error(String(error)));
+			// SSE listener is best-effort; don't tear down the connection
+			// if the initial GET fails or throws
 		} finally {
 			this.#sseAbortController = null;
 		}

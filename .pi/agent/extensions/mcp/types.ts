@@ -376,7 +376,8 @@ export type MCPProxyMode =
 	| "call"
 	| "resources"
 	| "prompts"
-	| "notifications";
+	| "notifications"
+	| "add";
 
 export interface MCPProxyResult {
 	ok: boolean;

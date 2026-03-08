@@ -239,7 +239,7 @@ export class MCPOAuthFlow {
 		let listeningPort = callbackPort;
 		try {
 			listeningPort = await listen(server, callbackPort);
-			const redirectUri = `http://127.0.0.1:${listeningPort}${CALLBACK_PATH}`;
+			const redirectUri = `http://localhost:${listeningPort}${CALLBACK_PATH}`;
 			const authUrl = this.#buildAuthorizationUrl(redirectUri, state, verifier);
 
 			callbacks.onAuth?.({

@@ -93,6 +93,8 @@ export interface ModalConfig {
 export interface ModalResult {
 	cancelled: boolean;
 	values: Record<string, any>;
+	/** Index of the active tab when the user submitted (0-based). Undefined when cancelled. */
+	activeTab?: number;
 }
 
 // ─── Internal Field Interface (implemented by each field type) ────────────────

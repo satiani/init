@@ -18,7 +18,7 @@ import { MCPManager } from "./manager";
 
 interface ModalLib {
 	Modal: {
-		show(ctx: ExtensionCommandContext, config: unknown): Promise<{ cancelled: boolean; values: Record<string, unknown> }>;
+		show(ctx: ExtensionCommandContext, config: unknown): Promise<{ cancelled: boolean; values: Record<string, unknown>; activeTab?: number }>;
 	};
 	RadioGroup(config: unknown): unknown;
 	SelectField(config: unknown): unknown;
@@ -90,7 +90,7 @@ async function selectOptionValue(
 	const formattedOptions = formatSelectOptions(options);
 	const result = await Modal.show(ctx, {
 		title,
-		maxWidth: 88,
+		maxWidth: 96,
 		fields: [
 			SelectField({
 				id: "selection",
@@ -431,182 +431,55 @@ async function runAddWizard(ctx: ExtensionCommandContext, initialName?: string):
 
 	const { Modal, RadioGroup, Separator, TextField } = await getModalLib();
 
-	const basics = await Modal.show(ctx, {
+	const result = await Modal.show(ctx, {
 		title: "Add MCP server",
-		maxWidth: 96,
-		tabs: [
-			{
-				label: "Basics",
-				fields: [
-					TextField({ id: "name", label: "Server name", value: initialName ?? "", placeholder: "my-server" }),
-					RadioGroup({
-						id: "scope",
-						label: "Scope",
-						options: [
-							{ value: "project", label: "project — Only this project" },
-							{ value: "user", label: "user — All projects" },
-						],
-						value: "project",
-					}),
-					RadioGroup({
-						id: "transport",
-						label: "Transport",
-						options: [
-							{ value: "stdio", label: "stdio — Command over stdin/stdout" },
-							{ value: "http", label: "http — Streamable HTTP MCP" },
-							{ value: "sse", label: "sse — HTTP with SSE notifications" },
-						],
-						value: "stdio",
-					}),
+		maxWidth: 80,
+		fields: [
+			TextField({ id: "name", label: "Name", value: initialName ?? "", placeholder: "my-server" }),
+			TextField({ id: "target", label: "Command or URL", placeholder: "npx -y @some/mcp-server  or  https://..." }),
+			RadioGroup({
+				id: "scope",
+				label: "Scope",
+				options: [
+					{ value: "project", label: "project — This project only" },
+					{ value: "user", label: "user — All projects" },
 				],
-			},
-			{
-				label: "Runtime",
-				fields: [
-					RadioGroup({
-						id: "lifecycle",
-						label: "Lifecycle",
-						options: [
-							{ value: "lazy", label: "lazy — Connect on demand" },
-							{ value: "eager", label: "eager — Connect on startup" },
-							{ value: "keep-alive", label: "keep-alive — Stay connected" },
-						],
-						value: "lazy",
-					}),
-					TextField({ id: "idleTimeout", label: "Idle timeout seconds", value: "30" }),
-					TextField({ id: "timeout", label: "Request timeout milliseconds", value: "30000" }),
-					RadioGroup({
-						id: "directTools",
-						label: "Direct tool registration",
-						options: [
-							{ value: "inherit", label: "inherit — Use global default" },
-							{ value: "on", label: "on — Register direct MCP tools" },
-							{ value: "off", label: "off — Proxy-only for this server" },
-						],
-						value: "inherit",
-					}),
-					Separator({ label: "Enter submit · Esc cancel" }),
-				],
-			},
+				value: "project",
+			}),
+			Separator({ label: "Enter submit · Esc cancel" }),
 		],
 	});
-	if (basics.cancelled) {
-		return null;
-	}
+	if (result.cancelled) return null;
 
-	const name = String(basics.values.name ?? "").trim();
-	if (!name) {
-		return null;
-	}
+	const name = String(result.values.name ?? "").trim();
+	if (!name) return null;
 
-	const scopeValue = String(basics.values.scope ?? "project");
-	const scope: "user" | "project" = scopeValue === "user" ? "user" : "project";
+	const target = String(result.values.target ?? "").trim();
+	if (!target) return null;
 
-	const transport = String(basics.values.transport ?? "stdio");
-	if (transport !== "stdio" && transport !== "http" && transport !== "sse") {
-		throw new Error("Transport must be stdio, http, or sse.");
-	}
+	const scope: "user" | "project" = String(result.values.scope ?? "project") === "user" ? "user" : "project";
 
-	const lifecycle = String(basics.values.lifecycle ?? "lazy");
-	if (lifecycle !== "lazy" && lifecycle !== "eager" && lifecycle !== "keep-alive") {
-		throw new Error("Lifecycle must be lazy, eager, or keep-alive.");
-	}
-
-	const idleTimeout = Number(String(basics.values.idleTimeout ?? "30"));
-	if (!Number.isFinite(idleTimeout) || idleTimeout < 0) {
-		throw new Error("Idle timeout must be a non-negative number.");
-	}
-
-	const timeout = Number(String(basics.values.timeout ?? "30000"));
-	if (!Number.isFinite(timeout) || timeout <= 0) {
-		throw new Error("Request timeout must be a positive number.");
-	}
-
-	const directToolsSelection = String(basics.values.directTools ?? "inherit");
-	const directTools =
-		directToolsSelection === "inherit" ? undefined : directToolsSelection === "on";
-
+	// Auto-detect transport: URLs become http servers, everything else is a stdio command
+	const isUrl = /^https?:\/\//i.test(target);
 	let config: MCPServerConfig;
-	if (transport === "stdio") {
-		const stdio = await Modal.show(ctx, {
-			title: `Configure stdio server: ${name}`,
-			maxWidth: 96,
-			tabs: [
-				{
-					label: "Command",
-					fields: [
-						TextField({ id: "command", label: "Command", placeholder: "npx" }),
-						TextField({ id: "args", label: "Args (space separated)", placeholder: "-y my-mcp-server" }),
-					],
-				},
-				{
-					label: "Environment",
-					fields: [
-						TextField({
-							id: "env",
-							label: "Environment (KEY=VALUE;KEY2=VALUE2)",
-							placeholder: "API_KEY=...;MODE=prod",
-						}),
-						Separator({ label: "Separate entries with comma, semicolon, or newline" }),
-					],
-				},
-			],
-		});
-		if (stdio.cancelled) {
-			return null;
-		}
-		const command = String(stdio.values.command ?? "").trim();
-		if (!command) {
-			return null;
-		}
-		const argsRaw = String(stdio.values.args ?? "");
-		const env = parseEnvAssignments(String(stdio.values.env ?? ""));
 
+	if (isUrl) {
+		config = {
+			type: "http",
+			url: target,
+		};
+	} else {
+		const tokens = parseCommandArgs(target);
+		const [command, ...args] = tokens;
+		if (!command) return null;
 		config = {
 			type: "stdio",
 			command,
-			args: argsRaw.trim() ? parseCommandArgs(argsRaw) : undefined,
-			env: Object.keys(env).length > 0 ? env : undefined,
-			lifecycle,
-			idleTimeout,
-			timeout,
-			directTools,
-		};
-	} else {
-		const remote = await Modal.show(ctx, {
-			title: `Configure ${transport.toUpperCase()} server: ${name}`,
-			maxWidth: 96,
-			fields: [
-				TextField({ id: "url", label: "Server URL", placeholder: "https://mcp.example.com" }),
-				TextField({ id: "token", label: "Bearer token (optional)", placeholder: "Leave empty if not needed" }),
-			],
-		});
-		if (remote.cancelled) {
-			return null;
-		}
-
-		const url = String(remote.values.url ?? "").trim();
-		if (!url) {
-			return null;
-		}
-		const token = String(remote.values.token ?? "").trim();
-
-		config = {
-			type: transport,
-			url: /^https?:\/\//i.test(url) ? url : `https://${url}`,
-			headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-			lifecycle,
-			idleTimeout,
-			timeout,
-			directTools,
+			args: args.length > 0 ? args : undefined,
 		};
 	}
 
-	return {
-		name,
-		scope,
-		config,
-	};
+	return { name, scope, config };
 }
 
 function stripAuth(config: MCPServerConfig): MCPServerConfig {
@@ -693,7 +566,7 @@ async function detectServerOAuth(manager: MCPManager, serverName: string, config
 	}
 
 	const parsed = analyzeAuthError(connectionError);
-	const discovered = await discoverOAuthEndpoints(config.url, parsed.authServerUrl);
+	const discovered = await discoverOAuthEndpoints(config.url, parsed.authServerUrl, parsed.resourceMetadataUrl);
 	const oauth = parsed.oauth ?? discovered;
 	if (oauth) {
 		return {
@@ -897,9 +770,10 @@ function getMCPHelpLines(): string[] {
 	return [
 		"MCP commands",
 		"/mcp",
-		"Interactive /mcp opens the MCP control center modal",
+		"Interactive /mcp opens the MCP control center",
 		"/mcp help",
 		"/mcp list",
+		"/mcp tools <server>",
 		"/mcp add",
 		"/mcp add <name> [--scope user|project] [--url <url> --transport http|sse] [--token <token>] [--lifecycle lazy|eager|keep-alive] [--idle-timeout <sec>] [--timeout <ms>] [--direct-tools on|off] [-- <command...>]",
 		"/mcp remove <name> [--scope user|project]",
@@ -918,353 +792,146 @@ function getMCPHelpLines(): string[] {
 	];
 }
 
-function formatServerDialogDescription(manager: MCPManager, name: string): string {
+function formatServerRichStatus(manager: MCPManager, name: string): string {
 	const config = manager.getServerConfig(name);
+	if (!config) return "unknown";
 	const status = formatConnectionStatus(manager.getConnectionStatus(name));
-	const source = manager.getServerSource(name);
-	const transport = config?.type ?? "unknown";
-	const lifecycle = config?.lifecycle ?? "unknown";
-	const sourceLabel = source ? `${source.provider}/${source.level}` : "unknown-source";
-	return `${status} · ${transport} · ${lifecycle} · ${sourceLabel}`;
+	const tools = manager.getServerTools(name);
+	const toolLabel = tools.length > 0 ? `${tools.length} tools` : "no tools";
+	return `${status} · ${toolLabel} · ${config.type}`;
 }
 
-async function runScopedServerCommandDialog(
-	ctx: ExtensionCommandContext,
-	manager: MCPManager,
-	commandName: "resources" | "prompts",
-): Promise<string | null> {
-	const serverOptions = manager
-		.getServerNames()
-		.filter((name) => manager.getServerConfig(name)?.enabled)
-		.map((name) => ({
-			value: `server:${name}`,
-			label: name,
-			description: formatServerDialogDescription(manager, name),
-		}));
-
-	const selection = await selectOptionValue(ctx, `/${commandName} scope`, [
-		{
-			value: "scope:all",
-			label: "all enabled servers",
-			description: `Run /mcp ${commandName}`,
-		},
-		...serverOptions,
-		{
-			value: "scope:back",
-			label: "back",
-			description: "Return to MCP menu",
-		},
-	]);
-	if (!selection || selection === "scope:back") {
-		return null;
-	}
-	if (selection === "scope:all") {
-		return commandName;
-	}
-	if (!selection.startsWith("server:")) {
-		return null;
-	}
-	const serverName = selection.slice("server:".length);
-	return `${commandName} ${serverName}`;
-}
-
-async function runMCPNotificationsDialog(ctx: ExtensionCommandContext): Promise<string | null> {
-	const selection = await selectOptionValue(ctx, "MCP notifications", [
-		{
-			value: "status",
-			label: "status",
-			description: "Show notification state and subscriptions",
-		},
-		{
-			value: "on",
-			label: "turn on",
-			description: "Enable resource notifications",
-		},
-		{
-			value: "off",
-			label: "turn off",
-			description: "Disable resource notifications",
-		},
-		{
-			value: "back",
-			label: "back",
-			description: "Return to MCP menu",
-		},
-	]);
-	if (!selection || selection === "back") {
-		return null;
-	}
-	return `notifications ${selection}`;
-}
-
-type MCPRootDialogAction =
-	| "manage"
-	| "add"
-	| "list"
-	| "resources"
-	| "prompts"
-	| "notifications"
-	| "reload"
-	| "help";
+type MCPRootDialogAction = "add" | "reload";
 
 type MCPRootDialogSelection =
 	| { type: "server"; name: string }
-	| {
-			type: "action";
-			value: Exclude<MCPRootDialogAction, "manage">;
-	  };
+	| { type: "action"; value: MCPRootDialogAction };
 
 async function runMCPRootDialog(ctx: ExtensionCommandContext, manager: MCPManager): Promise<MCPRootDialogSelection | null> {
-	const { Modal, SelectField, Separator } = await getModalLib();
 	const serverNames = manager.getServerNames();
-	const hasServers = serverNames.length > 0;
 
-	const serverFields = hasServers
-		? [
-				SelectField({
-					id: "selectedServer",
-					label: "Configured servers",
-					options: serverNames.map((name) => ({
-						value: name,
-						label: `${name} — ${formatServerDialogDescription(manager, name)}`,
-					})),
-					value: serverNames[0],
-				}),
-			]
-		: [Separator({ label: "No MCP servers configured yet" })];
-
-	const actionOptions: Array<{ value: string; label: string }> = [
-		...(hasServers ? [{ value: "manage", label: "Manage selected server" }] : []),
-		{ value: "add", label: "Add server" },
-		{ value: "list", label: "List servers" },
-		{ value: "resources", label: "List resources" },
-		{ value: "prompts", label: "List prompts" },
-		{ value: "notifications", label: "Notifications" },
-		{ value: "reload", label: "Reload MCP" },
-		{ value: "help", label: "Help" },
-	];
-
-	const modal = await Modal.show(ctx, {
-		title: "MCP control center",
-		maxWidth: 108,
-		tabs: [
-			{
-				label: "Servers",
-				fields: serverFields,
-			},
-			{
-				label: "Action",
-				fields: [
-					SelectField({
-						id: "action",
-						label: "What do you want to do?",
-						options: actionOptions,
-						value: hasServers ? "manage" : "add",
-					}),
-					Separator({ label: "Enter submit · Esc cancel" }),
-				],
-			},
-		],
-	});
-	if (modal.cancelled) {
-		return null;
+	const options: SelectOption[] = [];
+	for (const name of serverNames) {
+		options.push({
+			value: `server:${name}`,
+			label: name,
+			description: formatServerRichStatus(manager, name),
+		});
 	}
+	options.push(
+		{ value: "action:add", label: "Add server", description: "Configure a new MCP server" },
+		{ value: "action:reload", label: "Reload", description: "Reload MCP configuration" },
+	);
 
-	const action = String(modal.values.action ?? (hasServers ? "manage" : "add")) as MCPRootDialogAction;
-	if (action === "manage") {
-		const selectedServer = String(modal.values.selectedServer ?? "").trim();
-		if (!selectedServer) {
-			ctx.ui.notify("Select a server first.", "error");
-			return null;
-		}
-		return { type: "server", name: selectedServer };
+	const selection = await selectOptionValue(ctx, "MCP", options);
+	if (!selection) return null;
+
+	if (selection.startsWith("server:")) {
+		return { type: "server", name: selection.slice("server:".length) };
 	}
-
-	if (
-		action === "add" ||
-		action === "list" ||
-		action === "resources" ||
-		action === "prompts" ||
-		action === "notifications" ||
-		action === "reload" ||
-		action === "help"
-	) {
-		return { type: "action", value: action };
-	}
-
+	if (selection === "action:add") return { type: "action", value: "add" };
+	if (selection === "action:reload") return { type: "action", value: "reload" };
 	return null;
 }
 
 async function runMCPServerActionDialog(
 	ctx: ExtensionCommandContext,
 	manager: MCPManager,
-	preselectedServerName?: string,
+	name: string,
 ): Promise<string | null> {
-	const serverNames = manager.getServerNames();
-	if (serverNames.length === 0) {
-		ctx.ui.notify("No MCP servers configured.", "info");
-		return null;
-	}
-
-	let name = preselectedServerName;
-	if (!name) {
-		const serverSelection = await selectOptionValue(ctx, "Select MCP server", [
-			...serverNames.map((serverName) => ({
-				value: `server:${serverName}`,
-				label: serverName,
-				description: formatServerDialogDescription(manager, serverName),
-			})),
-			{
-				value: "server:back",
-				label: "back",
-				description: "Return to MCP menu",
-			},
-		]);
-		if (!serverSelection || serverSelection === "server:back") {
-			return null;
-		}
-		if (!serverSelection.startsWith("server:")) {
-			return null;
-		}
-		name = serverSelection.slice("server:".length);
-	}
-
 	const config = manager.getServerConfig(name);
 	if (!config) {
-		ctx.ui.notify(`Server ${name} was not found.`, "error");
+		ctx.ui.notify(`Server ${name} not found.`, "error");
 		return null;
 	}
 
 	const source = manager.getServerSource(name);
+	const status = manager.getConnectionStatus(name);
+	const tools = manager.getServerTools(name);
+	const isConnected = status === "connected";
+
+	const options: SelectOption[] = [];
+
+	// Connection actions (only when enabled)
+	if (config.enabled) {
+		if (isConnected) {
+			options.push({ value: "disconnect", label: "Disconnect", description: `Disconnect from ${name}` });
+		} else {
+			options.push({ value: "connect", label: "Connect", description: `Connect to ${name}` });
+		}
+		options.push({ value: "test", label: "Test connection", description: "Connect and verify tools" });
+	}
+
+	// Tool browsing
+	if (tools.length > 0) {
+		options.push({
+			value: "tools",
+			label: `Browse tools (${tools.length})`,
+			description: "List available tools",
+		});
+	}
+
+	// Resources and prompts (only when connected and capable)
+	const connection = manager.getConnection(name);
+	if (isConnected && connection?.capabilities?.resources) {
+		options.push({ value: "resources", label: "Browse resources", description: `List resources on ${name}` });
+	}
+	if (isConnected && connection?.capabilities?.prompts) {
+		options.push({ value: "prompts", label: "Browse prompts", description: `List prompts on ${name}` });
+	}
+
+	// Enable/disable
+	options.push({
+		value: config.enabled ? "disable" : "enable",
+		label: config.enabled ? "Disable" : "Enable",
+		description: config.enabled ? "Disable this server" : "Enable this server",
+	});
+
+	// Remove
 	const removeScope =
 		source?.provider === "pi" && (source.level === "user" || source.level === "project") ? source.level : undefined;
-	const connectionAction = manager.getConnectionStatus(name) === "connected" ? "disconnect" : "connect";
-	const enableAction = config.enabled ? "disable" : "enable";
+	if (removeScope) {
+		options.push({
+			value: "remove",
+			label: `Remove (${removeScope})`,
+			description: `Remove from ${removeScope} config`,
+		});
+	}
 
-	const actionOptions: SelectOption[] = [
-		{
-			value: enableAction,
-			label: enableAction === "enable" ? "enable" : "disable",
-			description:
-				enableAction === "enable"
-					? `Run /mcp enable ${name}`
-					: `Run /mcp disable ${name}`,
-		},
-	];
-
-	if (config.enabled) {
-		actionOptions.unshift(
-			{
-				value: "test",
-				label: "test connection",
-				description: `Run /mcp test ${name}`,
-			},
-			{
-				value: connectionAction,
-				label: connectionAction === "connect" ? "connect" : "disconnect",
-				description:
-					connectionAction === "connect"
-						? `Run /mcp connect ${name}`
-						: `Run /mcp disconnect ${name}`,
-			},
+	// Auth (only for remote servers)
+	if (config.type === "http" || config.type === "sse") {
+		options.push(
+			{ value: "reauth", label: "Reauthenticate", description: "Start OAuth flow" },
+			{ value: "unauth", label: "Remove auth", description: "Clear stored credentials" },
 		);
 	}
 
-	actionOptions.push(
-		{
-			value: "reauth",
-			label: "reauthenticate",
-			description: `Run /mcp reauth ${name}`,
-		},
-		{
-			value: "unauth",
-			label: "remove authentication",
-			description: `Run /mcp unauth ${name}`,
-		},
-	);
+	options.push({ value: "back", label: "Back", description: "Return to server list" });
 
-	if (removeScope) {
-		actionOptions.push({
-			value: "remove",
-			label: `remove (${removeScope} scope)`,
-			description: `Run /mcp remove ${name} --scope ${removeScope}`,
-		});
-	} else {
-		actionOptions.push({
-			value: "remove-unavailable",
-			label: "remove unavailable",
-			description: "Imported or external servers can be disabled, not removed",
-		});
-	}
+	const statusLine = formatServerRichStatus(manager, name);
+	const selection = await selectOptionValue(ctx, `${name} — ${statusLine}`, options);
+	if (!selection || selection === "back") return null;
 
-	actionOptions.push({
-		value: "back",
-		label: "back",
-		description: "Return to MCP menu",
-	});
-
-	const actionSelection = await selectOptionValue(ctx, `Manage MCP server: ${name}`, actionOptions);
-	if (!actionSelection || actionSelection === "back" || actionSelection === "remove-unavailable") {
-		return null;
-	}
-
-	if (actionSelection === "remove") {
-		if (!removeScope) {
-			return null;
-		}
-		return `remove ${name} --scope ${removeScope}`;
-	}
-	return `${actionSelection} ${name}`;
-}
-
-async function handleMCPAction(
-	ctx: ExtensionCommandContext,
-	manager: MCPManager,
-	action: Exclude<MCPRootDialogAction, "manage">,
-): Promise<string | null | "loop"> {
-	switch (action) {
-		case "resources": {
-			const result = await runScopedServerCommandDialog(ctx, manager, "resources");
-			return result ?? "loop";
-		}
-		case "prompts": {
-			const result = await runScopedServerCommandDialog(ctx, manager, "prompts");
-			return result ?? "loop";
-		}
-		case "notifications": {
-			const result = await runMCPNotificationsDialog(ctx);
-			return result ?? "loop";
-		}
-		case "add":
-		case "list":
-		case "reload":
-		case "help":
-			return action;
-		default:
-			return "loop";
-	}
+	if (selection === "tools") return `tools ${name}`;
+	if (selection === "resources") return `resources ${name}`;
+	if (selection === "prompts") return `prompts ${name}`;
+	if (selection === "remove" && removeScope) return `remove ${name} --scope ${removeScope}`;
+	return `${selection} ${name}`;
 }
 
 async function runMCPManagementDialog(ctx: ExtensionCommandContext, manager: MCPManager): Promise<string | null> {
 	while (true) {
 		const rootSelection = await runMCPRootDialog(ctx, manager);
-		if (!rootSelection) {
-			return null;
-		}
+		if (!rootSelection) return null;
 
 		if (rootSelection.type === "server") {
 			const action = await runMCPServerActionDialog(ctx, manager, rootSelection.name);
-			if (action) {
-				return action;
-			}
+			if (action) return action;
 			continue;
 		}
 
-		const result = await handleMCPAction(ctx, manager, rootSelection.value);
-		if (result === "loop") {
-			continue;
-		}
-		return result;
+		// Direct action from root (add, reload)
+		return rootSelection.value;
 	}
 }
 
@@ -1305,10 +972,35 @@ export function registerMCPCommands(pi: ExtensionAPI, manager: MCPManager): void
 					if (!config) continue;
 					const status = manager.getConnectionStatus(name);
 					const source = manager.getServerSource(name);
-					lines.push(formatServerSummary(name, config, status, source?.path));
+					const toolCount = manager.getServerTools(name).length;
+					const toolLabel = toolCount > 0 ? ` ${toolCount} tools` : "";
+					lines.push(`${formatServerSummary(name, config, status, source?.path)}${toolLabel}`);
 				}
 				if (lines.length === 1) {
 					lines.push("No MCP servers configured.");
+				}
+				await sendOutput(pi, formatTable(lines));
+				return;
+			}
+
+			if (subcommand === "tools") {
+				const targetServer = tokens[1];
+				if (!targetServer) {
+					ctx.ui.notify("Usage: /mcp tools <server>", "error");
+					return;
+				}
+				const serverConfig = manager.getServerConfig(targetServer);
+				if (!serverConfig) {
+					ctx.ui.notify(`Server ${targetServer} not found.`, "error");
+					return;
+				}
+				const serverTools = manager.getServerTools(targetServer);
+				const lines: string[] = [`Tools on ${targetServer} (${serverTools.length})`];
+				for (const tool of serverTools) {
+					lines.push(`- ${tool.name}${tool.description ? ` — ${tool.description}` : ""}`);
+				}
+				if (serverTools.length === 0) {
+					lines.push("(no tools — server may not be connected)");
 				}
 				await sendOutput(pi, formatTable(lines));
 				return;

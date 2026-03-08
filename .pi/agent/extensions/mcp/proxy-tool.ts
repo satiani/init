@@ -3,13 +3,15 @@ import { keyHint, type ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import { Text } from "@mariozechner/pi-tui";
 import { runWithAuthRetry } from "./commands";
 import { searchMCPTools } from "./tool-bridge";
-import type { MCPProxyMode, MCPProxyResult } from "./types";
+import { addMCPServer } from "./config-writer";
+import { getAgentDir, getProjectConfigPath, getUserConfigPath, validateServerConfig, validateServerName } from "./config";
+import type { MCPProxyMode, MCPProxyResult, MCPServerConfig } from "./types";
 import { MCPManager } from "./manager";
 
 const MCP_PROXY_PARAMETERS = Type.Object({
 	mode: Type.String({
 		description:
-			"Operation mode: status, list, search, describe, connect, call, resources, prompts, notifications",
+			"Operation mode: status, list, search, describe, connect, call, resources, prompts, notifications, add",
 	}),
 	server: Type.Optional(Type.String({ description: "MCP server name" })),
 	tool: Type.Optional(Type.String({ description: "MCP tool name (for call/describe)" })),
@@ -21,7 +23,7 @@ const MCP_PROXY_PARAMETERS = Type.Object({
 });
 
 function isSupportedMode(mode: string): mode is MCPProxyMode {
-	return ["status", "list", "search", "describe", "connect", "call", "resources", "prompts", "notifications"].includes(
+	return ["status", "list", "search", "describe", "connect", "call", "resources", "prompts", "notifications", "add"].includes(
 		mode,
 	);
 }
@@ -51,10 +53,10 @@ function summarizeServerStatus(manager: MCPManager): string {
 	for (const name of manager.getServerNames()) {
 		const config = manager.getServerConfig(name);
 		if (!config) continue;
+		const toolCount = manager.getServerTools(name).length;
+		const toolLabel = toolCount > 0 ? `, ${toolCount} tools` : "";
 		lines.push(
-			`- ${name}: ${formatConnectionStatus(manager.getConnectionStatus(name))} (${config.type}, ${config.lifecycle}, idle ${
-				config.lifecycle === "keep-alive" ? "never" : `${config.idleTimeout}s`
-			})`,
+			`- ${name}: ${formatConnectionStatus(manager.getConnectionStatus(name))}${toolLabel} (${config.type}, ${config.lifecycle})`,
 		);
 	}
 	if (lines.length === 1) {
@@ -85,12 +87,13 @@ export function registerMCPProxyTool(pi: ExtensionAPI, manager: MCPManager): voi
 		name: "mcp",
 		label: "MCP Gateway",
 		description:
-			"Gateway for Model Context Protocol servers. Supports status/list/search/describe/connect/call/resources/prompts/notifications.",
-		promptSnippet: "Inspect, connect, and call MCP servers and tools from one gateway.",
+			"Gateway for Model Context Protocol servers. Supports status/list/search/describe/connect/call/resources/prompts/notifications/add.",
+		promptSnippet: "Inspect, connect, call, and add MCP servers and tools from one gateway.",
 		promptGuidelines: [
 			"Use mode=status when you need current MCP connection state.",
 			"Use mode=search before mode=call if the user asks for an unknown MCP capability.",
 			"Use mode=describe to inspect tool schemas before crafting tool call args.",
+			'Use mode=add to add a new MCP server. Requires server (name) and args (JSON config: {"command":"npx","args":["-y","package"]} for stdio, or {"type":"http","url":"https://..."} for remote). Optional query for scope ("user" or "project", default "project").',
 		],
 		parameters: MCP_PROXY_PARAMETERS,
 		async execute(_toolCallId, params, signal, _onUpdate, ctx) {
@@ -136,7 +139,9 @@ export function registerMCPProxyTool(pi: ExtensionAPI, manager: MCPManager): voi
 						for (const name of manager.getServerNames()) {
 							const config = manager.getServerConfig(name);
 							if (!config) continue;
-							lines.push(`- ${name}: ${formatConnectionStatus(manager.getConnectionStatus(name))} (${config.type}, directTools=${config.directTools ? "on" : "off"})`);
+							const toolCount = manager.getServerTools(name).length;
+							const toolLabel = toolCount > 0 ? `, ${toolCount} tools` : "";
+							lines.push(`- ${name}: ${formatConnectionStatus(manager.getConnectionStatus(name))}${toolLabel} (${config.type}, directTools=${config.directTools ? "on" : "off"})`);
 						}
 					}
 					const message = lines.join("\n");
@@ -327,6 +332,90 @@ export function registerMCPProxyTool(pi: ExtensionAPI, manager: MCPManager): voi
 						}
 					}
 					const message = lines.join("\n") || "No prompts available.";
+					return {
+						content: [{ type: "text", text: message }],
+						details: { ok: true, mode, message } satisfies MCPProxyResult,
+					};
+				}
+
+				if (mode === "add") {
+					if (!params.server) {
+						throw new Error("add mode requires server (the server name)");
+					}
+					const serverName = params.server.trim();
+					if (!serverName) {
+						throw new Error("Server name cannot be empty");
+					}
+
+					const nameError = validateServerName(serverName);
+					if (nameError) {
+						throw new Error(nameError);
+					}
+
+					let config: MCPServerConfig;
+					try {
+						const raw = parseJsonObject(params.args);
+						if (raw.command && typeof raw.command === "string") {
+							config = {
+								type: "stdio",
+								command: raw.command,
+								args: Array.isArray(raw.args)
+									? raw.args.filter((a): a is string => typeof a === "string")
+									: undefined,
+								env: typeof raw.env === "object" && raw.env !== null
+									? Object.fromEntries(
+										Object.entries(raw.env as Record<string, unknown>).filter(
+											(entry): entry is [string, string] => typeof entry[1] === "string",
+										),
+									)
+									: undefined,
+							};
+						} else if (raw.url && typeof raw.url === "string") {
+							const type = raw.type === "sse" ? "sse" as const : "http" as const;
+							config = {
+								type,
+								url: raw.url,
+								headers: typeof raw.headers === "object" && raw.headers !== null
+									? Object.fromEntries(
+										Object.entries(raw.headers as Record<string, unknown>).filter(
+											(entry): entry is [string, string] => typeof entry[1] === "string",
+										),
+									)
+									: undefined,
+							};
+						} else {
+							throw new Error(
+								'args must be a JSON object with either "command" (for stdio) or "url" (for http/sse)',
+							);
+						}
+					} catch (error) {
+						if (error instanceof SyntaxError) {
+							throw new Error("args must be valid JSON");
+						}
+						throw error;
+					}
+
+					const validationErrors = validateServerConfig(serverName, config);
+					if (validationErrors.length > 0) {
+						throw new Error(validationErrors.join("; "));
+					}
+
+					const existing = manager.getServerConfig(serverName);
+					if (existing) {
+						throw new Error(`Server ${serverName} already exists. Remove it first or use a different name.`);
+					}
+
+					const scopeRaw = params.query?.trim().toLowerCase() ?? "project";
+					const scope: "user" | "project" = scopeRaw === "user" ? "user" : "project";
+					const agentDir = getAgentDir();
+					const targetPath = scope === "user"
+						? getUserConfigPath(agentDir)
+						: getProjectConfigPath(process.cwd());
+
+					await addMCPServer(targetPath, serverName, config);
+					await manager.reload();
+
+					const message = `Added MCP server ${serverName} (${scope} scope). Path: ${targetPath}`;
 					return {
 						content: [{ type: "text", text: message }],
 						details: { ok: true, mode, message } satisfies MCPProxyResult,

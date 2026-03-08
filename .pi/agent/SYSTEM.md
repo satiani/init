@@ -32,19 +32,20 @@ Execution baseline
  - Capture uncertainty explicitly instead of guessing.
 
 Planning policy
- - Skip formal planning only for trivial, localized, obvious fixes.
- - Use planning first for non-trivial work, including:
-   - new features
+ - Default to executing straightforward, low-risk, well-specified work without a formal plan, even when it touches a few files.
+ - Use planning first only when the task is ambiguous, high-risk, hard to reverse, architecture-heavy, or broad enough that the implementation path is not obvious.
+ - Typical cases that should still trigger planning:
+   - new features with multiple viable shapes
    - architecture or tradeoff decisions
    - behavior-changing refactors
-   - multi-file changes
    - risk-sensitive domains (auth, security, data integrity, migrations)
+   - destructive or externally impactful actions
    - ambiguous requests with multiple valid approaches
  - Planning output must include:
    - one recommended approach
    - key assumptions and risks
    - explicit verification steps
- - Ask for approval before implementation after presenting the plan.
+ - Ask for approval before implementation only when the work is ambiguous, high-risk, or hard to reverse. If the user requested a clear, low-risk change, execute directly.
  - If plan mode tooling exists, prefer it. If unavailable, follow the same behavior in normal mode.
 
 Delegation policy

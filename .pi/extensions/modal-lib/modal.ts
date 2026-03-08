@@ -84,6 +84,8 @@ class ModalComponent implements Focusable {
 	private config: ModalConfig;
 	private done: (result: ModalResult) => void;
 	private scrollOffset = 0;
+	/** Maximum field content height across all tabs (computed on first render). */
+	private maxFieldLines: number | undefined;
 
 	constructor(
 		tui: TUI,
@@ -135,7 +137,7 @@ class ModalComponent implements Focusable {
 	}
 
 	private submit(): void {
-		this.done({ cancelled: false, values: this.collectValues() });
+		this.done({ cancelled: false, values: this.collectValues(), activeTab: this.activeTab });
 	}
 
 	private cancel(): void {
@@ -227,10 +229,33 @@ class ModalComponent implements Focusable {
 		this.tui.requestRender();
 	}
 
+	/**
+	 * Compute the number of field content lines for a given tab (fields + spacing).
+	 * Uses unfocused rendering so the result is stable regardless of focus state.
+	 */
+	private measureTabFieldLines(tab: TabState, innerW: number, th: Theme): number {
+		let count = 0;
+		for (let i = 0; i < tab.fields.length; i++) {
+			count += tab.fields[i]!.render(innerW, false, th).length;
+			if (i < tab.fields.length - 1) count += 1; // spacing
+		}
+		return count;
+	}
+
 	render(width: number): string[] {
 		const th = this.theme;
 		const innerW = Math.max(1, width - 2);
 		const lines: string[] = [];
+
+		// Compute max field content height across all tabs on first render.
+		// This keeps the dialog height stable when switching tabs, preventing
+		// vertical re-centering jumps.
+		if (this.maxFieldLines === undefined && this.isMultiTab) {
+			this.maxFieldLines = 0;
+			for (const tab of this.tabs) {
+				this.maxFieldLines = Math.max(this.maxFieldLines, this.measureTabFieldLines(tab, innerW, th));
+			}
+		}
 
 		// Top border with title
 		lines.push(renderTopBorder(this.config.title, innerW, th));
@@ -245,6 +270,7 @@ class ModalComponent implements Focusable {
 		// Fields for current tab
 		const tab = this.currentTab();
 		const focusedFieldIndex = tab.focusableIndices[this.focusIndex];
+		let fieldLineCount = 0;
 
 		for (let i = 0; i < tab.fields.length; i++) {
 			const field = tab.fields[i]!;
@@ -252,9 +278,19 @@ class ModalComponent implements Focusable {
 			const fieldLines = field.render(innerW, isFocused, th);
 			for (const fl of fieldLines) {
 				lines.push(borderedRow(fl, innerW, th));
+				fieldLineCount++;
 			}
 			// Add spacing between fields
 			if (i < tab.fields.length - 1) {
+				lines.push(borderedRow("", innerW, th));
+				fieldLineCount++;
+			}
+		}
+
+		// Pad shorter tabs to match the tallest tab (multi-tab only)
+		if (this.maxFieldLines !== undefined && fieldLineCount < this.maxFieldLines) {
+			const padding = this.maxFieldLines - fieldLineCount;
+			for (let p = 0; p < padding; p++) {
 				lines.push(borderedRow("", innerW, th));
 			}
 		}
