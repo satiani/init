@@ -8,6 +8,7 @@
 *.pyc
 
 .pi/agent/auth.json
+.pi/agent/settings.json
 .pi/agent/bin/
 .pi/agent/sessions/
 .pi/agent/pi-crash.log
