@@ -33,3 +33,5 @@ if command -v zoxide > /dev/null; then
 fi
 
 # Skip fzf shell integration on startup (load manually with `source ~/.fzf.zsh` when needed).
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

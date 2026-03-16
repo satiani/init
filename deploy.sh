@@ -184,16 +184,13 @@ for item in SYSTEM.md agents extensions mcp.json models.json prompts settings.js
 done
 # }}}
 # ai agent skills {{{
-for skill_dir in $SCRIPT_DIR/skills/*/; do
-    skill_name=$(basename "$skill_dir")
-    for target in ~/.claude/skills ~/.agents/skills ~/.pi/agent/skills; do
-        if [ -e "$target/$skill_name" ]; then
-            echo "Skipping $target/$skill_name."
-        else
-            mkdir -p "$target"
-            ln -sv "$skill_dir" "$target/$skill_name"
-        fi
-    done
+for target in ~/.claude/skills ~/.agents/skills ~/.pi/agent/skills; do
+    if [ -e "$target" ]; then
+        echo "Skipping $target (already exists)."
+    else
+        mkdir -p "$(dirname "$target")"
+        ln -sv "$SCRIPT_DIR/skills" "$target"
+    fi
 done
 # }}}
 echo "Done."

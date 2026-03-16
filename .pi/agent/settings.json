@@ -1,7 +1,7 @@
 {
-  "lastChangelogVersion": "0.56.3",
-  "defaultProvider": "openai",
-  "defaultModel": "gpt-5.4",
+  "lastChangelogVersion": "0.58.3",
+  "defaultProvider": "anthropic",
+  "defaultModel": "claude-opus-4-6",
   "defaultThinkingLevel": "xhigh",
   "hideThinkingBlock": false,
   "quietStartup": true,
