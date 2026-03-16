@@ -18,3 +18,6 @@
 # MCP data/cache artifacts
 .mcp_data/
 .pi/agent/extensions/.mcp_data/
+
+# Skills dir is a link-farm populated by deploy.sh; not tracked
+.pi/agent/skills/

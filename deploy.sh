@@ -159,13 +159,29 @@ if [ $ON_A_MAC == "true" ]; then
 fi
 # }}}
 # pi config {{{
+# ~/.pi must be a real directory so that runtime state (skills link-farm,
+# sessions, auth, etc.) doesn't land inside the git repo.
+# If it's a legacy whole-dir symlink, replace it with a real directory.
 if [ -L "$HOME/.pi" ]; then
-    echo "Skipping .pi config."
-elif [ -d "$HOME/.pi" ]; then
-    echo "WARNING: ~/.pi is a real directory. Back it up, remove it, then re-run deploy.sh"
-else
-    ln -sv "$SCRIPT_DIR/.pi" "$HOME/.pi"
+    echo "Migrating ~/.pi from legacy symlink to real directory..."
+    rm "$HOME/.pi"
 fi
+mkdir -p "$HOME/.pi/agent"
+# Selectively symlink tracked config items from the repo into ~/.pi
+for item in extensions; do
+    if [ ! -e "$HOME/.pi/$item" ]; then
+        ln -sv "$SCRIPT_DIR/.pi/$item" "$HOME/.pi/$item"
+    else
+        echo "Skipping ~/.pi/$item"
+    fi
+done
+for item in SYSTEM.md agents extensions mcp.json models.json prompts settings.json; do
+    if [ ! -e "$HOME/.pi/agent/$item" ]; then
+        ln -sv "$SCRIPT_DIR/.pi/agent/$item" "$HOME/.pi/agent/$item"
+    else
+        echo "Skipping ~/.pi/agent/$item"
+    fi
+done
 # }}}
 # ai agent skills {{{
 for skill_dir in $SCRIPT_DIR/skills/*/; do
