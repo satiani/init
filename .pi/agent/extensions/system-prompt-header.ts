@@ -1,17 +1,15 @@
 /**
  * System Prompt Header Extension
  *
- * - Dumps effective system prompt to /tmp/prompt.txt for inspection.
  * - Injects ~/.pi/agent/SYSTEM.md (or nearest project .pi/SYSTEM.md) once per session
  *   as hidden runtime policy context.
  * - Re-injects full available skill files after compaction as hidden context.
  */
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { existsSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 
-const PROMPT_DUMP_PATH = "/tmp/prompt.txt";
 const USER_SYSTEM_POLICY_PATH = path.join(os.homedir(), ".pi", "agent", "SYSTEM.md");
 const MAX_POLICY_CHARS = 12_000;
 
@@ -198,11 +196,6 @@ export default function (pi: ExtensionAPI) {
 		// Re-inject policy after compaction so runtime behavior stays stable.
 		resetPolicyInjection();
 		skillReinjectPending = true;
-	});
-
-	pi.on("agent_start", (_event, ctx) => {
-		const prompt = ctx.getSystemPrompt();
-		writeFileSync(PROMPT_DUMP_PATH, prompt, "utf8");
 	});
 
 	pi.on("before_agent_start", async (event, ctx) => {

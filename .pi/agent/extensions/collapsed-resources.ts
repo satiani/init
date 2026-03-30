@@ -9,7 +9,7 @@
  * resource listing, then provides a minimal header and a collapsible
  * resource message.
  *
- * Ctrl+O (expandTools) toggles between collapsed and expanded view.
+ * Ctrl+O (app.tools.expand) toggles between collapsed and expanded view.
  */
 
 import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
@@ -53,7 +53,7 @@ function buildShortcutHints(): string[] {
 		rawKeyHint("ctrl+c twice", "to exit"),
 		rawKeyHint("ctrl+d", "to exit (empty)"),
 		rawKeyHint("ctrl+z", "to suspend"),
-		keyHint("deleteToLineEnd", "to delete to end"),
+		keyHint("tui.editor.deleteToLineEnd", "to delete to end"),
 		rawKeyHint("shift+tab", "to cycle thinking level"),
 		rawKeyHint("ctrl+p/shift+ctrl+p", "to cycle models"),
 		rawKeyHint("ctrl+l", "to select model"),
@@ -95,12 +95,12 @@ export default function collapsedResources(pi: ExtensionAPI) {
 		if (!expanded) {
 			const arrow = theme.fg("accent", "▸");
 			const summary = theme.fg("muted", counts.join(" · "));
-			const hint = theme.fg("dim", `  ${keyHint("expandTools", "to expand")}`);
+			const hint = theme.fg("dim", `  ${keyHint("app.tools.expand", "to expand")}`);
 			lines.push(`${arrow} ${summary}${hint}`);
 		} else {
 			const arrow = theme.fg("accent", "▾");
 			const summary = theme.fg("muted", counts.join(" · "));
-			const hint = theme.fg("dim", `  ${keyHint("expandTools", "to collapse")}`);
+			const hint = theme.fg("dim", `  ${keyHint("app.tools.expand", "to collapse")}`);
 			lines.push(`${arrow} ${summary}${hint}`);
 
 			if (shortcuts.length > 0) {

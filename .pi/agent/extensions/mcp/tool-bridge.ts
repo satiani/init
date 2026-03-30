@@ -102,7 +102,7 @@ function renderCollapsibleText(text: string, expanded: boolean, theme: any): str
 		return text;
 	}
 	const remaining = lines.length - 10;
-	return `${lines.slice(0, 10).join("\n")}\n${theme.fg("muted", `... (${remaining} more lines, ${keyHint("expandTools", "to expand")})`)}`;
+	return `${lines.slice(0, 10).join("\n")}\n${theme.fg("muted", `... (${remaining} more lines, ${keyHint("app.tools.expand", "to expand")})`)}`;
 }
 
 export function createDirectMCPToolDefinition(

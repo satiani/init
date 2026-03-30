@@ -63,6 +63,13 @@ else
     echo "Skipping zoxide."
 fi
 # }}}
+# tree-sitter-cli (required by nvim-treesitter main branch) {{{
+if ! [ -x "$(command -v tree-sitter)" ]; then
+    cargo install tree-sitter-cli --locked
+else
+    echo "Skipping tree-sitter-cli."
+fi
+# }}}
 # dotfiles {{{
 for i in .ctags .inputrc .myclirc .tmux.conf .tmux.theme .doom.d .zshrc; do
     ensure_link "$SCRIPT_DIR/$i"

@@ -859,10 +859,18 @@ export default function (pi: ExtensionAPI) {
 			detection = isWriteDestructive(filePath, content);
 		} else if (isToolCallEventType("edit", event)) {
 			const filePath = event.input.path;
-			const oldText = event.input.oldText;
-			const newText = event.input.newText;
+			// Handle both legacy {oldText, newText} and current {edits[]} formats
+			const edits = Array.isArray(event.input.edits)
+				? event.input.edits
+				: event.input.oldText != null
+					? [{ oldText: event.input.oldText, newText: event.input.newText }]
+					: [];
 			commandOrPath = filePath;
-			detection = isEditDestructive(filePath, oldText, newText);
+			detection = { detected: false, reason: "" };
+			for (const edit of edits) {
+				detection = isEditDestructive(filePath, edit.oldText ?? "", edit.newText ?? "");
+				if (detection.detected) break;
+			}
 		} else if (
 			event.toolName !== "read" &&
 			event.toolName !== "ls" &&

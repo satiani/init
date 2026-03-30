@@ -60,8 +60,8 @@ async function generateSlug(firstSentence: string, ctx: ExtensionContext): Promi
 		return DEFAULT_TITLE;
 	}
 
-	const apiKey = await ctx.modelRegistry.getApiKey(model);
-	if (!apiKey) {
+	const auth = await ctx.modelRegistry.getApiKeyAndHeaders(model);
+	if (!auth.ok) {
 		if (ctx.hasUI) ctx.ui.notify(`No API key for ${SLUG_MODEL_PROVIDER}/${SLUG_MODEL_ID}`, "warning");
 		return DEFAULT_TITLE;
 	}
@@ -73,7 +73,7 @@ async function generateSlug(firstSentence: string, ctx: ExtensionContext): Promi
 	};
 
 	try {
-		const response = await complete(model, { systemPrompt: SLUG_SYSTEM_PROMPT, messages: [message] }, { apiKey, maxTokens: 32 });
+		const response = await complete(model, { systemPrompt: SLUG_SYSTEM_PROMPT, messages: [message] }, { apiKey: auth.apiKey, headers: auth.headers, maxTokens: 32 });
 		const raw = extractTextContent(response.content);
 		return normalizeSlug(raw);
 	} catch (error) {

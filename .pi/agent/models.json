@@ -4,9 +4,20 @@
       "baseUrl": "http://127.0.0.1:1234/v1",
       "api": "openai-completions",
       "apiKey": "lmstudio",
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "maxTokensField": "max_tokens"
+      },
       "models": [
         {
-          "id": "mlx-community/qwen3.5-35b-a3b"
+          "id": "qwen3.5-35b-a3b",
+          "name": "Qwen 3.5 35B A3B (Local)",
+          "reasoning": false,
+          "input": ["text"],
+          "contextWindow": 128000,
+          "maxTokens": 16384,
+          "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 }
         }
       ]
     }

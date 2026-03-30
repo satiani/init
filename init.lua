@@ -39,7 +39,6 @@ vim.pack.add({
 
   -- Treesitter
   'https://github.com/nvim-treesitter/nvim-treesitter',
-  'https://github.com/nvim-treesitter/nvim-treesitter-textobjects',
 
   -- Git
   'https://github.com/tpope/vim-fugitive',
@@ -52,7 +51,6 @@ vim.pack.add({
   'https://github.com/lukas-reineke/indent-blankline.nvim',
 
   -- Editing
-  'https://github.com/numToStr/Comment.nvim',
   'https://github.com/tpope/vim-sleuth',
 
   -- Fuzzy Finder
@@ -168,8 +166,6 @@ require('lualine').setup {
   },
 }
 
--- Enable Comment.nvim
-require('Comment').setup()
 
 -- Enable `lukas-reineke/indent-blankline.nvim`
 require('ibl').setup()
@@ -250,9 +246,7 @@ require('registers').setup({
   },
 })
 
--- Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
+-- Diagnostic keymaps (built-in [d, ]d, K are provided by nvim 0.11+ defaults)
 vim.keymap.set('n', '<leader>de', vim.diagnostic.open_float)
 vim.keymap.set('n', '<leader>dq', vim.diagnostic.setloclist)
 vim.keymap.set('n', '<leader>dh', vim.diagnostic.hide, { desc = "[D]iagnostics [H]ide" })
@@ -295,7 +289,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
     nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
     nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 
-    nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
+    -- K for hover is a built-in default in nvim 0.11+
     nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
 
     nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
@@ -350,6 +344,16 @@ local servers = {
   },
 
 }
+
+-- Install treesitter parsers for your languages and enable highlighting
+require('nvim-treesitter').install({ 'go', 'gomod', 'python', 'bash', 'json', 'yaml', 'typescript' })
+vim.api.nvim_create_autocmd('FileType', {
+  callback = function()
+    if vim.treesitter.get_parser(0, nil, { error = false }) then
+      vim.treesitter.start()
+    end
+  end,
+})
 
 -- Setup neovim lua configuration (lazydev replaces neodev)
 require('lazydev').setup()

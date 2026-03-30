@@ -8,7 +8,7 @@
       "url": "https://mcp.atlassian.com/v1/mcp",
       "auth": {
         "type": "oauth",
-        "credentialId": "mcp_oauth_1773936168195_y4ydomukr"
+        "credentialId": "mcp_oauth_1774893470913_qk4lemf3l"
       },
       "oauth": {
         "authorizationUrl": "https://mcp.atlassian.com/v1/authorize",
