@@ -12,7 +12,7 @@ import {
 } from "./config";
 import { connectToServer, disconnectServer } from "./client";
 import { analyzeAuthError, discoverOAuthEndpoints } from "./oauth-discovery";
-import { MCPOAuthFlow } from "./oauth-flow";
+import { MCPOAuthFlow, OAUTH_CALLBACK_HOST } from "./oauth-flow";
 import type { MCPMergedConfig, MCPResolvedServerConfig, MCPServerConfig } from "./types";
 import { MCPManager } from "./manager";
 
@@ -590,7 +590,7 @@ async function registerOAuthClient(
 		throw new Error(`OAuth client registration endpoint is unavailable for ${serverName}.`);
 	}
 
-	const redirectUri = `http://127.0.0.1:${callbackPort}/callback`;
+	const redirectUri = `http://${OAUTH_CALLBACK_HOST}:${callbackPort}/callback`;
 	const payload: Record<string, unknown> = {
 		client_name: "pi-mcp-extension",
 		redirect_uris: [redirectUri],

@@ -785,6 +785,14 @@ function truncateDisplay(s: string, max: number = 200): string {
 	return s.slice(0, max) + "…";
 }
 
+function triggerTmuxBell(): void {
+	try {
+		process.stdout.write("\x07");
+	} catch {
+		// Best effort only.
+	}
+}
+
 // --- Main Extension ---
 
 export default function (pi: ExtensionAPI) {
@@ -889,6 +897,9 @@ export default function (pi: ExtensionAPI) {
 				reason: `Destructive operation blocked (no UI): ${detection.reason}`,
 			};
 		}
+
+		// Surface the prompt in tmux so the user notices the guard needs input.
+		triggerTmuxBell();
 
 		// Show permission dialog
 		const displayCmd = truncateDisplay(commandOrPath, 300);

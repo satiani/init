@@ -131,10 +131,24 @@ install_nvim() {
         fi
     fi
 }
-if ! [ -x "$(command -v nvim)" ] || [ "$UPDATE_NVIM" == "true" ]; then
+need_nvim_update=false
+if ! [ -x "$(command -v nvim)" ]; then
+    need_nvim_update=true
+elif [ "$NVIM_VERSION" = "stable" ]; then
+    NVIM_CURRENT=$(nvim --version | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+    NVIM_LATEST=$(curl -sL https://api.github.com/repos/neovim/neovim/releases/latest \
+        | grep '"tag_name"' | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+    if [ -n "$NVIM_LATEST" ] && [ "$NVIM_CURRENT" != "$NVIM_LATEST" ]; then
+        echo "Upgrading nvim v${NVIM_CURRENT} -> v${NVIM_LATEST}..."
+        need_nvim_update=true
+    fi
+elif [ "$NVIM_VERSION" = "nightly" ]; then
+    need_nvim_update=true
+fi
+if [ "$need_nvim_update" = true ]; then
     install_nvim
 else
-    echo "Skipping nvim installation. Set UPDATE_NVIM=true to force update."
+    echo "Skipping nvim (v$(nvim --version | head -1 | grep -oE '[0-9]+\.[0-9]+[^ ]*') is current)."
 fi
 if ! [ -e ~/.config/nvim/init.lua ]; then
     mkdir -p ~/.config/nvim

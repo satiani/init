@@ -3,6 +3,10 @@ import { createServer, type IncomingMessage, type ServerResponse } from "node:ht
 import type { MCPOAuthCredential, MCPOAuthConfig } from "./types";
 
 const DEFAULT_CALLBACK_PORT = 39271;
+// Keep the loopback host stable across client registration, authorization,
+// token exchange, and the local callback listener. Some providers (including
+// Atlassian MCP) treat localhost and 127.0.0.1 as different redirect URIs.
+export const OAUTH_CALLBACK_HOST = "127.0.0.1";
 const CALLBACK_PATH = "/callback";
 const DEFAULT_TIMEOUT_MS = 5 * 60 * 1000;
 
@@ -47,7 +51,7 @@ function writeHtmlResponse(response: ServerResponse, statusCode: number, title: 
 }
 
 function parseRequestUrl(request: IncomingMessage): URL {
-	const host = request.headers.host ?? "127.0.0.1";
+	const host = request.headers.host ?? OAUTH_CALLBACK_HOST;
 	return new URL(request.url ?? CALLBACK_PATH, `http://${host}`);
 }
 
@@ -58,7 +62,7 @@ function readQuery(request: IncomingMessage): URLSearchParams {
 async function listen(server: ReturnType<typeof createServer>, port: number): Promise<number> {
 	await new Promise<void>((resolve, reject) => {
 		server.once("error", reject);
-		server.listen(port, "127.0.0.1", () => {
+		server.listen(port, OAUTH_CALLBACK_HOST, () => {
 			server.off("error", reject);
 			resolve();
 		});
@@ -239,7 +243,7 @@ export class MCPOAuthFlow {
 		let listeningPort = callbackPort;
 		try {
 			listeningPort = await listen(server, callbackPort);
-			const redirectUri = `http://localhost:${listeningPort}${CALLBACK_PATH}`;
+			const redirectUri = `http://${OAUTH_CALLBACK_HOST}:${listeningPort}${CALLBACK_PATH}`;
 			const authUrl = this.#buildAuthorizationUrl(redirectUri, state, verifier);
 
 			callbacks.onAuth?.({

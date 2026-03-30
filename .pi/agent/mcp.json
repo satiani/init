@@ -3,6 +3,20 @@
     "directTools": true
   },
   "mcpServers": {
+    "Atlassian": {
+      "type": "http",
+      "url": "https://mcp.atlassian.com/v1/mcp",
+      "auth": {
+        "type": "oauth",
+        "credentialId": "mcp_oauth_1773936168195_y4ydomukr"
+      },
+      "oauth": {
+        "authorizationUrl": "https://mcp.atlassian.com/v1/authorize",
+        "tokenUrl": "https://cf.mcp.atlassian.com/v1/token",
+        "registrationUrl": "https://cf.mcp.atlassian.com/v1/register",
+        "clientId": "svxZnJXC5Va0xCPf"
+      }
+    },
     "chrome-devtools": {
       "type": "stdio",
       "command": "npx",
@@ -16,25 +30,17 @@
     },
     "datadog": {
       "type": "http",
-      "url": "https://mcp.datadoghq.com/api/unstable/mcp-server/mcp",
+      "url": "https://mcp.datadoghq.com/api/unstable/mcp-server/mcp?toolsets=core,profiling,data-observability",
       "lifecycle": "keep-alive",
       "auth": {
         "type": "oauth",
-        "credentialId": "mcp_oauth_1772813903485_c98h7x2sf"
+        "credentialId": "mcp_oauth_1773594407539_uggygd9x1"
       },
       "oauth": {
         "authorizationUrl": "https://mcp.datadoghq.com/api/unstable/mcp-server/authorize",
         "tokenUrl": "https://mcp.datadoghq.com/api/unstable/mcp-server/token",
         "registrationUrl": "https://mcp.datadoghq.com/api/unstable/mcp-server/register",
         "clientId": "mcp_0767ad8413142a20552eadacf5ed1b82"
-      }
-    },
-    "slack": {
-      "type": "http",
-      "url": "https://mcp.slack.com/mcp",
-      "oauth": {
-        "clientId": "1601185624273.8899143856786",
-        "callbackPort": 3118
       }
     }
   }

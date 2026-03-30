@@ -59,12 +59,54 @@ const RUNTIME_DIR = path.join(getAgentDir(), "runtime", "pi-auto-update");
 const LOCK_FILE = path.join(RUNTIME_DIR, "lock.json");
 const STATE_FILE = path.join(RUNTIME_DIR, "state.json");
 const LOG_FILE = path.join(RUNTIME_DIR, "update.log");
+const VOLTA_PACKAGES_DIR = path.join(homedir(), ".volta", "tools", "image", "packages");
 const CHECK_DELAY_MS = 50;
 const POLL_INTERVAL_MS = 1000;
 const SPINNER_INTERVAL_MS = 100;
 const MIN_CHECKING_SPINNER_MS = 1000;
 const LAUNCH_TIMEOUT_MS = 15000;
 const SPINNER_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
+
+interface InstallCommand {
+	manager: "npm" | "volta";
+	command: string;
+	args: string[];
+	displayCommand: string;
+}
+
+function isSubpath(filePath: string, parentDir: string): boolean {
+	const relativePath = path.relative(path.resolve(parentDir), path.resolve(filePath));
+	return relativePath === "" || (!relativePath.startsWith("..") && !path.isAbsolute(relativePath));
+}
+
+function isVoltaManagedInstall(packageJsonPath: string): boolean {
+	return isSubpath(packageJsonPath, VOLTA_PACKAGES_DIR);
+}
+
+function resolveVoltaCommand(): string {
+	const voltaHome = process.env.VOLTA_HOME || path.join(homedir(), ".volta");
+	const voltaPath = path.join(voltaHome, "bin", "volta");
+	return existsSync(voltaPath) ? voltaPath : "volta";
+}
+
+function getInstallCommand(targetVersion: string): InstallCommand {
+	const packageSpec = `${PACKAGE_NAME}@${targetVersion}`;
+	if (isVoltaManagedInstall(PACKAGE_JSON_PATH)) {
+		return {
+			manager: "volta",
+			command: resolveVoltaCommand(),
+			args: ["install", packageSpec],
+			displayCommand: `volta install ${packageSpec}`,
+		};
+	}
+
+	return {
+		manager: "npm",
+		command: "npm",
+		args: ["install", "-g", packageSpec],
+		displayCommand: `npm install -g ${packageSpec}`,
+	};
+}
 
 interface UpdateLock {
 	phase: "launching" | "running";
@@ -254,15 +296,19 @@ async function tryAcquireLock(targetVersion: string): Promise<UpdateLock | undef
 
 async function appendUpdateLog(targetVersion: string): Promise<void> {
 	await ensureRuntimeDir();
+	const installCommand = getInstallCommand(targetVersion);
 	const header = [
 		"",
 		`=== ${new Date().toISOString()} pi auto-update ${VERSION} -> ${targetVersion} ===`,
-		`Command: npm install -g ${PACKAGE_NAME}`,
+		`Manager: ${installCommand.manager}`,
+		`Package JSON: ${PACKAGE_JSON_PATH}`,
+		`Command: ${installCommand.displayCommand}`,
 	].join("\n");
 	await appendFile(LOG_FILE, `${header}\n`, "utf-8");
 }
 
 async function finalizeFromLock(lock: UpdateLock): Promise<UpdateState> {
+	const installCommand = getInstallCommand(lock.targetVersion);
 	const installedVersion = await readInstalledVersionOnDisk();
 	const finishedAt = Date.now();
 	const success = installedVersion !== undefined && compareVersions(installedVersion, lock.targetVersion) >= 0;
@@ -285,7 +331,7 @@ async function finalizeFromLock(lock: UpdateLock): Promise<UpdateState> {
 				finishedAt,
 				logFile: lock.logFile,
 				installedVersion,
-				reason: `npm install -g ${PACKAGE_NAME} exited before version ${lock.targetVersion} was installed`,
+				reason: `${installCommand.displayCommand} exited before version ${lock.targetVersion} was installed`,
 			};
 
 	await atomicWriteJson(STATE_FILE, state);
@@ -345,11 +391,12 @@ async function reconcileState(): Promise<UpdateState | undefined> {
 }
 
 async function spawnBackgroundUpdate(lock: UpdateLock): Promise<RunningUpdateState> {
+	const installCommand = getInstallCommand(lock.targetVersion);
 	await appendUpdateLog(lock.targetVersion);
 	const logFd = openSync(LOG_FILE, "a");
 
 	try {
-		const child = spawn("npm", ["install", "-g", PACKAGE_NAME], {
+		const child = spawn(installCommand.command, installCommand.args, {
 			cwd: homedir(),
 			detached: true,
 			env: {
@@ -361,7 +408,7 @@ async function spawnBackgroundUpdate(lock: UpdateLock): Promise<RunningUpdateSta
 		});
 
 		if (!child.pid) {
-			throw new Error("Failed to start npm background update process");
+			throw new Error(`Failed to start ${installCommand.displayCommand}`);
 		}
 
 		const runningLock: UpdateLock = {
@@ -579,6 +626,7 @@ export default function piAutoUpdateExtension(pi: ExtensionAPI) {
 				nextState = await spawnBackgroundUpdate(lock);
 				spinnerFrame = 0;
 			} catch (error) {
+				const installCommand = getInstallCommand(latestVersion);
 				await removeFile(LOCK_FILE);
 				nextState = {
 					status: "failed",
@@ -587,7 +635,7 @@ export default function piAutoUpdateExtension(pi: ExtensionAPI) {
 					startedAt: lock.startedAt,
 					finishedAt: Date.now(),
 					logFile: LOG_FILE,
-					reason: error instanceof Error ? error.message : String(error),
+					reason: error instanceof Error ? `${installCommand.displayCommand}: ${error.message}` : `${installCommand.displayCommand}: ${String(error)}`,
 				};
 				await atomicWriteJson(STATE_FILE, nextState);
 			}

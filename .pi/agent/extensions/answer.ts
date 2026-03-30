@@ -231,7 +231,7 @@ class QnAComponent implements Component {
 				this.submit();
 				return;
 			}
-			if (matchesKey(data, Key.escape) || matchesKey(data, Key.ctrl("c")) || data.toLowerCase() === "n") {
+			if (matchesKey(data, Key.ctrl("c")) || data.toLowerCase() === "n") {
 				this.showingConfirmation = false;
 				this.invalidate();
 				this.tui.requestRender();
@@ -241,7 +241,7 @@ class QnAComponent implements Component {
 		}
 
 		// Global navigation and commands
-		if (matchesKey(data, Key.escape) || matchesKey(data, Key.ctrl("c"))) {
+		if (matchesKey(data, Key.ctrl("c"))) {
 			this.cancel();
 			return;
 		}
@@ -392,11 +392,11 @@ class QnAComponent implements Component {
 		// Confirmation dialog or footer with controls
 		if (this.showingConfirmation) {
 			lines.push(padToWidth(this.dim("├" + horizontalLine(boxWidth - 2) + "┤")));
-			const confirmMsg = `${this.yellow("Submit all answers?")} ${this.dim("(Enter/y to confirm, Esc/n to cancel)")}`;
+			const confirmMsg = `${this.yellow("Submit all answers?")} ${this.dim("(Enter/y to confirm, Ctrl+C/n to cancel)")}`;
 			lines.push(padToWidth(boxLine(truncateToWidth(confirmMsg, contentWidth))));
 		} else {
 			lines.push(padToWidth(this.dim("├" + horizontalLine(boxWidth - 2) + "┤")));
-			const controls = `${this.dim("Tab/Enter")} next · ${this.dim("Shift+Tab")} prev · ${this.dim("Shift+Enter")} newline · ${this.dim("Esc")} cancel`;
+			const controls = `${this.dim("Tab/Enter")} next · ${this.dim("Shift+Tab")} prev · ${this.dim("Shift+Enter")} newline · ${this.dim("Ctrl+C")} cancel`;
 			lines.push(padToWidth(boxLine(truncateToWidth(controls, contentWidth))));
 		}
 		lines.push(padToWidth(this.dim("╰" + horizontalLine(boxWidth - 2) + "╯")));

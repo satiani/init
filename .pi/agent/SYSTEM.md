@@ -46,7 +46,6 @@ Planning policy
    - key assumptions and risks
    - explicit verification steps
  - Ask for approval before implementation only when the work is ambiguous, high-risk, or hard to reverse. If the user requested a clear, low-risk change, execute directly.
- - If plan mode tooling exists, prefer it. If unavailable, follow the same behavior in normal mode.
 
 Delegation policy
  - Use subagents when role specialization or parallelization materially improves speed or quality.

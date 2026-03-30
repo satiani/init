@@ -1,0 +1,115 @@
+
+=== 2026-03-08T17:50:20.433Z pi auto-update 0.56.3 -> 0.57.1 ===
+Command: npm install -g @mariozechner/pi-coding-agent
+npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+
+removed 1 package, and changed 289 packages in 7s
+
+43 packages are looking for funding
+  run `npm fund` for details
+
+=== 2026-03-08T17:50:56.458Z pi auto-update 0.56.3 -> 0.57.1 ===
+Command: npm install -g @mariozechner/pi-coding-agent
+npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+
+changed 289 packages in 4s
+
+43 packages are looking for funding
+  run `npm fund` for details
+
+=== 2026-03-08T17:52:11.510Z pi auto-update 0.56.3 -> 0.57.1 ===
+Command: npm install -g @mariozechner/pi-coding-agent
+npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+
+changed 289 packages in 4s
+
+43 packages are looking for funding
+  run `npm fund` for details
+
+=== 2026-03-08T17:53:06.482Z pi auto-update 0.56.3 -> 0.57.1 ===
+Command: npm install -g @mariozechner/pi-coding-agent
+npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+
+changed 289 packages in 4s
+
+43 packages are looking for funding
+  run `npm fund` for details
+
+=== 2026-03-08T18:00:56.880Z pi auto-update 0.56.3 -> 0.57.1 ===
+Command: npm install -g @mariozechner/pi-coding-agent
+npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+
+changed 289 packages in 6s
+
+43 packages are looking for funding
+  run `npm fund` for details
+
+=== 2026-03-08T18:02:52.275Z pi auto-update 0.56.3 -> 0.57.1 ===
+Command: npm install -g @mariozechner/pi-coding-agent
+npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+
+changed 289 packages in 4s
+
+43 packages are looking for funding
+  run `npm fund` for details
+
+=== 2026-03-08T18:03:00.628Z pi auto-update 0.56.3 -> 0.57.1 ===
+Command: npm install -g @mariozechner/pi-coding-agent
+npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+
+changed 289 packages in 4s
+
+43 packages are looking for funding
+  run `npm fund` for details
+
+=== 2026-03-15T17:03:17.631Z pi auto-update 0.57.1 -> 0.58.1 ===
+Manager: volta
+Package JSON: /Users/samer.atiani/.volta/tools/image/packages/@mariozechner/pi-coding-agent/lib/node_modules/@mariozechner/pi-coding-agent/package.json
+Command: volta install @mariozechner/pi-coding-agent@0.58.1
+
+=== 2026-03-15T18:32:45.544Z pi auto-update 0.58.1 -> 0.58.2 ===
+Manager: volta
+Package JSON: /Users/samer.atiani/.volta/tools/image/packages/@mariozechner/pi-coding-agent/lib/node_modules/@mariozechner/pi-coding-agent/package.json
+Command: volta install @mariozechner/pi-coding-agent@0.58.2
+
+=== 2026-03-15T22:34:43.184Z pi auto-update 0.58.2 -> 0.58.3 ===
+Manager: volta
+Package JSON: /Users/samer.atiani/.volta/tools/image/packages/@mariozechner/pi-coding-agent/lib/node_modules/@mariozechner/pi-coding-agent/package.json
+Command: volta install @mariozechner/pi-coding-agent@0.58.3
+
+=== 2026-03-16T19:52:28.390Z pi auto-update 0.58.3 -> 0.58.4 ===
+Manager: volta
+Package JSON: /Users/samer.atiani/.volta/tools/image/packages/@mariozechner/pi-coding-agent/lib/node_modules/@mariozechner/pi-coding-agent/package.json
+Command: volta install @mariozechner/pi-coding-agent@0.58.4
+
+=== 2026-03-18T14:10:33.904Z pi auto-update 0.58.4 -> 0.60.0 ===
+Manager: volta
+Package JSON: /Users/samer.atiani/.volta/tools/image/packages/@mariozechner/pi-coding-agent/lib/node_modules/@mariozechner/pi-coding-agent/package.json
+Command: volta install @mariozechner/pi-coding-agent@0.60.0
+
+=== 2026-03-20T16:42:16.669Z pi auto-update 0.60.0 -> 0.61.0 ===
+Manager: volta
+Package JSON: /Users/samer.atiani/.volta/tools/image/packages/@mariozechner/pi-coding-agent/lib/node_modules/@mariozechner/pi-coding-agent/package.json
+Command: volta install @mariozechner/pi-coding-agent@0.61.0
+
+=== 2026-03-24T13:58:27.189Z pi auto-update 0.61.0 -> 0.62.0 ===
+Manager: volta
+Package JSON: /Users/samer.atiani/.volta/tools/image/packages/@mariozechner/pi-coding-agent/lib/node_modules/@mariozechner/pi-coding-agent/package.json
+Command: volta install @mariozechner/pi-coding-agent@0.62.0
+
+=== 2026-03-27T14:21:07.303Z pi auto-update 0.62.0 -> 0.63.1 ===
+Manager: volta
+Package JSON: /Users/samer.atiani/.volta/tools/image/packages/@mariozechner/pi-coding-agent/lib/node_modules/@mariozechner/pi-coding-agent/package.json
+Command: volta install @mariozechner/pi-coding-agent@0.63.1
+
+=== 2026-03-30T00:42:13.610Z pi auto-update 0.63.1 -> 0.64.0 ===
+Manager: volta
+Package JSON: /Users/samer.atiani/.volta/tools/image/packages/@mariozechner/pi-coding-agent/lib/node_modules/@mariozechner/pi-coding-agent/package.json
+Command: volta install @mariozechner/pi-coding-agent@0.64.0
