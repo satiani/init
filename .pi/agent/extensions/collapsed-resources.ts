@@ -163,7 +163,7 @@ export default function collapsedResources(pi: ExtensionAPI) {
 
 		pi.sendMessage({
 			customType: "collapsed-resources",
-			content: "",
+			content: ".",
 			display: true,
 			details: { skills, prompts, extensions, shortcuts },
 		});
