@@ -313,7 +313,9 @@ vim.api.nvim_create_autocmd('LspAttach', {
 local servers = {
   -- clangd = {},
   gopls = {
-    cmd = { 'gopls', '-remote=auto', '-remote.listen.timeout=24h' },
+    -- Keep the lspconfig server name as "gopls" for Go filetype/root detection,
+    -- but launch the gopls-rs binary instead of the regular gopls server.
+    cmd = { 'gopls-rs', 'serve' },
     settings = {
       gopls = {
         directoryFilters = {

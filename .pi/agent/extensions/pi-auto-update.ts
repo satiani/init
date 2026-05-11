@@ -53,7 +53,6 @@ function resolvePackageJsonPath(): string {
 }
 
 const PACKAGE_JSON_PATH = resolvePackageJsonPath();
-const REGISTRY_URL = "https://registry.npmjs.org/@mariozechner/pi-coding-agent/latest";
 const STATUS_KEY = "pi-auto-update";
 const RUNTIME_DIR = path.join(getAgentDir(), "runtime", "pi-auto-update");
 const LOCK_FILE = path.join(RUNTIME_DIR, "lock.json");
@@ -63,7 +62,6 @@ const VOLTA_PACKAGES_DIR = path.join(homedir(), ".volta", "tools", "image", "pac
 const CHECK_DELAY_MS = 50;
 const POLL_INTERVAL_MS = 1000;
 const SPINNER_INTERVAL_MS = 100;
-const MIN_CHECKING_SPINNER_MS = 1000;
 const LAUNCH_TIMEOUT_MS = 15000;
 const SPINNER_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
 
@@ -248,23 +246,35 @@ async function readInstalledVersionOnDisk(): Promise<string | undefined> {
 	}
 }
 
-async function fetchLatestVersion(): Promise<string | undefined> {
-	if (process.env.PI_OFFLINE) {
-		return undefined;
-	}
-
-	try {
-		const response = await fetch(REGISTRY_URL, {
-			signal: AbortSignal.timeout(10000),
-		});
-		if (!response.ok) {
-			return undefined;
+async function resolveLatestPublishedVersion(): Promise<string | undefined> {
+	return new Promise((resolve) => {
+		let child;
+		try {
+			child = spawn("npm", ["view", `${PACKAGE_NAME}@latest`, "version"], {
+				cwd: homedir(),
+				env: { ...process.env, npm_config_update_notifier: "false" },
+				shell: false,
+				stdio: ["ignore", "pipe", "ignore"],
+			});
+		} catch {
+			resolve(undefined);
+			return;
 		}
-		const payload = (await response.json()) as { version?: unknown };
-		return typeof payload.version === "string" ? payload.version : undefined;
-	} catch {
-		return undefined;
-	}
+
+		let output = "";
+		child.stdout?.on("data", (chunk: Buffer) => {
+			output += chunk.toString();
+		});
+		child.on("error", () => resolve(undefined));
+		child.on("close", (code) => {
+			if (code !== 0) {
+				resolve(undefined);
+				return;
+			}
+			const trimmed = output.trim();
+			resolve(trimmed.length > 0 ? trimmed : undefined);
+		});
+	});
 }
 
 async function tryAcquireLock(targetVersion: string): Promise<UpdateLock | undefined> {
@@ -307,36 +317,31 @@ async function appendUpdateLog(targetVersion: string): Promise<void> {
 	await appendFile(LOG_FILE, `${header}\n`, "utf-8");
 }
 
-async function finalizeFromLock(lock: UpdateLock): Promise<UpdateState> {
-	const installCommand = getInstallCommand(lock.targetVersion);
+async function finalizeFromLock(lock: UpdateLock): Promise<UpdateState | undefined> {
 	const installedVersion = await readInstalledVersionOnDisk();
 	const finishedAt = Date.now();
-	const success = installedVersion !== undefined && compareVersions(installedVersion, lock.targetVersion) >= 0;
 
-	const state: UpdateState = success
-		? {
-				status: "success",
-				previousVersion: lock.previousVersion,
-				targetVersion: lock.targetVersion,
-				installedVersion,
-				startedAt: lock.startedAt,
-				finishedAt,
-				logFile: lock.logFile,
-			}
-		: {
-				status: "failed",
-				previousVersion: lock.previousVersion,
-				targetVersion: lock.targetVersion,
-				startedAt: lock.startedAt,
-				finishedAt,
-				logFile: lock.logFile,
-				installedVersion,
-				reason: `${installCommand.displayCommand} exited before version ${lock.targetVersion} was installed`,
-			};
+	// If the installed version is newer than what was running, the update succeeded.
+	if (installedVersion && compareVersions(installedVersion, lock.previousVersion) > 0) {
+		const state: SuccessfulUpdateState = {
+			status: "success",
+			previousVersion: lock.previousVersion,
+			targetVersion: installedVersion,
+			installedVersion,
+			startedAt: lock.startedAt,
+			finishedAt,
+			logFile: lock.logFile,
+		};
+		await atomicWriteJson(STATE_FILE, state);
+		await removeFile(LOCK_FILE);
+		return state;
+	}
 
-	await atomicWriteJson(STATE_FILE, state);
+	// Version didn't change — either no qualifying update was available or the
+	// install was a no-op.  Clean up silently.
 	await removeFile(LOCK_FILE);
-	return state;
+	await removeFile(STATE_FILE);
+	return undefined;
 }
 
 async function reconcileState(): Promise<UpdateState | undefined> {
@@ -358,29 +363,29 @@ async function reconcileState(): Promise<UpdateState | undefined> {
 	const installedVersion = await readInstalledVersionOnDisk();
 
 	if (state.status === "success") {
-		if (compareVersions(VERSION, state.targetVersion) >= 0) {
+		if (compareVersions(VERSION, state.installedVersion) >= 0) {
 			await removeFile(STATE_FILE);
 			return undefined;
 		}
-		if (installedVersion && compareVersions(installedVersion, state.targetVersion) < 0) {
+		if (installedVersion && compareVersions(installedVersion, state.installedVersion) < 0) {
 			await removeFile(STATE_FILE);
 			return undefined;
 		}
 		return state;
 	}
 
-	if (installedVersion && compareVersions(installedVersion, state.targetVersion) >= 0) {
+	if (installedVersion && compareVersions(installedVersion, state.previousVersion) > 0) {
 		const recoveredState: SuccessfulUpdateState = {
 			status: "success",
 			previousVersion: state.previousVersion,
-			targetVersion: state.targetVersion,
+			targetVersion: installedVersion,
 			installedVersion,
 			startedAt: state.startedAt,
 			finishedAt: Date.now(),
 			logFile: state.logFile,
 		};
 		await atomicWriteJson(STATE_FILE, recoveredState);
-		if (compareVersions(VERSION, recoveredState.targetVersion) >= 0) {
+		if (compareVersions(VERSION, recoveredState.installedVersion) >= 0) {
 			await removeFile(STATE_FILE);
 			return undefined;
 		}
@@ -439,7 +444,6 @@ function renderStatus(
 	ctx: ExtensionContext,
 	state: UpdateState | undefined,
 	spinnerFrame: number,
-	isChecking: boolean,
 ): void {
 	if (!ctx.hasUI) {
 		return;
@@ -450,15 +454,7 @@ function renderStatus(
 	if (state?.status === "running") {
 		const frame = SPINNER_FRAMES[spinnerFrame % SPINNER_FRAMES.length];
 		const spinner = theme.fg("accent", frame);
-		const text = theme.fg("dim", ` pi updating to v${state.targetVersion} in background`);
-		ctx.ui.setStatus(STATUS_KEY, spinner + text);
-		return;
-	}
-
-	if (!state && isChecking) {
-		const frame = SPINNER_FRAMES[spinnerFrame % SPINNER_FRAMES.length];
-		const spinner = theme.fg("accent", frame);
-		const text = theme.fg("dim", " checking for pi updates");
+		const text = theme.fg("dim", " pi checking for updates");
 		ctx.ui.setStatus(STATUS_KEY, spinner + text);
 		return;
 	}
@@ -470,7 +466,7 @@ function renderStatus(
 
 	if (state.status === "success") {
 		const check = theme.fg("success", "✓");
-		const text = theme.fg("dim", ` pi updated to v${state.targetVersion}; restart pi to use it`);
+		const text = theme.fg("dim", ` pi updated to v${state.installedVersion}; restart pi to use it`);
 		ctx.ui.setStatus(STATUS_KEY, check + text);
 		return;
 	}
@@ -488,7 +484,6 @@ export default function piAutoUpdateExtension(pi: ExtensionAPI) {
 	let pollTimer: ReturnType<typeof setInterval> | undefined;
 	let pollInFlight = false;
 	let checkInFlight = false;
-	let isChecking = false;
 
 	function startSpinner(): void {
 		if (spinnerTimer) {
@@ -520,14 +515,12 @@ export default function piAutoUpdateExtension(pi: ExtensionAPI) {
 		if (!activeCtx) {
 			return;
 		}
-		renderStatus(activeCtx, currentState, spinnerFrame, isChecking);
+		renderStatus(activeCtx, currentState, spinnerFrame);
 	}
 
 	function ensureRunningTimers(): void {
 		if (!currentState || currentState.status !== "running") {
-			if (!isChecking) {
-				stopSpinner();
-			}
+			stopSpinner();
 			if (pollTimer) {
 				clearInterval(pollTimer);
 				pollTimer = undefined;
@@ -566,8 +559,6 @@ export default function piAutoUpdateExtension(pi: ExtensionAPI) {
 			return;
 		}
 
-		let showingCheckingSpinner = false;
-		let checkingStartedAt: number | undefined;
 		let nextState: UpdateState | undefined;
 		checkInFlight = true;
 		try {
@@ -578,26 +569,13 @@ export default function piAutoUpdateExtension(pi: ExtensionAPI) {
 				return;
 			}
 
-			if (!currentState) {
-				showingCheckingSpinner = true;
-				checkingStartedAt = Date.now();
-				isChecking = true;
-				spinnerFrame = 0;
-				startSpinner();
-				syncRenderedStatus();
-			}
-
-			const latestVersion = await fetchLatestVersion();
-			if (!latestVersion || compareVersions(latestVersion, VERSION) <= 0) {
-				return;
-			}
-
+			// Check if already updated on disk but not yet restarted.
 			const installedVersion = await readInstalledVersionOnDisk();
-			if (installedVersion && compareVersions(installedVersion, latestVersion) >= 0) {
+			if (installedVersion && compareVersions(installedVersion, VERSION) > 0) {
 				nextState = {
 					status: "success",
 					previousVersion: VERSION,
-					targetVersion: latestVersion,
+					targetVersion: installedVersion,
 					installedVersion,
 					startedAt: Date.now(),
 					finishedAt: Date.now(),
@@ -607,7 +585,23 @@ export default function piAutoUpdateExtension(pi: ExtensionAPI) {
 				return;
 			}
 
-			let lock = await tryAcquireLock(latestVersion);
+			// Resolve the latest published version up front so we can refuse to
+			// downgrade.  If the resolution fails (offline, registry down, etc.) we
+			// silently skip this update attempt rather than risk installing an
+			// unknown version.
+			const targetVersion = await resolveLatestPublishedVersion();
+			if (!targetVersion) {
+				return;
+			}
+
+			const baselineVersion = installedVersion ?? VERSION;
+			if (compareVersions(targetVersion, baselineVersion) <= 0) {
+				// Target isn't newer than what's already installed — abort to avoid
+				// downgrading or redundantly reinstalling.
+				return;
+			}
+
+			let lock = await tryAcquireLock(targetVersion);
 			if (!lock) {
 				const reconciledState = await reconcileState();
 				if (reconciledState?.status === "running") {
@@ -615,7 +609,7 @@ export default function piAutoUpdateExtension(pi: ExtensionAPI) {
 					spinnerFrame = 0;
 					return;
 				}
-				lock = await tryAcquireLock(latestVersion);
+				lock = await tryAcquireLock(targetVersion);
 			}
 
 			if (!lock) {
@@ -626,12 +620,12 @@ export default function piAutoUpdateExtension(pi: ExtensionAPI) {
 				nextState = await spawnBackgroundUpdate(lock);
 				spinnerFrame = 0;
 			} catch (error) {
-				const installCommand = getInstallCommand(latestVersion);
+				const installCommand = getInstallCommand(targetVersion);
 				await removeFile(LOCK_FILE);
 				nextState = {
 					status: "failed",
 					previousVersion: VERSION,
-					targetVersion: latestVersion,
+					targetVersion,
 					startedAt: lock.startedAt,
 					finishedAt: Date.now(),
 					logFile: LOG_FILE,
@@ -640,14 +634,6 @@ export default function piAutoUpdateExtension(pi: ExtensionAPI) {
 				await atomicWriteJson(STATE_FILE, nextState);
 			}
 		} finally {
-			if (showingCheckingSpinner && checkingStartedAt !== undefined) {
-				const elapsed = Date.now() - checkingStartedAt;
-				const remaining = MIN_CHECKING_SPINNER_MS - elapsed;
-				if (remaining > 0) {
-					await new Promise((resolve) => setTimeout(resolve, remaining));
-				}
-				isChecking = false;
-			}
 			if (nextState) {
 				currentState = nextState;
 			}
@@ -677,11 +663,10 @@ export default function piAutoUpdateExtension(pi: ExtensionAPI) {
 		}, CHECK_DELAY_MS);
 	}
 
+	// session_start fires on startup, reload, resume, fork, and new sessions,
+	// which covers the case the old code was trying to handle with a separate
+	// (non-existent) "session_switch" event.
 	pi.on("session_start", async (_event, ctx) => {
-		scheduleBootstrap(ctx);
-	});
-
-	pi.on("session_switch", async (_event, ctx) => {
 		scheduleBootstrap(ctx);
 	});
 

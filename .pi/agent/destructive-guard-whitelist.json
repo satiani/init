@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "id": "noi304ip3qmnjkg8hn",
+      "pattern": "bash -c .*",
+      "toolTypes": [
+        "bash"
+      ],
+      "scope": "session",
+      "description": "Allow bash: contains obfuscation with execution context (possible bypass…",
+      "createdAt": 1775260811003
+    }
+  ]
+}

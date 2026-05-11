@@ -15,6 +15,7 @@
 .pi/agent/mcp-cache.json
 .pi/agent/mcp-npx-cache.json
 .pi/agent/mcp-credentials.json
+.pi/agent/runtime/pi-auto-update/update.log
 
 # MCP data/cache artifacts
 .mcp_data/

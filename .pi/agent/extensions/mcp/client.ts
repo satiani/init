@@ -69,11 +69,16 @@ async function createTransport(config: MCPResolvedServerConfig): Promise<MCPTran
 }
 
 async function initializeConnection(transport: MCPTransport, signal?: AbortSignal): Promise<MCPInitializeResult> {
+	// IMPORTANT: do not advertise capabilities that pi does not actually implement.
+	// Previously we sent `roots: { listChanged: false }` here, but pi has no
+	// roots/list request handler. Spec-compliant servers (e.g. chrome-devtools-mcp)
+	// see the advertisement, call client.listRoots() during tool setup, and block
+	// for ~60 s on their own internal timeout before letting the tool run. That
+	// caused every chrome-devtools tool call to appear to "hang" past pi's 30 s
+	// per-request deadline. Until pi grows real roots support, advertise nothing.
 	const params: MCPInitializeParams = {
 		protocolVersion: PROTOCOL_VERSION,
-		capabilities: {
-			roots: { listChanged: false },
-		},
+		capabilities: {},
 		clientInfo: CLIENT_INFO,
 	};
 

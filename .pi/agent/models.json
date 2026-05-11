@@ -1,22 +1,84 @@
 {
   "providers": {
-    "lmstudio": {
-      "baseUrl": "http://127.0.0.1:1234/v1",
+    "openai": {
+      "modelOverrides": {
+        "gpt-5.5": {
+          "thinkingLevelMap": {
+            "off": "none",
+            "minimal": null
+          }
+        }
+      }
+    },
+    "dd-ai-gateway": {
+      "baseUrl": "https://ai-gateway.us1.staging.dog/v1",
       "api": "openai-completions",
-      "apiKey": "lmstudio",
+      "apiKey": "!ddtool auth token rapid-ai-platform --datacenter us1.staging.dog",
+      "authHeader": true,
+      "headers": {
+        "source": "aip-dev",
+        "org-id": "2"
+      },
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false
+      },
+      "models": [
+        {
+          "id": "bedrock/zai.glm-5",
+          "name": "ZAI GLM-5 (Bedrock via DD AI Gateway)",
+          "reasoning": false,
+          "input": ["text"],
+          "contextWindow": 128000,
+          "maxTokens": 16384
+        }
+      ]
+    },
+    "dd-ai-gateway-us1": {
+      "baseUrl": "https://ai-gateway.us1.prod.dog/v1",
+      "api": "openai-completions",
+      "apiKey": "!ddtool auth token rapid-ai-platform --datacenter us1.prod.dog",
+      "authHeader": true,
+      "headers": {
+        "source": "sre-arena-research",
+        "org-id": "2"
+      },
       "compat": {
         "supportsDeveloperRole": false,
         "supportsReasoningEffort": false,
-        "maxTokensField": "max_tokens"
+        "maxTokensField": "max_tokens",
+        "thinkingFormat": "qwen-chat-template"
+      },
+      "models": [
+        {
+          "id": "datadoginternal/scooby/2026-03-20-hero-full-weight-async-2_attempt0/step110",
+          "name": "Scooby (DD AI Gateway us1 prod)",
+          "reasoning": true,
+          "input": ["text"],
+          "contextWindow": 128000,
+          "maxTokens": 16384,
+          "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 }
+        }
+      ]
+    },
+    "mlx": {
+      "baseUrl": "http://127.0.0.1:8082/v1",
+      "api": "openai-completions",
+      "apiKey": "mlx",
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "maxTokensField": "max_tokens",
+        "supportsUsageInStreaming": false
       },
       "models": [
         {
           "id": "qwen3.5-35b-a3b",
-          "name": "Qwen 3.5 35B A3B (Local)",
+          "name": "Qwen 3.5 35B A3B (MLX)",
           "reasoning": false,
           "input": ["text"],
           "contextWindow": 128000,
-          "maxTokens": 16384,
+          "maxTokens": 32768,
           "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 }
         }
       ]

@@ -2,8 +2,9 @@ import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import { createDirectMCPToolDefinition } from "./tool-bridge";
 import { registerMCPCommands, runWithAuthRetry } from "./commands";
 import { getAgentDir } from "./config";
-import { MCPManager } from "./manager";
+import { MCPManager, type MCPConnectionStatus } from "./manager";
 import { registerMCPProxyTool } from "./proxy-tool";
+import type { MCPToolDefinition } from "./types";
 
 export default function mcpExtension(pi: ExtensionAPI): void {
 	const registeredDirectToolSignatures = new Map<string, string>();
@@ -72,4 +73,79 @@ export default function mcpExtension(pi: ExtensionAPI): void {
 	pi.on("session_shutdown", async () => {
 		await manager.disconnectAll();
 	});
+
+	pi.on("before_agent_start", async (_event, _ctx) => {
+		if (!manager.mergedConfig) return;
+
+		const serverNames = manager.getServerNames();
+		if (serverNames.length === 0) return;
+
+		const enabledServers = serverNames.filter((name) => {
+			const config = manager.getServerConfig(name);
+			return config?.enabled;
+		});
+		if (enabledServers.length === 0) return;
+
+		const lines: string[] = [
+			"[MCP Server Catalog]",
+			"Configured MCP servers (use the `mcp` tool to connect and call):",
+			"",
+		];
+
+		for (const name of enabledServers) {
+			const config = manager.getServerConfig(name)!;
+			const status = manager.getConnectionStatus(name);
+			const tools = manager.getServerTools(name);
+			const toolLabel = tools.length > 0 ? `, ${tools.length} tools` : "";
+
+			const description = config.description?.trim()
+				|| autoDescribeFromTools(tools)
+				|| `${config.type} server`;
+
+			lines.push(`- ${name} [${formatStatus(status)}${toolLabel}]: ${description}`);
+		}
+
+		lines.push("");
+		lines.push(
+			"If a user's question might be answered by a server that is disconnected or requires auth, "
+			+ "use `mcp` mode=connect to activate it first (this triggers OAuth in the browser if needed), "
+			+ "then call its tools. Do not tell the user you lack access without trying first.",
+		);
+
+		return {
+			message: {
+				customType: "mcp-catalog",
+				content: lines.join("\n"),
+				display: false,
+			},
+		};
+	});
+}
+
+function formatStatus(status: MCPConnectionStatus): string {
+	switch (status) {
+		case "connected":
+			return "connected";
+		case "connecting":
+			return "connecting";
+		case "requires-auth":
+			return "requires auth";
+		case "disconnected":
+			return "disconnected";
+		case "disabled":
+			return "disabled";
+		default:
+			return status;
+	}
+}
+
+function autoDescribeFromTools(tools: MCPToolDefinition[]): string | null {
+	if (tools.length === 0) return null;
+
+	const summaries = tools
+		.slice(0, 8)
+		.map((t) => t.name)
+		.join(", ");
+	const overflow = tools.length > 8 ? ` (+${tools.length - 8} more)` : "";
+	return `Provides tools: ${summaries}${overflow}`;
 }

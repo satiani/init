@@ -94,6 +94,8 @@ export function registerMCPProxyTool(pi: ExtensionAPI, manager: MCPManager): voi
 			"Use mode=search before mode=call if the user asks for an unknown MCP capability.",
 			"Use mode=describe to inspect tool schemas before crafting tool call args.",
 			'Use mode=add to add a new MCP server. Requires server (name) and args (JSON config: {"command":"npx","args":["-y","package"]} for stdio, or {"type":"http","url":"https://..."} for remote). Optional query for scope ("user" or "project", default "project").',
+			"When a server shows 'requires auth' or 'disconnected' in the MCP Server Catalog, use mode=connect to trigger authentication. The system will automatically open an OAuth flow in the user's browser if needed.",
+			"Before telling the user you cannot find information, check whether an inactive MCP server in the catalog might have the answer based on its description, and try connecting and querying it.",
 		],
 		parameters: MCP_PROXY_PARAMETERS,
 		async execute(_toolCallId, params, signal, _onUpdate, ctx) {

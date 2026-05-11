@@ -25,6 +25,7 @@ Unless the user asks otherwise:
 - use category headers plus bullet lists of quotes
 - do not include author attributions like "one peer" or "his manager"
 - do not add summary paragraphs beneath each category
+- always include a numerical pulse summary of survey-style responses (see rules below for where it lands)
 - do not save or submit Workday changes
 - do not take screenshots unless the user explicitly asks for one
 - after showing the first draft, expect quote-level refinement requests and handle them by revising only the targeted quote unless the user asks for a broader rewrite
@@ -143,27 +144,41 @@ async () => {
   };
 
   const seen = new Map();
-  const maxScroll = Math.max(0, wrapper.scrollHeight - wrapper.clientHeight);
-  const step = Math.max(200, Math.floor(wrapper.clientHeight * 0.8));
+  const step = 400;
 
   wrapper.scrollTop = 0;
-  await sleep(200);
+  await sleep(300);
+  for (const row of extract()) seen.set(JSON.stringify(row), row);
 
-  for (let y = 0; y <= maxScroll + step; y += step) {
+  // Iterate using the live scrollHeight on every pass. Workday's virtualized
+  // grid can grow scrollHeight as new rows mount, so a maxScroll computed once
+  // up front will under-walk the table.
+  for (let y = step; ; y += step) {
+    const maxScroll = wrapper.scrollHeight - wrapper.clientHeight;
     wrapper.scrollTop = Math.min(y, maxScroll);
     wrapper.dispatchEvent(new Event('scroll', { bubbles: true }));
-    await sleep(200);
-
-    for (const row of extract()) {
-      seen.set(JSON.stringify(row), row);
-    }
+    await sleep(400);
+    for (const row of extract()) seen.set(JSON.stringify(row), row);
+    if (y >= maxScroll) break;
   }
+
+  // Guaranteed final land at the bottom with a longer settle. Some rows only
+  // mount after a longer idle even when earlier scrolls reach the same offset.
+  wrapper.scrollTop = wrapper.scrollHeight;
+  await sleep(500);
+  for (const row of extract()) seen.set(JSON.stringify(row), row);
 
   return { count: seen.size, rows: Array.from(seen.values()) };
 }
 ```
 
 Prefer this deterministic scroll-collection flow over guessing about hidden rows.
+
+### If the collector still returns fewer rows than the item count
+- Do not accept the partial result. Workday reports an accurate `N items` label; trust it over the DOM.
+- Bump the per-step sleep to 500ms and rerun. The common cause is row-mount latency, not a bad selector.
+- Confirm the scroll container: run a scrollable-element probe and check that `[data-automation-id="tableWrapper"]` is the element with `scrollHeight > clientHeight`. Other wrappers (detail panes) can also be scrollable and mislead a naive selector.
+- Only after two failed passes should you suspect expandable sub-rows (`View Details`) or a filter is hiding content.
 
 ## Extraction and filtering rules
 
@@ -248,6 +263,16 @@ Only add context outside the quote if the quote is otherwise impossible to under
 - Use direct quoted text only.
 - If you need to summarize a theme, do it outside quotation marks.
 
+### 7. Credit attribution pushback
+The manager may say a particular strength theme actually reflects their own behind-the-scenes coaching or direction rather than the reviewee's independent initiative. When that happens:
+- Drop or demote the specific quotes that credit the reviewee for the disputed initiative.
+- Prefer replacement quotes that describe behaviors the reviewee clearly drove themselves (their own championing, their own framing, their own investments) rather than outcomes produced under the manager's steering.
+- Re-check the remaining quotes in the same category: a category whose core evidence was the disputed quote may need to be renamed or merged into a neighbor rather than propped up with weaker alternatives.
+- Do not argue the original framing. The manager has private context you do not have.
+
+### 8. Role-forward framing for development areas
+When the reviewee has an upcoming role, expanded scope, or named new assignment, prefer development-area quotes that explicitly reference that new context and reflect it in the category title (for example, appending `(critical for the <new role>)`). Historical, narrowly project-specific, or purely personal upward quotes should be de-prioritized unless the lesson cleanly transfers to the new role.
+
 ## Quote revision workflow
 
 Treat quote revision as a normal part of the workflow.
@@ -257,6 +282,23 @@ Treat quote revision as a normal part of the workflow.
 - If the user corrects which quote they meant, accept the correction directly and replace only that quote.
 - After a targeted revision, offer to update the full section or Workday fields with the revised quote.
 - Once the user says the quotes look good, stop re-litigating the selection and move straight to the next requested step.
+
+### When the user questions a quote's depth or actionability
+If the user says a quote or a whole category feels shallow, non-actionable, or oddly framed:
+1. Return the **full unedited original response** that the quote was drawn from, along with which review prompt (`continue doing well`, `start doing differently`, upward vs peer) it answered.
+2. Call out explicitly whether the original contains more substance than the trimmed quote captured, or whether the short version really is all there is.
+3. Based on that, propose one of:
+   - a richer trim of the same response,
+   - replacement with a stronger quote from a different reviewer,
+   - merging the category into a neighboring one,
+   - dropping the category entirely.
+
+Do not try to rescue a shallow single-sentence quote by padding surrounding prose. If the source material is thin, say so and propose restructuring rather than inflating.
+
+### Category right-sizing and merging
+- A category anchored by only one or two single-sentence, incident-free quotes is underweight. Either pull a richer specific-incident quote to anchor it, or merge its theme into an adjacent category that covers the same underlying behavior.
+- If a category is named around an aspirational concept (for example a leadership-ladder abstraction) but its supporting quotes are actually about a specific stalled project or a specific interaction, rename the category around the concrete observed behavior, or merge it with a neighbor.
+- Merging is preferable to keeping a weak category. Two solid development categories are better than three uneven ones.
 
 ## Output format defaults
 
@@ -283,6 +325,47 @@ Use this exact structure in each manager answer field:
 - blank line between categories
 
 Do **not** bold `Selected quotes:`.
+
+### Workday rich text editor capability surface
+The ProseMirror answer editor exposes only these toolbar controls:
+- Paragraph Format
+- Bold
+- Italic
+- Underline
+- Text Color
+- Bullets
+- Create Link / Create Email Link
+- Maximize
+
+It does **not** support:
+- tables
+- headings (paragraphs only, with optional bold for pseudo-headers)
+- numbered / ordered lists
+- nested multi-level lists reliably
+- inline code or code blocks
+- images or attachments
+
+Do not attempt to paste HTML `<table>`, `<h1..h6>`, or `<ol>` content — it will be stripped or degrade into plain paragraphs. Any tabular information must be rendered as a bulleted list using `Label: value` items. Confirm the toolbar matches the list above during your first snapshot; if it differs, adjust the output shape before inserting.
+
+### Numerical pulse / survey summary
+Always include a numerical pulse summary whenever the feedback set contains survey-style rows (`I am supported in this area.` / `I need stronger support in this area.` or equivalent). Do not gate this on the user asking.
+
+**Placement rule (required):**
+- If **every** rated prompt is universally positive (zero `need stronger support` responses across all prompts), place the pulse summary at the **end of the strengths field**.
+- If the pulse is **mixed** (at least one prompt has a `need stronger support` response) or **entirely negative**, place the pulse summary at the **end of the development-area field**.
+
+Do not split the pulse across both fields and do not duplicate it. The placement rule above is deterministic; follow it without asking.
+
+**Shape (identical in either field, because the editor has no table support):**
+- bold header along the lines of `Upward Pulse Summary (<n> direct reports, supported vs. needs stronger support)`
+- bullet list of `<prompt>: <x> supported / <y> need stronger support` items, one bullet per rated prompt
+- trailing paragraph that is sensitive to placement:
+  - in the strengths field (all-positive case): call out that every rated area showed universal support
+  - in the development field (mixed / all-negative case): name the weakest areas by tally and any prompt where support is still universal
+
+Compute the counts from the extracted survey rows, not by eye. Use the same row set that feeds the main summary so the numbers are internally consistent. Do not invent a table, do not use tabs or fixed-width alignment — the editor will flatten whitespace.
+
+Mirror the same placement in the in-chat summary draft: if the pulse lands in the strengths field, show it under `Areas of Excellence`; if it lands in the development field, show it under `Areas of Improvement`.
 
 ## Recommended category pattern
 

@@ -75,6 +75,38 @@ At each diagram or code stop, structure the explanation roughly like this:
 
 If you introduce a new technical term, define it on the spot.
 
+### Code-first walkthrough mode (when user asks to go block-by-block)
+
+If the user says they want to browse code block-by-block (or says your explanation is too high-level), switch immediately into **code-first walkthrough mode**:
+
+1. **Anchor to visible code first.**
+   - Explain the exact block currently on screen before adding more abstraction.
+   - Start each explanation with the file + line range for the current block.
+
+2. **One code block per message.**
+   - Treat a "block" as one coherent unit (e.g., one struct, one function signature, one if/for block, one helper method).
+   - Do not explain multiple distant blocks in one message.
+
+3. **Explain in this order for each block:**
+   - what this exact block does
+   - inputs and outputs (or fields and their roles)
+   - side effects (DB/network/blob/logging/concurrency)
+   - dependency links (who calls this, what it calls)
+   - why it exists
+
+4. **Keep concept mapping local.**
+   - Tie every concept to a specific symbol in the visible block.
+   - Avoid broad architectural summaries unless the user asks for them.
+
+5. **Minimize pre-reading burden for the user.**
+   - Assume the user has only skimmed the visible block, not the whole file.
+   - Avoid "as you saw above/below" references without navigating there first.
+
+6. **Navigation cadence in this mode:**
+   - Stay in the same file and move to adjacent blocks unless the user asks to jump.
+   - Keep `zt` positioning so the block start is visible.
+   - After each block explanation, ask whether to continue to the next block.
+
 ### Anti-patterns to avoid
 
 - Do **not** assume the user shares your vocabulary.

@@ -52,6 +52,31 @@ function toError(error: unknown): Error {
 	return new Error(String(error));
 }
 
+// Best-effort async drain on `beforeExit`. Catches the case where pi exits
+// without firing `session_shutdown` for some reason (e.g. an uncaught error
+// path that still allows the event loop to drain). We intentionally do NOT
+// listen on SIGINT/SIGTERM/SIGHUP here: attaching listeners for those
+// signals suppresses Node's default termination behavior, which would change
+// pi's shutdown semantics. The synchronous process-group kill registered in
+// transports/stdio.ts (process.on("exit")) handles the child-cleanup
+// guarantee independently of this drain.
+const registeredManagers = new Set<MCPManager>();
+let processShutdownHooksInstalled = false;
+function ensureProcessShutdownHooks(): void {
+	if (processShutdownHooksInstalled) return;
+	processShutdownHooksInstalled = true;
+	let draining = false;
+	process.on("beforeExit", () => {
+		if (draining) return;
+		draining = true;
+		const managers = [...registeredManagers];
+		registeredManagers.clear();
+		void Promise.all(
+			managers.map((mgr) => mgr.disconnectAll().catch(() => undefined)),
+		);
+	});
+}
+
 export class MCPManager {
 	readonly #cwd: string;
 	readonly #agentDir: string;
@@ -86,6 +111,8 @@ export class MCPManager {
 		this.#onPromptsChanged = options.onPromptsChanged;
 		this.#onResourcesChanged = options.onResourcesChanged;
 		this.#onNotification = options.onNotification;
+		registeredManagers.add(this);
+		ensureProcessShutdownHooks();
 	}
 
 	get mergedConfig(): MCPMergedConfig | null {
@@ -306,6 +333,7 @@ export class MCPManager {
 			this.#knownToolsSource.clear();
 			this.#emitToolsChanged();
 		}
+		registeredManagers.delete(this);
 	}
 
 	async callTool(

@@ -3,12 +3,28 @@
     "directTools": true
   },
   "mcpServers": {
+    "atlassian": {
+      "type": "http",
+      "url": "https://mcp.atlassian.com/v1/mcp",
+      "description": "Internal documentation, runbooks, wiki pages, Confluence spaces and pages, Jira issues and projects. Use for questions about internal processes, team docs, finding internal links, or anything that might be documented on Confluence or tracked in Jira.",
+      "auth": {
+        "type": "oauth",
+        "credentialId": "mcp_oauth_1775573342093_f72hqaafl"
+      },
+      "oauth": {
+        "authorizationUrl": "https://mcp.atlassian.com/v1/authorize",
+        "tokenUrl": "https://cf.mcp.atlassian.com/v1/token",
+        "registrationUrl": "https://cf.mcp.atlassian.com/v1/register",
+        "clientId": "xnQXZBQz7-gaKbOG"
+      }
+    },
     "Atlassian": {
       "type": "http",
       "url": "https://mcp.atlassian.com/v1/mcp",
+      "description": "Internal documentation, runbooks, wiki pages, Confluence spaces and pages, Jira issues and projects. Use for questions about internal processes, team docs, finding internal links, or anything that might be documented on Confluence or tracked in Jira.",
       "auth": {
         "type": "oauth",
-        "credentialId": "mcp_oauth_1774893470913_qk4lemf3l"
+        "credentialId": "mcp_oauth_1778105384126_as5j1fyu1"
       },
       "oauth": {
         "authorizationUrl": "https://mcp.atlassian.com/v1/authorize",
@@ -25,16 +41,18 @@
         "chrome-devtools-mcp@latest",
         "--autoConnect"
       ],
+      "description": "Browser automation, inspection, and debugging. Interact with open Chrome tabs: click elements, fill forms, take screenshots, evaluate JS, inspect network requests, run Lighthouse audits, and trace performance.",
       "lifecycle": "keep-alive",
       "idleTimeout": 30
     },
     "datadog": {
       "type": "http",
       "url": "https://mcp.datadoghq.com/api/unstable/mcp-server/mcp?toolsets=core,profiling,data-observability",
+      "description": "Monitoring, dashboards, metrics, logs, traces, APM, incidents, SLOs, profiling, data observability. Use for observability questions, debugging production issues, querying metrics/logs, investigating incidents, or finding monitoring data.",
       "lifecycle": "keep-alive",
       "auth": {
         "type": "oauth",
-        "credentialId": "mcp_oauth_1773594407539_uggygd9x1"
+        "credentialId": "mcp_oauth_1777640822675_3o93eckvj"
       },
       "oauth": {
         "authorizationUrl": "https://mcp.datadoghq.com/api/unstable/mcp-server/authorize",
