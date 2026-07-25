@@ -204,6 +204,24 @@ for item in SYSTEM.md agents extensions mcp.json models.json prompts settings.js
     fi
 done
 # }}}
+# pi chrome extension deps {{{
+# The chrome browser extension (~/.pi/agent/extensions/chrome) drives Chrome over
+# CDP and needs its npm deps installed. node_modules is gitignored, so a fresh
+# clone has none and the extension would register zero tools.
+CHROME_EXT="$SCRIPT_DIR/.pi/agent/extensions/chrome"
+if [ -d "$CHROME_EXT" ]; then
+    if [ -d "$CHROME_EXT/node_modules" ]; then
+        echo "Skipping pi chrome extension deps."
+    elif [ -x "$(command -v npm)" ]; then
+        echo "Installing pi chrome extension dependencies..."
+        # npm ci honours the committed package-lock.json for reproducible installs.
+        ( cd "$CHROME_EXT" && { npm ci --no-audit --no-fund || npm install --no-audit --no-fund; } )
+    else
+        echo "WARNING: npm not found. Chrome tools stay disabled until you run:"
+        echo "           (cd $CHROME_EXT && npm install)"
+    fi
+fi
+# }}}
 # ai agent skills {{{
 for target in ~/.claude/skills ~/.agents/skills ~/.pi/agent/skills; do
     if [ -e "$target" ]; then

@@ -1,0 +1,10 @@
+{
+  "name": "pi-chrome-extension",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Native pi tools driving Chrome over CDP. No MCP protocol involved; chrome-devtools-mcp is used purely as a tool-implementation library.",
+  "dependencies": {
+    "chrome-devtools-mcp": "1.6.0",
+    "zod-to-json-schema": "^3.24.1"
+  }
+}
