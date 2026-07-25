@@ -3,8 +3,22 @@
   "private": true,
   "version": "1.0.0",
   "description": "Native pi tools driving Chrome over CDP. No MCP protocol involved; chrome-devtools-mcp is used purely as a tool-implementation library.",
+  "keywords": ["pi-package", "pi-extension", "chrome", "cdp", "browser", "devtools"],
+  "engines": {
+    "node": ">=20"
+  },
+  "pi": {
+    "extensions": ["./index.ts"]
+  },
+  "scripts": {
+    "test": "node test/unit-autoshot.mjs",
+    "test:e2e": "node test/e2e-autoshot.mjs"
+  },
   "dependencies": {
     "chrome-devtools-mcp": "1.6.0",
     "zod-to-json-schema": "^3.24.1"
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*"
   }
 }
