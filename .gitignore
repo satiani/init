@@ -15,11 +15,16 @@
 .pi/agent/mcp-cache.json
 .pi/agent/mcp-npx-cache.json
 .pi/agent/mcp-credentials.json
-.pi/agent/runtime/pi-auto-update/update.log
+.pi/agent/runtime/
 
 # MCP data/cache artifacts
 .mcp_data/
 .pi/agent/extensions/.mcp_data/
+
+# trajectory extension: locally installed, and bin/trajectory is a ~148MB
+# prebuilt Mach-O binary that exceeds GitHub's 100MB per-file limit.
+# Install it per-machine; settings.json and mcp.json reference it by path.
+.pi/agent/extensions/trajectory/
 
 # Skills dir is a link-farm populated by deploy.sh; not tracked
 .pi/agent/skills/
