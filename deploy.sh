@@ -188,20 +188,31 @@ if [ -L "$HOME/.pi" ]; then
     rm "$HOME/.pi"
 fi
 mkdir -p "$HOME/.pi/agent"
-# Selectively symlink tracked config items from the repo into ~/.pi
+# Selectively symlink tracked config items from the repo into ~/.pi.
+#
+# link_pi_item <repo-relative path> <destination>
+# Skips when the repo source is absent (linking a missing source produces a
+# dangling symlink), and tests -L as well as -e so an existing dangling link
+# isn't re-created -- `ln` would fail with "File exists" and `set -e` would
+# abort the rest of this script.
+link_pi_item() {
+    local src="$SCRIPT_DIR/$1" dest="$2"
+    if [ ! -e "$src" ]; then
+        echo "Skipping $dest (not present in repo)"
+    elif [ -e "$dest" ] || [ -L "$dest" ]; then
+        echo "Skipping $dest"
+    else
+        ln -sv "$src" "$dest"
+    fi
+}
 for item in extensions; do
-    if [ ! -e "$HOME/.pi/$item" ]; then
-        ln -sv "$SCRIPT_DIR/.pi/$item" "$HOME/.pi/$item"
-    else
-        echo "Skipping ~/.pi/$item"
-    fi
+    link_pi_item ".pi/$item" "$HOME/.pi/$item"
 done
-for item in SYSTEM.md agents extensions mcp.json models.json prompts settings.json; do
-    if [ ! -e "$HOME/.pi/agent/$item" ]; then
-        ln -sv "$SCRIPT_DIR/.pi/agent/$item" "$HOME/.pi/agent/$item"
-    else
-        echo "Skipping ~/.pi/agent/$item"
-    fi
+# NOTE: settings.json is deliberately NOT listed here. It was untracked in
+# 1b65324 (machine-specific: absolute extension paths, enabled models,
+# lastChangelogVersion), so the repo has no copy to link to. pi creates its own.
+for item in SYSTEM.md agents extensions mcp.json models.json prompts; do
+    link_pi_item ".pi/agent/$item" "$HOME/.pi/agent/$item"
 done
 # }}}
 # pi chrome extension deps {{{
