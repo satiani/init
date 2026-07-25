@@ -1,4 +1,4 @@
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { createDirectMCPToolDefinition } from "./tool-bridge";
 import { registerMCPCommands, runWithAuthRetry } from "./commands";
 import { getAgentDir } from "./config";

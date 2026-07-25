@@ -5,8 +5,8 @@
  * manages tabs, field focus, keyboard routing, and collects results.
  */
 
-import type { ExtensionContext, Theme } from "@mariozechner/pi-coding-agent";
-import { matchesKey, Key, type Focusable, type TUI } from "@mariozechner/pi-tui";
+import type { ExtensionContext, Theme } from "@earendil-works/pi-coding-agent";
+import { matchesKey, Key, type Focusable, type TUI } from "@earendil-works/pi-tui";
 import type { ModalConfig, ModalResult, ModalField, TabConfig } from "./types.ts";
 import { createField } from "./fields.ts";
 import {

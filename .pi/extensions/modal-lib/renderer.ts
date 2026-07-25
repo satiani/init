@@ -4,8 +4,8 @@
  * Pure functions for rendering modal frame, tab bar, and help text.
  */
 
-import type { Theme } from "@mariozechner/pi-coding-agent";
-import { truncateToWidth, visibleWidth } from "@mariozechner/pi-tui";
+import type { Theme } from "@earendil-works/pi-coding-agent";
+import { truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 
 /**
  * Pad a string to exactly `len` visible width with spaces.

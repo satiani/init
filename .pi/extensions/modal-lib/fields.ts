@@ -5,8 +5,8 @@
  * input handling, and value management.
  */
 
-import type { Theme } from "@mariozechner/pi-coding-agent";
-import { matchesKey, Key, truncateToWidth, CURSOR_MARKER } from "@mariozechner/pi-tui";
+import type { Theme } from "@earendil-works/pi-coding-agent";
+import { matchesKey, Key, truncateToWidth, CURSOR_MARKER } from "@earendil-works/pi-tui";
 import type {
 	ModalField,
 	TextFieldConfig,

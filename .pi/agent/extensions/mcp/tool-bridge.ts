@@ -1,6 +1,6 @@
-import { keyHint, type ExtensionContext } from "@mariozechner/pi-coding-agent";
-import { Type } from "@sinclair/typebox";
-import { Text } from "@mariozechner/pi-tui";
+import { keyHint, type ExtensionContext } from "@earendil-works/pi-coding-agent";
+import { Type } from "typebox";
+import { Text } from "@earendil-works/pi-tui";
 import type {
 	MCPContent,
 	MCPDirectToolDefinition,

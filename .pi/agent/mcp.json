@@ -9,7 +9,7 @@
       "description": "Internal documentation, runbooks, wiki pages, Confluence spaces and pages, Jira issues and projects. Use for questions about internal processes, team docs, finding internal links, or anything that might be documented on Confluence or tracked in Jira.",
       "auth": {
         "type": "oauth",
-        "credentialId": "mcp_oauth_1775573342093_f72hqaafl"
+        "credentialId": "mcp_oauth_1785006459184_7dicyprru"
       },
       "oauth": {
         "authorizationUrl": "https://mcp.atlassian.com/v1/authorize",
@@ -24,7 +24,7 @@
       "description": "Internal documentation, runbooks, wiki pages, Confluence spaces and pages, Jira issues and projects. Use for questions about internal processes, team docs, finding internal links, or anything that might be documented on Confluence or tracked in Jira.",
       "auth": {
         "type": "oauth",
-        "credentialId": "mcp_oauth_1778105384126_as5j1fyu1"
+        "credentialId": "mcp_oauth_1785005933671_omst98kla"
       },
       "oauth": {
         "authorizationUrl": "https://mcp.atlassian.com/v1/authorize",
@@ -33,18 +33,6 @@
         "clientId": "svxZnJXC5Va0xCPf"
       }
     },
-    "chrome-devtools": {
-      "type": "stdio",
-      "command": "npx",
-      "args": [
-        "-y",
-        "chrome-devtools-mcp@latest",
-        "--autoConnect"
-      ],
-      "description": "Browser automation, inspection, and debugging. Interact with open Chrome tabs: click elements, fill forms, take screenshots, evaluate JS, inspect network requests, run Lighthouse audits, and trace performance.",
-      "lifecycle": "keep-alive",
-      "idleTimeout": 30
-    },
     "datadog": {
       "type": "http",
       "url": "https://mcp.datadoghq.com/api/unstable/mcp-server/mcp?toolsets=core,profiling,data-observability",
@@ -52,7 +40,7 @@
       "lifecycle": "keep-alive",
       "auth": {
         "type": "oauth",
-        "credentialId": "mcp_oauth_1777640822675_3o93eckvj"
+        "credentialId": "mcp_oauth_1785009804527_74o4e28so"
       },
       "oauth": {
         "authorizationUrl": "https://mcp.datadoghq.com/api/unstable/mcp-server/authorize",
@@ -60,6 +48,14 @@
         "registrationUrl": "https://mcp.datadoghq.com/api/unstable/mcp-server/register",
         "clientId": "mcp_0767ad8413142a20552eadacf5ed1b82"
       }
+    },
+    "trajectory": {
+      "type": "stdio",
+      "command": "/Users/samer.atiani/.pi/agent/extensions/trajectory/bin/trajectory",
+      "args": [
+        "mcp"
+      ],
+      "lifecycle": "eager"
     }
   }
 }

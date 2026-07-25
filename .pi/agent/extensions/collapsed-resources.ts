@@ -12,9 +12,9 @@
  * Ctrl+O (app.tools.expand) toggles between collapsed and expanded view.
  */
 
-import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
-import { keyHint, rawKeyHint, VERSION } from "@mariozechner/pi-coding-agent";
-import { Box, Text } from "@mariozechner/pi-tui";
+import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
+import { keyHint, rawKeyHint, VERSION } from "@earendil-works/pi-coding-agent";
+import { Box, Text } from "@earendil-works/pi-tui";
 import fs from "fs";
 import os from "os";
 import path from "path";

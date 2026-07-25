@@ -46,8 +46,8 @@
  *   All ctrl+key shortcuts (ctrl+c, ctrl+l, etc.) work in both modes.
  */
 
-import { CustomEditor, type ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { matchesKey, truncateToWidth, visibleWidth } from "@mariozechner/pi-tui";
+import { CustomEditor, type ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { matchesKey, truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 
 // Terminal escape sequences that map to default editor keybindings.
 // These are processed by Editor.handleInput via the keybindings manager.

@@ -4,12 +4,12 @@ import { appendFile, mkdir, readFile, rename, rm, writeFile } from "node:fs/prom
 import { homedir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { VERSION, getAgentDir, type ExtensionAPI, type ExtensionContext } from "@mariozechner/pi-coding-agent";
+import { VERSION, getAgentDir, type ExtensionAPI, type ExtensionContext } from "@earendil-works/pi-coding-agent";
 
 // Disable pi's built-in update banner early. This extension replaces that flow.
 process.env.PI_SKIP_VERSION_CHECK = "1";
 
-const PACKAGE_NAME = "@mariozechner/pi-coding-agent";
+const PACKAGE_NAME = "@earendil-works/pi-coding-agent";
 const PACKAGE_ENTRY_PATH = fileURLToPath(import.meta.resolve(PACKAGE_NAME));
 
 function findPackageJson(startPath: string | undefined): string | undefined {

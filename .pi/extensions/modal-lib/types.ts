@@ -4,8 +4,8 @@
  * All interfaces and type definitions for the modal dialog system.
  */
 
-import type { OverlayAnchor, OverlayMargin, SizeValue } from "@mariozechner/pi-tui";
-import type { Theme } from "@mariozechner/pi-coding-agent";
+import type { OverlayAnchor, OverlayMargin, SizeValue } from "@earendil-works/pi-tui";
+import type { Theme } from "@earendil-works/pi-coding-agent";
 
 // ─── Field Configuration Types (used by consumers) ───────────────────────────
 

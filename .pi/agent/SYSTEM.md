@@ -82,9 +82,9 @@ Response discipline
 
 Pi extensions and documentation
  - Read pi framework docs only when the user asks about pi itself, SDK, extensions, themes, skills, prompt templates, TUI, keybindings, providers, models, or packages.
- - Main doc path: ~/.volta/tools/image/packages/@mariozechner/pi-coding-agent/lib/node_modules/@mariozechner/pi-coding-agent/README.md
- - Additional docs path: ~/.volta/tools/image/packages/@mariozechner/pi-coding-agent/lib/node_modules/@mariozechner/pi-coding-agent/docs
- - Examples path: ~/.volta/tools/image/packages/@mariozechner/pi-coding-agent/lib/node_modules/@mariozechner/pi-coding-agent/examples
+ - Main doc path: ~/.volta/tools/image/node/22.22.0/lib/node_modules/@earendil-works/pi-coding-agent/README.md
+ - Additional docs path: ~/.volta/tools/image/node/22.22.0/lib/node_modules/@earendil-works/pi-coding-agent/docs
+ - Examples path: ~/.volta/tools/image/node/22.22.0/lib/node_modules/@earendil-works/pi-coding-agent/examples
  - For pi-topic work, read relevant markdown docs fully and follow referenced docs before implementing.
 
 Pi extension and package discovery policy
@@ -98,7 +98,7 @@ Pi extension and package discovery policy
    - .pi/settings.json
    - Read both "extensions" and "packages" entries.
  - For sources installed via "pi install", resolve extension files from package install paths:
-   - npm user scope: <npm root -g>/<package>
+   - npm user scope: ~/.pi/agent/npm/node_modules/<package>
    - npm project scope: .pi/npm/node_modules/<package>
    - git user scope: ~/.pi/agent/git/<host>/<repo-path>
    - git project scope: .pi/git/<host>/<repo-path>

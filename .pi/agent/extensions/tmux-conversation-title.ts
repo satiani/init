@@ -2,7 +2,7 @@ import { existsSync, realpathSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { Worker } from "node:worker_threads";
-import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 
 const DEFAULT_TITLE = "pi";
 const MAX_TITLE_LENGTH = 16;
@@ -31,7 +31,7 @@ function resolvePiAiEntry(): string {
 		try {
 			let dir = dirname(candidateToPath(candidate));
 			while (dir !== dirname(dir)) {
-				const entry = join(dir, "node_modules", "@mariozechner", "pi-ai", "dist", "index.js");
+				const entry = join(dir, "node_modules", "@earendil-works", "pi-ai", "dist", "compat.js");
 				if (existsSync(entry)) return pathToFileURL(entry).href;
 				dir = dirname(dir);
 			}
@@ -39,7 +39,7 @@ function resolvePiAiEntry(): string {
 			// Try the next known module root.
 		}
 	}
-	throw new Error("Could not resolve @mariozechner/pi-ai for tmux title generation");
+	throw new Error("Could not resolve @earendil-works/pi-ai for tmux title generation");
 }
 
 const PI_AI_ENTRY = resolvePiAiEntry();

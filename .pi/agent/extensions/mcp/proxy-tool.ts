@@ -1,6 +1,6 @@
-import { Type } from "@sinclair/typebox";
-import { keyHint, type ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { Text } from "@mariozechner/pi-tui";
+import { Type } from "typebox";
+import { keyHint, type ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Text } from "@earendil-works/pi-tui";
 import { runWithAuthRetry } from "./commands";
 import { searchMCPTools } from "./tool-bridge";
 import { addMCPServer } from "./config-writer";
